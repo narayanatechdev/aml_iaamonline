@@ -1,0 +1,35 @@
+# Ignore everything
+*
+
+# But don't ignore these directories
+!aml_iaamonline-backend/
+!aml_iaamonline-frontend/
+
+# Don't ignore .gitignore itself
+!.gitignore
+
+# Laravel specific ignores (backend)
+aml_iaamonline-backend/.env
+aml_iaamonline-backend/.env.*
+aml_iaamonline-backend/vendor/
+aml_iaamonline-backend/storage/logs/
+aml_iaamonline-backend/storage/framework/
+aml_iaamonline-backend/bootstrap/cache/
+aml_iaamonline-backend/public/hot
+aml_iaamonline-backend/public/storage
+aml_iaamonline-backend/.phpunit.result.cache
+
+# Next.js specific ignores (frontend)
+aml_iaamonline-frontend/.env
+aml_iaamonline-frontend/.env.*
+aml_iaamonline-frontend/node_modules/
+aml_iaamonline-frontend/.next/
+aml_iaamonline-frontend/out/
+aml_iaamonline-frontend/.vercel
+aml_iaamonline-frontend/dist/
+
+# Common ignores for both
+**/.DS_Store
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
