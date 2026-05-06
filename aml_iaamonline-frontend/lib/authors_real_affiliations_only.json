@@ -1,0 +1,80 @@
+[
+    {
+        "id": 5049,
+        "name": "Indradevi P",
+        "email": null,
+        "orcid": null,
+        "article_count": 1,
+        "affiliation": "Department of Physics, Sri Meenakshi Govt. Arts College for Women, Madurai 625002, India",
+        "country": "India",
+        "city": "Madurai",
+        "department": "Department of Physics",
+        "created_at": "2026-05-03 09:40:51",
+        "updated_at": "2026-05-03 09:40:59"
+    },
+    {
+        "id": 5050,
+        "name": "Karunamoorthi R",
+        "email": null,
+        "orcid": null,
+        "article_count": 1,
+        "affiliation": "Department of Physics, Sri Meenakshi Govt. Arts College for Women, Madurai 625002, India",
+        "country": "India",
+        "city": "Madurai",
+        "department": "Department of Physics",
+        "created_at": "2026-05-03 09:40:51",
+        "updated_at": "2026-05-03 09:40:59"
+    },
+    {
+        "id": 651,
+        "name": "Paulo José Pereira De Oliveira",
+        "email": null,
+        "orcid": null,
+        "article_count": 2,
+        "affiliation": "Federal Institute of Education, Science and Technology of Espírito Santo – Unit Cachoeiro de Itapemirim City, P.O. Box 727, 29311-970, Brazil",
+        "country": "Brazil",
+        "city": "Cachoeiro de Itapemirim",
+        "department": "Federal Institute of Education, Science and Technology",
+        "created_at": "2026-05-03 09:40:30",
+        "updated_at": "2026-05-03 09:40:54"
+    },
+    {
+        "id": 4984,
+        "name": "Ramachandran K",
+        "email": null,
+        "orcid": null,
+        "article_count": 2,
+        "affiliation": "School of Physics, Madurai Kamaraj University, Madurai – 625 021, Tamilnadu, India",
+        "country": "India",
+        "city": "Madurai",
+        "department": "School of Physics",
+        "created_at": "2026-05-03 09:40:51",
+        "updated_at": "2026-05-03 09:40:59"
+    },
+    {
+        "id": 5051,
+        "name": "Sivabharthy M",
+        "email": null,
+        "orcid": null,
+        "article_count": 1,
+        "affiliation": "School of Physics, Madurai Kamaraj University, Madurai – 625 021, Tamilnadu, India",
+        "country": "India",
+        "city": "Madurai",
+        "department": "School of Physics",
+        "created_at": "2026-05-03 09:40:51",
+        "updated_at": "2026-05-03 09:40:59"
+    },
+    {
+        "id": 5048,
+        "name": "Thaizy Carlos Nossa",
+        "email": null,
+        "orcid": null,
+        "article_count": 1,
+        "affiliation": "Department of Physics, Federal University of Ouro Preto (UFOP) -Morro do Cruzeiro unit, Minas Gerais, 35400-000, Brazil",
+        "country": "Brazil",
+        "city": "Ouro Preto",
+        "department": "Department of Physics",
+        "created_at": "2026-05-03 09:40:51",
+        "updated_at": "2026-05-03 09:40:59"
+    }
+]

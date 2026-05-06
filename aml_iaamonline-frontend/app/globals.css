@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Light Mode - Design System Colors */
+    --background: 0 0% 100%;
+    --foreground: 210.4 43.4% 13.5%; /* #0f1a2e deep navy-black */
+
+    --card: 0 0% 100%;
+    --card-foreground: 210.4 43.4% 13.5%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210.4 43.4% 13.5%;
+
+    /* Navy Blue Primary (#0f2d6b) */
+    --primary: 210.4 81.3% 22.2%;
+    --primary-foreground: 0 0% 100%; /* White text on navy */
+
+    /* Light Blue-Grey Secondary (#f0f4fb) */
+    --secondary: 217 58.3% 97.1%;
+    --secondary-foreground: 210.4 81.3% 22.2%; /* Navy text on light bg */
+
+    --muted: 217 58.3% 97.1%;
+    --muted-foreground: 216.9 38.2% 53.1%; /* #5a6a8a */
+
+    /* Gold Accent (#c9a227) */
+    --accent: 42.4 76.7% 53.9%;
+    --accent-foreground: 0 0% 100%; /* White text on gold */
+
+    --destructive: 0 84.2% 60.2%; /* #d4183d */
+    --destructive-foreground: 0 0% 100%;
+
+    /* Navy with 12% opacity for subtle borders */
+    --border: 210.4 81.3% 22.2%;
+    --input: 217 58.3% 97.1%; /* #f4f7fc */
+    --ring: 210.4 81.3% 22.2%; /* Navy focus ring */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.3% 65.1%;
+
+    --accent: 217.2 91.2% 59.8%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out forwards;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

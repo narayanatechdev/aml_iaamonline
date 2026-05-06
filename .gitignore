@@ -1,9 +1,11 @@
 # Ignore everything
 *
 
-# But don't ignore these directories
+# But don't ignore these directories and their contents
 !aml_iaamonline-backend/
+!aml_iaamonline-backend/**
 !aml_iaamonline-frontend/
+!aml_iaamonline-frontend/**
 
 # Don't ignore .gitignore itself
 !.gitignore
