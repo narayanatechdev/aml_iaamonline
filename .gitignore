@@ -35,3 +35,13 @@ aml_iaamonline-frontend/dist/
 **/npm-debug.log*
 **/yarn-debug.log*
 **/yarn-error.log*
+
+# Ignore all hidden files (starting with .)
+.*
+
+# But allow .gitignore
+!.gitignore
+
+# Allow hidden files in tracked directories
+!aml_iaamonline-backend/.*
+!aml_iaamonline-frontend/.*
