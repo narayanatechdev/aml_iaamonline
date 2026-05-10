@@ -1,13 +1,30 @@
 'use client';
 
 import { TrendingUp, Award, ExternalLink, Globe } from 'lucide-react';
+import { ARTICLE_STATS } from '@/lib/realData';
 
 export function PerformanceMetrics() {
   const metrics = [
     { label: 'Impact Factor (2025)', value: '3.82', icon: TrendingUp, color: 'text-[#0f2d6b]' },
     { label: 'h-Index', value: '32', icon: Award, color: 'text-[#0f2d6b]' },
-    { label: 'Total Citations', value: '8.5K+', icon: ExternalLink, color: 'text-[#0f2d6b]' },
-    { label: 'Global Downloads', value: '2.8M+', icon: Globe, color: 'text-[#0f2d6b]' },
+    {
+      label: 'Total Citations',
+      value: ARTICLE_STATS.totalCitations > 1000
+        ? (ARTICLE_STATS.totalCitations / 1000).toFixed(1) + 'K+'
+        : ARTICLE_STATS.totalCitations.toLocaleString(),
+      icon: ExternalLink,
+      color: 'text-[#0f2d6b]',
+    },
+    {
+      label: 'Total Views',
+      value: ARTICLE_STATS.totalViews > 1000000
+        ? (ARTICLE_STATS.totalViews / 1000000).toFixed(1) + 'M+'
+        : ARTICLE_STATS.totalViews > 1000
+          ? Math.round(ARTICLE_STATS.totalViews / 1000).toLocaleString() + 'K+'
+          : ARTICLE_STATS.totalViews.toLocaleString(),
+      icon: Globe,
+      color: 'text-[#0f2d6b]',
+    },
   ];
 
   return (

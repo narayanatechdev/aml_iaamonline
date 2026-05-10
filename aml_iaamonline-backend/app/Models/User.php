@@ -11,7 +11,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name', 'email', 'password', 'title', 'first_name', 'last_name',
+    'degree', 'position', 'specialty', 'field_of_study', 'orcid',
+    'phone', 'mobile', 'fax', 'country', 'city', 'affiliation',
+    'postal_code', 'home_page', 'alt_email', 'username',
+    'is_reviewer', 'receive_news', 'join_date', 'comments',
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -33,7 +39,23 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_reviewer' => 'boolean',
+            'receive_news' => 'boolean',
+            'join_date' => 'date',
         ];
+    }
+
+    public function authorProfile()
+    {
+        return $this->hasOne(Author::class);
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        if ($this->first_name || $this->last_name) {
+            return trim("{$this->first_name} {$this->last_name}");
+        }
+        return $this->name ?? '';
     }
 
     public function roles()

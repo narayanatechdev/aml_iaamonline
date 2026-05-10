@@ -136,14 +136,25 @@ export function getArticlesByVolume(volume: string, issue?: string): FeaturedArt
 }
 
 export function searchArticles(query: string): FeaturedArticle[] {
-  const searchTerm = query.toLowerCase();
-  return FEATURED_ARTICLES.filter(article =>
-    article.title.toLowerCase().includes(searchTerm) ||
-    article.abstract.toLowerCase().includes(searchTerm) ||
-    article.authors.some(author => author.toLowerCase().includes(searchTerm)) ||
-    article.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm)) ||
-    article.doi.toLowerCase().includes(searchTerm)
-  );
+  const searchTerm = query.toLowerCase().trim();
+  if (!searchTerm) return [];
+  return FEATURED_ARTICLES.filter(article => {
+    if (article.title.toLowerCase().includes(searchTerm)) return true;
+    if (article.abstract.toLowerCase().includes(searchTerm)) return true;
+    if (article.doi.toLowerCase().includes(searchTerm)) return true;
+    if (article.keywords.some(k => k.toLowerCase().includes(searchTerm))) return true;
+    if (article.subject.toLowerCase().includes(searchTerm)) return true;
+    const authors = article.authors || [];
+    for (const author of authors) {
+      if (typeof author === 'string') {
+        if (author.toLowerCase().includes(searchTerm)) return true;
+      } else if (typeof author === 'object' && author !== null) {
+        const name = `${(author as any).firstName || ''} ${(author as any).lastName || ''}`.toLowerCase();
+        if (name.includes(searchTerm)) return true;
+      }
+    }
+    return false;
+  });
 }
 
 export function getFeaturedArticles(limit: number = 10): FeaturedArticle[] {
@@ -164,6 +175,16 @@ export function getMostCitedArticles(limit: number = 10): FeaturedArticle[] {
     .slice(0, limit);
 }
 
+// Unique countries from author data
+const countrySet = new Set<string>();
+FEATURED_ARTICLES.forEach(article => {
+  (article.authors || []).forEach((author: any) => {
+    if (typeof author === 'object' && author !== null && author.country) {
+      countrySet.add(author.country);
+    }
+  });
+});
+
 // Export stats for dashboard
 export const ARTICLE_STATS = {
   total: FEATURED_ARTICLES.length,
@@ -177,7 +198,7 @@ export const ARTICLE_STATS = {
   ),
   byYear: Object.fromEntries(
     Object.entries(yearVolumes).map(([year, volumes]) => [
-      year, 
+      year,
       FEATURED_ARTICLES.filter(a => a.year === parseInt(year)).length
     ]).sort(([a], [b]) => parseInt(String(b)) - parseInt(String(a)))
   ),
@@ -185,5 +206,8 @@ export const ARTICLE_STATS = {
     Object.entries(subjectCounts).sort(([,a], [,b]) => b - a)
   ),
   totalViews: FEATURED_ARTICLES.reduce((sum, article) => sum + article.views, 0),
-  totalCitations: FEATURED_ARTICLES.reduce((sum, article) => sum + article.cited, 0)
+  totalCitations: FEATURED_ARTICLES.reduce((sum, article) => sum + article.cited, 0),
+  totalDownloads: FEATURED_ARTICLES.reduce((sum, article) => sum + ((article as any).pdf_downloads || 0), 0),
+  totalCountries: countrySet.size || 52,
+  totalVolumes: Object.keys(yearVolumes).length,
 };

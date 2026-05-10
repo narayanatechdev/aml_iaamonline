@@ -19,6 +19,11 @@ class ArticleAuthor extends Model
         ];
     }
 
+    public function article(): BelongsTo
+    {
+        return $this->belongsTo(Article::class, 'article_id', 'legacy_id');
+    }
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);

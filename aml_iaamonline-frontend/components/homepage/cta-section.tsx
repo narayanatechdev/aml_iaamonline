@@ -1,6 +1,7 @@
 'use client';
 
 import { BookOpen, FileText } from 'lucide-react';
+import { ARTICLE_STATS } from '@/lib/realData';
 
 export function CTASection() {
   return (
@@ -17,17 +18,17 @@ export function CTASection() {
             <BookOpen className="w-8 h-8 text-[#c9a227] mb-4" />
             <h3 className="text-xl mb-3 font-bold">For Readers</h3>
             <p className="text-white/80 text-sm leading-relaxed mb-6">
-              Access 1,250+ peer-reviewed articles across all areas of materials science — completely free, no subscription required. Stay current with the latest research from 50 countries.
+              Access {ARTICLE_STATS.total.toLocaleString()}+ peer-reviewed articles across all areas of materials science — completely free, no subscription required. Stay current with the latest research from {ARTICLE_STATS.totalCountries}+ countries.
             </p>
             <div className="flex gap-3">
               <a
-                href="#browse"
+                href="/browse/current"
                 className="px-4 py-2 bg-white text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] transition-colors font-semibold"
               >
                 Current Issue
               </a>
               <a
-                href="#archive"
+                href="/browse/archive"
                 className="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg text-sm hover:bg-white/20 transition-colors"
               >
                 Browse Archive

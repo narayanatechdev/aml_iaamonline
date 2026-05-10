@@ -2,7 +2,15 @@
 
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { FEATURED_ARTICLES } from '@/lib/realData';
+import { getFeaturedArticles } from '@/lib/realData';
+
+function getAuthorName(author: any): string {
+  if (typeof author === 'string') return author;
+  if (typeof author === 'object' && author !== null) {
+    return `${author.firstName || ''} ${author.lastName || ''}`.trim();
+  }
+  return '';
+}
 
 const STATUS_TAG_COLORS: Record<string, string> = {
   "Editor's Pick": 'bg-[#0f2d6b]  text-white',
@@ -12,10 +20,9 @@ const STATUS_TAG_COLORS: Record<string, string> = {
 };
 
 export function FeaturedContent() {
-  // Add some tags specifically for the homepage display
-  const articlesToDisplay = FEATURED_ARTICLES.slice(0, 3).map((a, i) => ({
+  const articlesToDisplay = getFeaturedArticles(3).map((a, i) => ({
     ...a,
-    tag: i === 0 ? "Editor's Pick" : (i === 1 ? 'Most Cited' : 'Latest')
+    tag: i === 0 ? "Editor's Pick" : (i === 1 ? 'Most Viewed' : 'Most Viewed')
   }));
 
   return (
@@ -57,8 +64,8 @@ export function FeaturedContent() {
               <p className="text-[#5a6a8a] text-xs mb-4 line-clamp-2 leading-relaxed">{article.abstract}</p>
               
               <div className="text-[#0f2d6b] text-xs mb-4 font-semibold">
-                {article.authors.slice(0, 2).join(', ')}
-                {article.authors.length > 2 ? ' et al.' : ''}
+                {(article.authors || []).slice(0, 2).map(getAuthorName).filter(Boolean).join(', ')}
+                {(article.authors || []).length > 2 ? ' et al.' : ''}
               </div>
               
               <div className="flex items-center justify-between text-[10px] border-t pt-4 border-gray-50">

@@ -1,11 +1,13 @@
 'use client';
 
+import { ARTICLE_STATS, FEATURED_ARTICLES, SUBJECTS } from '@/lib/realData';
+
 export function QuickMetrics() {
   const metrics = [
-    { label: 'Annual Readership', value: '150K+' },
-    { label: 'Published Articles', value: '1,250+' },
-    { label: 'Journal Issues', value: '25' },
-    { label: 'Countries', value: '50+' },
+    { label: 'Published Articles', value: ARTICLE_STATS.total.toLocaleString() + '+' },
+    { label: 'Total Downloads', value: ARTICLE_STATS.totalDownloads > 1000 ? Math.round(ARTICLE_STATS.totalDownloads / 1000).toLocaleString() + 'K+' : ARTICLE_STATS.totalDownloads.toLocaleString() },
+    { label: 'Journal Volumes', value: String(ARTICLE_STATS.totalVolumes) },
+    { label: 'Countries', value: ARTICLE_STATS.totalCountries + '+' },
   ];
 
   return (

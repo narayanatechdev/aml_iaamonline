@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronDown, Menu, X, Search, BookOpen } from 'lucide-react';
+import Link from 'next/link';
+import { searchArticles } from '@/lib/realData';
 
 interface NavItem {
   label: string;
@@ -41,9 +44,6 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: 'Submission Guidelines', path: '#guidelines' },
       { label: 'Peer Review & Ethics', path: '#ethics' },
-      /* Hidden for now: Submit Manuscript and Track Submission */
-      /* { label: 'Submit Manuscript', path: '/submit' }, */
-      /* { label: 'Track Submission', path: '/track' }, */
     ],
   },
   {
@@ -52,26 +52,48 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+function getAuthorName(author: any): string {
+  if (typeof author === 'string') return author;
+  if (typeof author === 'object' && author !== null) {
+    return `${author.firstName || ''} ${author.lastName || ''}`.trim();
+  }
+  return '';
+}
+
 export function Navbar() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  function handleSearchChange(value: string) {
+    setSearchQuery(value);
+    if (value.trim().length >= 2) {
+      const found = searchArticles(value).slice(0, 5);
+      setSearchResults(found);
+      setShowSearchDropdown(true);
+    } else {
+      setSearchResults([]);
+      setShowSearchDropdown(false);
+    }
+  }
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setShowSearchDropdown(false);
+      router.push(`/browse/current?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Top bar - Navy with ISSN info */}
+      {/* Top bar */}
       <div className="bg-[#0f2d6b] text-white py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <span className="text-xs opacity-80">ISSN: 0976-3961 | eISSN: 1998-0140 | Diamond Open Access</span>
-          {/* Hidden for now: Editor Login and Track Submission
-          <div className="hidden md:flex items-center gap-4 text-xs">
-            <a href="/editor/login" className="opacity-80 hover:opacity-100 transition-opacity">
-              Editor Login
-            </a>
-            <span className="opacity-40">|</span>
-            <a href="/track" className="opacity-80 hover:opacity-100 transition-opacity">
-              Track Submission
-            </a>
-          </div> */}
         </div>
       </div>
 
@@ -89,19 +111,51 @@ export function Navbar() {
             </div>
           </a>
 
-          {/* Search bar */}
+          {/* Functional search bar */}
           <div className="hidden md:flex flex-1 max-w-md mx-4">
-            <div className="relative w-full">
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onFocus={() => searchResults.length > 0 && setShowSearchDropdown(true)}
+                onBlur={() => setTimeout(() => setShowSearchDropdown(false), 200)}
                 placeholder="Search articles, authors, keywords..."
                 className="w-full pl-4 pr-10 py-2 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            </div>
-          </div>
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Search className="w-4 h-4 text-muted-foreground" />
+              </button>
 
-          {/* Hidden for now: Submit Manuscript button */}
+              {showSearchDropdown && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-[100] max-h-[350px] overflow-y-auto">
+                  {searchResults.map((article) => (
+                    <Link
+                      key={article.id}
+                      href={`/article/${article.id}`}
+                      className="block px-4 py-2.5 hover:bg-[#f0f4fb] border-b border-gray-50 last:border-b-0 transition-colors"
+                      onClick={() => setShowSearchDropdown(false)}
+                    >
+                      <div className="text-[#0f1a2e] text-xs font-semibold line-clamp-1">{article.title}</div>
+                      <div className="text-[#5a6a8a] text-[10px] mt-0.5">
+                        {(article.authors || []).slice(0, 2).map(getAuthorName).filter(Boolean).join(', ')}
+                        {(article.authors || []).length > 2 ? ' et al.' : ''}
+                        <span className="mx-1">·</span>
+                        {article.year}
+                      </div>
+                    </Link>
+                  ))}
+                  <Link
+                    href={`/browse/current?q=${encodeURIComponent(searchQuery)}`}
+                    className="block px-4 py-2.5 text-center text-[#0f2d6b] text-xs font-semibold hover:bg-[#f0f4fb] bg-gray-50"
+                    onClick={() => setShowSearchDropdown(false)}
+                  >
+                    View all results
+                  </Link>
+                </div>
+              )}
+            </form>
+          </div>
 
           {/* Mobile menu toggle */}
           <button
@@ -134,7 +188,6 @@ export function Navbar() {
                   {item.children && <ChevronDown className="w-3.5 h-3.5 opacity-70" />}
                 </a>
 
-                {/* Dropdown menu */}
                 {item.children && activeDropdown === item.label && (
                   <div className="absolute top-full left-0 w-56 bg-white rounded-b-lg shadow-xl border border-border z-50">
                     {item.children.map((child, idx) => (
@@ -160,11 +213,15 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-border shadow-lg">
           <div className="px-4 py-3">
-            <input
-              type="text"
-              placeholder="Search articles, DOI, authors..."
-              className="w-full pl-4 pr-10 py-2 rounded-lg border border-border bg-secondary text-sm focus:outline-none"
-            />
+            <form onSubmit={handleSearchSubmit}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search articles, DOI, authors..."
+                className="w-full pl-4 pr-10 py-2 rounded-lg border border-border bg-secondary text-sm focus:outline-none"
+              />
+            </form>
           </div>
           <nav className="px-4 pb-4">
             {NAV_ITEMS.map((item) => (
@@ -190,13 +247,6 @@ export function Navbar() {
                 )}
               </div>
             ))}
-            {/* Hidden for now: Mobile Submit Manuscript button */}
-            {/* <a
-              href="/submit"
-              className="block mt-4 text-center py-2.5 bg-[#c9a227] text-white rounded-lg text-sm font-semibold hover:bg-[#b8911f] transition-colors"
-            >
-              Submit Manuscript
-            </a> */}
           </nav>
         </div>
       )}
