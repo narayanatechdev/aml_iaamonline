@@ -33,6 +33,11 @@ const NAV_ITEMS: NavItem[] = [
     path: '/admin',
   },
   {
+    label: 'Articles',
+    icon: <BookOpen className="w-5 h-5" />,
+    path: '/admin/articles',
+  },
+  {
     label: 'Users',
     icon: <Users className="w-5 h-5" />,
     path: '/admin/users',
