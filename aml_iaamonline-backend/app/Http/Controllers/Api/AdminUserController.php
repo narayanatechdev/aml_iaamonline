@@ -28,8 +28,17 @@ class AdminUserController extends Controller
     {
         $this->authorizeAdmin();
 
-        $query = User::select(['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at'])
-            ->with(['activeRoles:id,name,display_name']);
+        $isPostgres = config('database.default') === 'pgsql';
+        $likeOp     = $isPostgres ? 'ilike' : 'like';
+
+        $query = User::select([
+                'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
+                'title', 'first_name', 'last_name', 'degree', 'position',
+                'orcid', 'affiliation', 'country', 'city',
+                'is_reviewer', 'join_date',
+            ])
+            ->with(['activeRoles:id,name,display_name'])
+            ->with(['authorProfile:id,user_id,article_count,orcid']);
 
         if ($request->filled('role')) {
             $query->whereHas('activeRoles', function ($q) use ($request) {
@@ -39,22 +48,51 @@ class AdminUserController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "%{$search}%");
+            $query->where(function ($q) use ($search, $likeOp) {
+                $q->where('name',        $likeOp, "%{$search}%")
+                  ->orWhere('email',       $likeOp, "%{$search}%")
+                  ->orWhere('affiliation', $likeOp, "%{$search}%")
+                  ->orWhere('country',     $likeOp, "%{$search}%")
+                  ->orWhere('orcid',       $likeOp, "%{$search}%");
             });
         }
 
-        $perPage = min($request->integer('per_page', 10), 100);
-        $users = $query->latest()->paginate($perPage);
+        $perPage = min($request->integer('per_page', 20), 100);
+        $users   = $query->latest()->paginate($perPage);
+
+        $items = collect($users->items())->map(function (User $u) {
+            $roles = $u->activeRoles->pluck('name')->toArray();
+            return [
+                'id'           => $u->id,
+                'name'         => $u->name,
+                'first_name'   => $u->first_name,
+                'last_name'    => $u->last_name,
+                'title'        => $u->title,
+                'email'        => $u->email,
+                'orcid'        => $u->orcid ?? $u->authorProfile?->orcid,
+                'affiliation'  => $u->affiliation,
+                'country'      => $u->country,
+                'city'         => $u->city,
+                'degree'       => $u->degree,
+                'position'     => $u->position,
+                'is_reviewer'  => (bool) $u->is_reviewer,
+                'join_date'    => $u->join_date,
+                'created_at'   => $u->created_at,
+                'article_count'=> $u->authorProfile?->article_count ?? 0,
+                'author_id'    => $u->authorProfile?->id,
+                'roles'        => $roles,
+                'is_admin'     => in_array('admin', $roles),
+                'verified'     => ! is_null($u->email_verified_at),
+            ];
+        });
 
         return response()->json([
-            'data' => $users->items(),
+            'data' => $items,
             'meta' => [
-                'total' => $users->total(),
-                'per_page' => $users->perPage(),
+                'total'        => $users->total(),
+                'per_page'     => $users->perPage(),
                 'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
+                'last_page'    => $users->lastPage(),
             ],
         ]);
     }
@@ -111,12 +149,28 @@ class AdminUserController extends Controller
     {
         $this->authorizeAdmin();
 
-        $user = User::select(['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at'])
-            ->with(['activeRoles:id,name,display_name,description'])
+        $user = User::select([
+                'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
+                'title', 'first_name', 'last_name', 'degree', 'position', 'specialty',
+                'field_of_study', 'orcid', 'phone', 'mobile', 'fax',
+                'affiliation', 'country', 'city', 'postal_code',
+                'home_page', 'alt_email', 'username',
+                'is_reviewer', 'receive_news', 'join_date', 'comments',
+            ])
+            ->with(['activeRoles:id,name,display_name,description', 'authorProfile:id,user_id,article_count,orcid'])
             ->findOrFail($id);
 
+        $roles = $user->activeRoles->pluck('name')->toArray();
+
         return response()->json([
-            'data' => $user,
+            'data' => array_merge($user->toArray(), [
+                'roles'         => $roles,
+                'is_admin'      => in_array('admin', $roles),
+                'verified'      => ! is_null($user->email_verified_at),
+                'article_count' => $user->authorProfile?->article_count ?? 0,
+                'author_id'     => $user->authorProfile?->id,
+                'status'        => 'active',
+            ]),
             'message' => 'Success',
         ]);
     }

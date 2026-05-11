@@ -7,14 +7,13 @@ import { AdminBreadcrumb } from '@/components/admin/AdminBreadcrumb';
 import { UserForm, UserFormData, Role } from '@/components/forms/UserForm';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
+import { authFetch, API_BASE } from '@/lib/adminAuth';
 
 interface UserDetails extends UserFormData {
   created_at: string;
   last_login: string | null;
   last_login_ip: string | null;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export default function EditUserPage() {
   const router = useRouter();
@@ -48,8 +47,8 @@ export default function EditUserPage() {
 
     try {
       const [userResponse, rolesResponse] = await Promise.all([
-        fetch(`${API_URL}/admin/users/${userId}`),
-        fetch(`${API_URL}/admin/roles`),
+        authFetch(`${API_BASE}/admin/users/${userId}`),
+        authFetch(`${API_BASE}/admin/roles`),
       ]);
 
       if (!userResponse.ok) throw new Error('Failed to fetch user');
@@ -80,12 +79,9 @@ export default function EditUserPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+      const response = await authFetch(`${API_BASE}/admin/users/${userId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -109,7 +105,7 @@ export default function EditUserPage() {
     setIsDeleting(true);
 
     try {
-      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+      const response = await authFetch(`${API_BASE}/admin/users/${userId}`, {
         method: 'DELETE',
       });
 

@@ -53,10 +53,10 @@ export function UserForm({
   useEffect(() => {
     if (initialData) {
       setFormData({
-        name: initialData.name,
-        email: initialData.email,
-        status: initialData.status,
-        roles: initialData.roles,
+        name: initialData.name  ?? '',
+        email: initialData.email ?? '',
+        status: initialData.status ?? 'active',
+        roles: Array.isArray(initialData.roles) ? initialData.roles : [],
       });
     }
   }, [initialData]);
@@ -99,12 +99,15 @@ export function UserForm({
   };
 
   const handleRoleToggle = (roleName: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      roles: prev.roles.includes(roleName)
-        ? prev.roles.filter((r) => r !== roleName)
-        : [...prev.roles, roleName],
-    }));
+    setFormData((prev) => {
+      const current = Array.isArray(prev.roles) ? prev.roles : [];
+      return {
+        ...prev,
+        roles: current.includes(roleName)
+          ? current.filter((r) => r !== roleName)
+          : [...current, roleName],
+      };
+    });
     if (errors.roles) {
       setErrors((prev) => ({ ...prev, roles: undefined }));
     }
@@ -243,7 +246,7 @@ export function UserForm({
                 >
                   <input
                     type="checkbox"
-                    checked={formData.roles.includes(role.name)}
+                    checked={(formData.roles ?? []).includes(role.name)}
                     onChange={() => handleRoleToggle(role.name)}
                     className="w-4 h-4 rounded border-gray-300 text-[#0f2d6b] focus:ring-[#0f2d6b]"
                   />

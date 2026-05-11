@@ -6,8 +6,7 @@ import { AdminBreadcrumb } from '@/components/admin/AdminBreadcrumb';
 import { UserForm, Role } from '@/components/forms/UserForm';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
 import { Loader2 } from 'lucide-react';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { authFetch, API_BASE } from '@/lib/adminAuth';
 
 export default function NewUserPage() {
   const router = useRouter();
@@ -32,7 +31,7 @@ export default function NewUserPage() {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/admin/roles`);
+      const response = await authFetch(`${API_BASE}/admin/roles`);
       if (!response.ok) throw new Error('Failed to fetch roles');
 
       const data = await response.json();
@@ -57,12 +56,9 @@ export default function NewUserPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/admin/users`, {
+      const response = await authFetch(`${API_BASE}/admin/users`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 

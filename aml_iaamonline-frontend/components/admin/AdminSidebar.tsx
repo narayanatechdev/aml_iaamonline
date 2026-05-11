@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
+  UserCheck,
   Shield,
   FileText,
   Settings,
@@ -36,6 +37,11 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Articles',
     icon: <BookOpen className="w-5 h-5" />,
     path: '/admin/articles',
+  },
+  {
+    label: 'Authors',
+    icon: <UserCheck className="w-5 h-5" />,
+    path: '/admin/authors',
   },
   {
     label: 'Users',
