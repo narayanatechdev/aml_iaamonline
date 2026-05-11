@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Filter, Eye, Quote, Search, X } from 'lucide-react';
 import Link from 'next/link';
@@ -61,7 +61,7 @@ function ArticleCard({ article }: ArticleCardProps) {
   );
 }
 
-export default function CurrentIssuePage() {
+function CurrentIssueContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
@@ -111,9 +111,8 @@ export default function CurrentIssuePage() {
     setSearchQuery('');
   }
 
-  return (
-    <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 py-10">
+return (
+    <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Navigation Links */}
         <div className="mb-8">
           <div className="flex items-center gap-6 border-b border-border">
@@ -308,7 +307,16 @@ export default function CurrentIssuePage() {
             </div>
           </div>
         </div>
-      </div>
+    </div>
+  );
+}
+
+export default function CurrentIssuePage() {
+  return (
+    <MainLayout>
+      <Suspense fallback={<div className="text-center py-10">Loading...</div>}>
+        <CurrentIssueContent />
+      </Suspense>
     </MainLayout>
   );
 }
