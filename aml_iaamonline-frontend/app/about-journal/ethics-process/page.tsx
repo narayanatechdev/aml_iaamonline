@@ -20,7 +20,7 @@ export default function EthicsProcess() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Publication Ethics */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Shield className="w-5 h-5" />
@@ -54,7 +54,7 @@ export default function EthicsProcess() {
                       ]
                     }
                   ].map((section, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg">
+                    <div key={index} className="p-4 border-b border-gray-200">
                       <h4 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 600 }}>{section.title}</h4>
                       <div className="space-y-2">
                         {section.points.map((point, idx) => (
@@ -71,7 +71,7 @@ export default function EthicsProcess() {
             </Card>
 
             {/* Peer Review Process */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Eye className="w-5 h-5" />
@@ -123,7 +123,7 @@ export default function EthicsProcess() {
                         description: "Final review of revisions and preparation for publication."
                       }
                     ].map((step, index) => (
-                      <div key={index} className="flex gap-4 p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors">
+                      <div key={index} className="flex gap-4 p-4 border-b border-gray-200">
                         <div className="w-10 h-10 bg-[#0f2d6b] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                           {step.step}
                         </div>
@@ -145,7 +145,7 @@ export default function EthicsProcess() {
             </Card>
 
             {/* Research Misconduct */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5" />
@@ -174,7 +174,7 @@ export default function EthicsProcess() {
                       action: "Editorial notice and correction procedures"
                     }
                   ].map((misconduct, index) => (
-                    <div key={index} className="p-4 border border-red-200 bg-red-50 rounded-lg">
+                    <div key={index} className="p-4 border-b border-gray-200">
                       <h5 className="text-red-700 text-sm mb-2" style={{ fontWeight: 600 }}>{misconduct.type}</h5>
                       <p className="text-red-600 text-xs mb-3 leading-relaxed">{misconduct.description}</p>
                       <div className="text-red-700 text-xs" style={{ fontWeight: 500 }}>{misconduct.action}</div>
@@ -188,7 +188,7 @@ export default function EthicsProcess() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Ethics Guidelines */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Scale className="w-4 h-4" />
@@ -214,7 +214,7 @@ export default function EthicsProcess() {
                       badge: "Compliant"
                     }
                   ].map((standard, index) => (
-                    <div key={index} className="p-3 border border-border rounded-lg">
+                    <div key={index} className="p-3 border-b border-gray-200">
                       <div className="flex items-start justify-between mb-2">
                         <h5 className="text-[#0f2d6b] text-sm" style={{ fontWeight: 600 }}>{standard.title}</h5>
                         <Badge variant="secondary" className="text-xs">{standard.badge}</Badge>
@@ -227,7 +227,7 @@ export default function EthicsProcess() {
             </Card>
 
             {/* Contact Information */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <FileText className="w-4 h-4" />
@@ -252,7 +252,7 @@ export default function EthicsProcess() {
             </Card>
 
             {/* Review Timeline */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -282,7 +282,7 @@ export default function EthicsProcess() {
             </Card>
 
             {/* Reviewer Recognition */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Users className="w-4 h-4" />

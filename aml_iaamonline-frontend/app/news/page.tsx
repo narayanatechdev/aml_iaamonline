@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MainLayout } from '@/components/layout/main-layout';
-import { Calendar, Tag, Newspaper, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import { Calendar, ExternalLink } from 'lucide-react';
 
 export default function NewsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -92,14 +92,14 @@ export default function NewsPage() {
             
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+              <div className="border-b border-gray-200 pb-6 mb-6">
                 <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4">Categories</h3>
                 <div className="space-y-2">
                   {categories.map((category) => (
                     <button
                       key={category.id}
                       onClick={() => setActiveCategory(category.id)}
-                      className={`w-full text-left flex items-center justify-between p-3 rounded-lg transition-colors ${
+                      className={`w-full text-left flex items-center justify-between p-3 transition-colors ${
                         activeCategory === category.id
                           ? 'bg-[#0f2d6b] text-white'
                           : 'hover:bg-gray-50'
@@ -117,25 +117,6 @@ export default function NewsPage() {
                   ))}
                 </div>
               </div>
-
-              {/* Featured Images */}
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4 flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5" />
-                  Featured Images
-                </h3>
-                <div className="space-y-3">
-                  {newsArticles.slice(0, 5).map((news, index) => (
-                    <div key={index} className="w-full h-16 bg-gray-100 rounded overflow-hidden">
-                      <img 
-                        src={news.image}
-                        alt={news.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Main Content */}
@@ -146,7 +127,7 @@ export default function NewsPage() {
                   <h2 className="text-2xl font-bold text-[#0f2d6b] mb-6">Featured News</h2>
                   <div className="grid md:grid-cols-3 gap-6 mb-8">
                     {featuredNews.map((news) => (
-                      <div key={news.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                      <div key={news.id} className="border-b border-gray-200 pb-6">
                         <div className="h-48 overflow-hidden">
                           <img 
                             src={news.image}
@@ -156,7 +137,7 @@ export default function NewsPage() {
                         </div>
                         <div className="p-6">
                           <div className="flex items-center gap-2 mb-3">
-                            <span className="text-xs font-semibold text-[#c9a227] bg-[#c9a227]/10 px-2 py-1 rounded-full">
+                            <span className="text-xs font-semibold text-[#0f2d6b] bg-[#0f2d6b]/10 px-2 py-1">
                               {news.category}
                             </span>
                             <span className="text-xs text-gray-500">
@@ -178,9 +159,9 @@ export default function NewsPage() {
               </h2>
               <div className="space-y-6">
                 {filteredNews.map((news) => (
-                  <div key={news.id} className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-shadow">
+                  <div key={news.id} className="border-b border-gray-200 pb-6">
                     <div className="flex gap-6">
-                      <div className="w-32 h-24 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                      <div className="w-32 h-24 bg-gray-100 overflow-hidden flex-shrink-0">
                         <img 
                           src={news.image}
                           alt={news.title}
@@ -189,7 +170,7 @@ export default function NewsPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-xs font-semibold text-[#c9a227] bg-[#c9a227]/10 px-2 py-1 rounded-full">
+                          <span className="text-xs font-semibold text-[#0f2d6b] bg-[#0f2d6b]/10 px-2 py-1">
                             {news.category}
                           </span>
                           <span className="text-xs text-gray-500 flex items-center gap-1">

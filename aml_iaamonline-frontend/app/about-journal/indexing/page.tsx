@@ -95,7 +95,7 @@ export default function Indexing() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Major Indexes */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Star className="w-5 h-5 text-[#c9a227]" />
@@ -105,9 +105,9 @@ export default function Indexing() {
               <CardContent>
                 <div className="space-y-6">
                   {majorIndexes.map((index, idx) => (
-                    <div key={idx} className={`p-6 border rounded-lg ${index.featured ? 'border-[#c9a227] bg-[#c9a227]/5' : 'border-border'} hover:shadow-md transition-shadow`}>
+                    <div key={idx} className={`py-5 border-b ${index.featured ? 'border-[#c9a227] bg-[#c9a227]/5' : 'border-gray-200'}`}>
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-white rounded-lg border border-border flex items-center justify-center shadow-sm">
+                        <div className="w-12 h-12 bg-white border border-gray-200 flex items-center justify-center">
                           {index.icon}
                         </div>
                         <div className="flex-1">
@@ -143,7 +143,7 @@ export default function Indexing() {
             </Card>
 
             {/* Citation Metrics */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
@@ -153,7 +153,7 @@ export default function Indexing() {
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-6">
                   {metrics.map((metric, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg text-center hover:bg-[#f0f4fb] transition-colors">
+                    <div key={index} className="p-4 border-b border-gray-200 text-center">
                       <div className="text-[#0f2d6b] text-2xl font-bold mb-1">{metric.value}</div>
                       <div className="text-[#0f2d6b] text-sm mb-1" style={{ fontWeight: 600 }}>{metric.metric}</div>
                       <div className="text-[#5a6a8a] text-xs mb-2">{metric.provider}</div>
@@ -165,7 +165,7 @@ export default function Indexing() {
             </Card>
 
             {/* Benefits of Indexing */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Award className="w-5 h-5" />
@@ -216,21 +216,21 @@ export default function Indexing() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Stats */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Indexing Statistics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">15+</div>
                     <div className="text-[#5a6a8a] text-xs">Major Databases</div>
                   </div>
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">50+</div>
                     <div className="text-[#5a6a8a] text-xs">Countries Reached</div>
                   </div>
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">1M+</div>
                     <div className="text-[#5a6a8a] text-xs">Annual Downloads</div>
                   </div>
@@ -239,7 +239,7 @@ export default function Indexing() {
             </Card>
 
             {/* Additional Indexes */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Link className="w-4 h-4" />
@@ -259,7 +259,7 @@ export default function Indexing() {
             </Card>
 
             {/* Submission Guidelines */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">For Authors</CardTitle>
               </CardHeader>
@@ -277,7 +277,7 @@ export default function Indexing() {
             </Card>
 
             {/* Contact */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Indexing Inquiries</CardTitle>
               </CardHeader>

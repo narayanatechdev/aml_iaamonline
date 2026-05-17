@@ -197,7 +197,7 @@ export default function Process() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Process Steps */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl">Submission to Publication Process</CardTitle>
               </CardHeader>
@@ -241,7 +241,7 @@ export default function Process() {
                             </div>
                           </div>
                           
-                          <div className="mt-4 p-3 bg-[#f0f4fb] rounded-lg border border-[#0f2d6b]/10">
+                          <div className="mt-4 p-3 border-b border-gray-200">
                             <div className="flex items-start gap-2">
                               <AlertCircle className="w-4 h-4 text-[#c9a227] mt-0.5 flex-shrink-0" />
                               <p className="text-[#3a4a6a] text-xs"><strong>Tip:</strong> {step.tips}</p>
@@ -256,14 +256,14 @@ export default function Process() {
             </Card>
 
             {/* Decision Types */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl">Editorial Decision Types</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {decisionTypes.map((decision, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors">
+                    <div key={index} className="p-4 border-b border-gray-200">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className={`text-sm ${decision.color}`} style={{ fontWeight: 600 }}>
                           {decision.decision}
@@ -284,7 +284,7 @@ export default function Process() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Timeline Summary */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -307,7 +307,7 @@ export default function Process() {
             </Card>
 
             {/* Success Tips */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Award className="w-4 h-4" />
@@ -316,15 +316,15 @@ export default function Process() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="p-3 border-b border-gray-200">
                     <h5 className="text-emerald-700 text-xs mb-1" style={{ fontWeight: 600 }}>Before Submission</h5>
                     <p className="text-emerald-600 text-xs">Follow formatting guidelines exactly and include all required sections.</p>
                   </div>
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="p-3 border-b border-gray-200">
                     <h5 className="text-blue-700 text-xs mb-1" style={{ fontWeight: 600 }}>During Review</h5>
                     <p className="text-blue-600 text-xs">Be patient and avoid multiple status inquiries during normal review periods.</p>
                   </div>
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="p-3 border-b border-gray-200">
                     <h5 className="text-amber-700 text-xs mb-1" style={{ fontWeight: 600 }}>During Revision</h5>
                     <p className="text-amber-600 text-xs">Address every reviewer comment thoroughly and clearly mark all changes.</p>
                   </div>
@@ -333,7 +333,7 @@ export default function Process() {
             </Card>
 
             {/* Contact Information */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Editorial Support</CardTitle>
               </CardHeader>
@@ -353,21 +353,21 @@ export default function Process() {
             </Card>
 
             {/* Quick Stats */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Process Statistics</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">85%</div>
                     <div className="text-[#5a6a8a] text-xs">Manuscripts requiring revision</div>
                   </div>
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">6-8 weeks</div>
                     <div className="text-[#5a6a8a] text-xs">Average time to first decision</div>
                   </div>
-                  <div className="text-center p-3 bg-[#0f2d6b]/5 rounded-lg">
+                  <div className="text-center p-3 border-b border-gray-200">
                     <div className="text-[#0f2d6b] text-lg font-bold">2-3 rounds</div>
                     <div className="text-[#5a6a8a] text-xs">Average revision cycles</div>
                   </div>

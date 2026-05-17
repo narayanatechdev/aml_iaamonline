@@ -21,11 +21,11 @@ interface ArticleCardProps {
 
 function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg transition-shadow">
+    <article className="border-b border-gray-200 py-6">
       {/* Open Access Badge */}
       <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs rounded-full font-semibold">
-          <span className="w-2 h-2 bg-[#c9a227] rounded-full"></span>
+        <div className="inline-flex items-center gap-1 text-[#8c7220] text-xs">
+          <span className="w-1.5 h-1.5 bg-[#c9a227] rounded-full"></span>
           Open Access
         </div>
         <div className="text-xs text-[#5a6a8a] font-mono">
@@ -35,7 +35,7 @@ function ArticleCard({ article }: ArticleCardProps) {
 
       {/* Article Type */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="px-2 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10 font-semibold">
+        <span className="text-[#0f2d6b] text-xs">
           {article.type}
         </span>
         <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
@@ -65,7 +65,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       {/* Graphical Abstract Thumbnail */}
       {article.graphical_abstract_url && (
         <div className="mb-3">
-          <div className="w-full max-w-xs h-32 bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
+          <div className="w-full max-w-xs h-32 bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
             <img 
               src={article.graphical_abstract_url}
               alt={`Graphical abstract for ${article.title}`}
@@ -76,7 +76,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       )}
 
       {/* Abstract Snippet */}
-      <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed mb-3">
+      <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed mb-3">
         {article.abstract || 'Abstract not available.'}
       </p>
 
@@ -97,7 +97,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       <div className="flex items-center gap-2">
         <Link
           href={article.pdf_url || `#`}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
           {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -107,7 +107,7 @@ function ArticleCard({ article }: ArticleCardProps) {
         </Link>
         <Link
           href={`/article/${article.id}`}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-[#0f2d6b] hover:bg-[#0d2560] text-white text-xs font-medium rounded transition-colors"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -116,7 +116,7 @@ function ArticleCard({ article }: ArticleCardProps) {
           Full Text
         </Link>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -181,7 +181,7 @@ export default function SubjectPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar Subject Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-border p-5">
+            <div className="border-b border-gray-200 pb-5">
               <h3 className="text-[#0f2d6b] text-sm font-semibold mb-4">Browse by Subject</h3>
               
               {/* Search Subjects */}
@@ -231,7 +231,7 @@ export default function SubjectPage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {!selectedSubject ? (
-              <div className="bg-white rounded-xl border border-border p-10 text-center">
+              <div className="py-10 text-center border-b border-gray-200">
                 <h1 className="text-[#0f1a2e] text-xl font-bold mb-4">Browse by Subject</h1>
                 <p className="text-[#5a6a8a] text-sm mb-6">
                   Select a subject from the sidebar to explore articles in that research area.
@@ -241,7 +241,7 @@ export default function SubjectPage() {
                     <button
                       key={subject.id}
                       onClick={() => toggleSubject(subject.name)}
-                      className="p-4 border border-border rounded-lg hover:shadow-md transition-shadow text-center group hover:border-[#0f2d6b]"
+                      className="p-4 border-b border-gray-200 text-center group hover:border-[#0f2d6b]"
                     >
                       <h3 className="text-[#0f2d6b] font-semibold mb-1 text-sm group-hover:text-[#0f2d6b]">
                         {subject.name}
@@ -256,7 +256,7 @@ export default function SubjectPage() {
             ) : (
               <div>
                 {/* Header */}
-                <div className="bg-white rounded-xl border border-border p-6 mb-6">
+                <div className="border-b border-gray-200 pb-6 mb-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h1 className="text-[#0f1a2e] text-xl font-bold">{selectedSubject}</h1>
@@ -282,13 +282,13 @@ export default function SubjectPage() {
                 </div>
 
                 {/* Articles List */}
-                <div className="space-y-4">
+                <div className="">
                   {selectedArticles.length > 0 ? (
                     selectedArticles.map((article) => (
                       <ArticleCard key={article.id} article={article} />
                     ))
                   ) : (
-                    <div className="bg-white rounded-xl border border-border p-10 text-center">
+                    <div className="py-10 text-center border-b border-gray-200">
                       <p className="text-[#5a6a8a] text-sm">No articles found for this subject.</p>
                     </div>
                   )}

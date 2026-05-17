@@ -19,7 +19,7 @@ export default function About() {
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
           {/* Journal Overview */}
           <div className="lg:col-span-2">
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <BookOpen className="w-5 h-5" />
@@ -40,7 +40,7 @@ export default function About() {
             </Card>
 
             {/* Publication Types */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Target className="w-5 h-5" />
@@ -55,7 +55,7 @@ export default function About() {
                     { type: "Letters", desc: "Short communications reporting urgent or significant findings" },
                     { type: "Perspectives", desc: "Forward-looking opinion pieces by invited experts in the field" }
                   ].map((item) => (
-                    <div key={item.type} className="p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors">
+                    <div key={item.type} className="py-3 border-b border-gray-200">
                       <h4 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 600 }}>{item.type}</h4>
                       <p className="text-[#5a6a8a] text-xs leading-relaxed">{item.desc}</p>
                     </div>
@@ -65,7 +65,7 @@ export default function About() {
             </Card>
 
             {/* Open Access Commitment */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Globe className="w-5 h-5" />
@@ -98,7 +98,7 @@ export default function About() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Key Metrics */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Key Information</CardTitle>
               </CardHeader>
@@ -129,7 +129,7 @@ export default function About() {
             </Card>
 
             {/* Focus Areas */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Zap className="w-4 h-4" />
@@ -159,7 +159,7 @@ export default function About() {
             </Card>
 
             {/* Contact */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Users className="w-4 h-4" />
@@ -188,7 +188,7 @@ export default function About() {
         </div>
 
         {/* Awards & Recognition */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Award className="w-5 h-5" />
@@ -203,7 +203,7 @@ export default function About() {
                 { title: "DOAJ Listed", desc: "Directory of Open Access Journals certified" },
                 { title: "CrossRef DOI", desc: "Digital Object Identifiers for all articles" }
               ].map((item, index) => (
-                <div key={index} className="text-center p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
+                <div key={index} className="text-center p-4 border-b border-gray-200">
                   <div className="w-12 h-12 bg-[#0f2d6b]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Award className="w-6 h-6 text-[#0f2d6b]" />
                   </div>

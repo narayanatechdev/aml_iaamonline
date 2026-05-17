@@ -105,6 +105,44 @@
 }
 
 @layer utilities {
+  .public-academic h1,
+  .public-academic h2,
+  .public-academic h3,
+  .public-academic h4,
+  .public-academic h5,
+  .public-academic h6 {
+    font-family: var(--font-lexia);
+    font-style: normal;
+    letter-spacing: 0.01em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .public-academic p {
+    line-height: 1.7;
+  }
+
+  /* Remove card-heavy appearance across public pages */
+  .public-academic :where(div, section, article, aside)[class*="shadow"] {
+    box-shadow: none !important;
+  }
+
+  .public-academic :where(div, section, article, aside)[class*="rounded"] {
+    border-radius: 0 !important;
+  }
+
+  .public-academic :where(div, section, article, aside)[class*="border"]
+    :where(input, textarea, select, button) {
+    border-radius: 0.375rem;
+  }
+
+  .public-academic :where(div, section, article, aside)[class*="border"] {
+    border-left-width: 0 !important;
+    border-right-width: 0 !important;
+    border-top-width: 0 !important;
+  }
+
   .article-main-title {
     font-size: 2rem !important;
   }

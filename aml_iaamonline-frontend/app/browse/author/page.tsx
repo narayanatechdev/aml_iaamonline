@@ -31,11 +31,10 @@ interface ArticleCardProps {
 
 function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg transition-shadow">
-      {/* Open Access Badge */}
+    <article className="border-b border-gray-200 py-6">
       <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs rounded-full font-semibold">
-          <span className="w-2 h-2 bg-[#c9a227] rounded-full"></span>
+        <div className="inline-flex items-center gap-1 text-[#8c7220] text-xs">
+          <span className="w-1.5 h-1.5 bg-[#c9a227] rounded-full"></span>
           Open Access
         </div>
         <div className="text-xs text-[#5a6a8a] font-mono">
@@ -45,7 +44,7 @@ function ArticleCard({ article }: ArticleCardProps) {
 
       {/* Article Type */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="px-2 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10 font-semibold">
+        <span className="text-[#0f2d6b] text-xs">
           {article.type}
         </span>
         <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
@@ -56,7 +55,7 @@ function ArticleCard({ article }: ArticleCardProps) {
         href={`/article/${article.id}`}
         className="block hover:text-[#0f2d6b] transition-colors"
       >
-        <h3 className="text-sm font-semibold text-[#0f1a2e] line-clamp-2 mb-2">
+        <h3 className="text-lg text-[#0f1a2e] leading-snug mb-2">
           {article.title}
         </h3>
       </Link>
@@ -75,7 +74,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       {/* Graphical Abstract Thumbnail */}
       {article.graphical_abstract_url && (
         <div className="mb-3">
-          <div className="w-full max-w-xs h-32 bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
+          <div className="w-full max-w-xs h-32 bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
             <img 
               src={article.graphical_abstract_url}
               alt={`Graphical abstract for ${article.title}`}
@@ -86,7 +85,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       )}
 
       {/* Abstract Snippet */}
-      <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed mb-3">
+      <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed mb-3">
         {article.abstract || 'Abstract not available.'}
       </p>
 
@@ -107,7 +106,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       <div className="flex items-center gap-2">
         <Link
           href={article.pdf_url || `#`}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
           {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -117,7 +116,7 @@ function ArticleCard({ article }: ArticleCardProps) {
         </Link>
         <Link
           href={`/article/${article.id}`}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-[#0f2d6b] hover:bg-[#0d2560] text-white text-xs font-medium rounded transition-colors"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -126,7 +125,7 @@ function ArticleCard({ article }: ArticleCardProps) {
           Full Text
         </Link>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -208,7 +207,7 @@ export default function AuthorPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Filters */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-border p-6 sticky top-40">
+            <div className="border-b border-gray-200 pb-6 sticky top-40">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[#0f2d6b] text-sm" style={{ fontWeight: 700 }}>Refine Results</h3>
                 <button 
@@ -325,8 +324,8 @@ export default function AuthorPage() {
           <div className="lg:col-span-3">
             {!selectedAuthor ? (
               /* Authors Table */
-              <div className="bg-white rounded-xl border border-border overflow-hidden">
-                <div className="p-6 border-b border-border">
+              <div className="border-b border-gray-200 overflow-hidden">
+                <div className="pb-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <h2 className="text-[#0f2d6b] text-lg" style={{ fontWeight: 700 }}>Authors Directory</h2>
                     <div className="text-[#5a6a8a] text-sm">
@@ -414,7 +413,7 @@ export default function AuthorPage() {
               /* Author Articles */
               <div>
                 {/* Header */}
-                <div className="bg-white rounded-xl border border-border p-6 mb-6">
+                <div className="border-b border-gray-200 pb-6 mb-6">
                   <div className="flex items-center gap-4 mb-4">
                     <button
                       onClick={handleBackToAuthors}
@@ -440,13 +439,13 @@ export default function AuthorPage() {
                 </div>
 
                 {/* Articles List */}
-                <div className="space-y-6">
+                <div>
                   {authorArticles.length > 0 ? (
                     authorArticles.map((article) => (
                       <ArticleCard key={article.id} article={article} />
                     ))
                   ) : (
-                    <div className="bg-white rounded-xl border border-border p-10 text-center">
+                    <div className="py-10 text-center border-b border-gray-200">
                       <p className="text-[#5a6a8a] text-sm">No articles found for this author.</p>
                       <button
                         onClick={handleBackToAuthors}

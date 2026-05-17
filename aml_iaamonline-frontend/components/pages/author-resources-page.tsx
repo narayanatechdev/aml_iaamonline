@@ -50,17 +50,17 @@ export default function AuthorResourcesPage() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 border-b border-gray-200 pb-8">
         {[
           { icon: <FileText className="w-6 h-6" />, label: "Submit Manuscript", desc: "Start your submission online", to: "/submit", color: "bg-[#0f2d6b]", textColor: "text-white" },
-          { icon: <CheckCircle className="w-6 h-6" />, label: "Track Submission", desc: "Check your manuscript status", to: "/track", color: "bg-[#c9a227]", textColor: "text-white" },
-          { icon: <Shield className="w-6 h-6" />, label: "Review Process", desc: "Learn about peer review", to: "#ethics", color: "bg-emerald-600", textColor: "text-white" },
-          { icon: <DollarSign className="w-6 h-6" />, label: "Open Access Info", desc: "No APCs — Diamond OA", to: "#open-access", color: "bg-purple-600", textColor: "text-white" },
+          { icon: <CheckCircle className="w-6 h-6" />, label: "Track Submission", desc: "Check your manuscript status", to: "/track", color: "bg-[#1a3f8f]", textColor: "text-white" },
+          { icon: <Shield className="w-6 h-6" />, label: "Review Process", desc: "Learn about peer review", to: "#ethics", color: "bg-[#254b9d]", textColor: "text-white" },
+          { icon: <DollarSign className="w-6 h-6" />, label: "Open Access Info", desc: "No APCs — Diamond OA", to: "#open-access", color: "bg-[#3260b5]", textColor: "text-white" },
         ].map((action) => (
           <Link
             key={action.label}
             href={action.to}
-            className={`${action.color} ${action.textColor} rounded-xl p-5 hover:opacity-90 transition-opacity`}
+            className={`${action.color} ${action.textColor} p-5 hover:opacity-90 transition-opacity`}
           >
             <div className="mb-3 opacity-90">{action.icon}</div>
             <h3 className="text-sm mb-1" style={{ fontWeight: 700 }}>{action.label}</h3>
@@ -111,12 +111,12 @@ export default function AuthorResourcesPage() {
               ],
             },
           ].map((section) => (
-            <div key={section.title} className="bg-white rounded-xl border border-border p-5">
+            <div key={section.title} className="border-b border-gray-200 p-5">
               <h3 className="text-[#0f2d6b] text-sm mb-4" style={{ fontWeight: 700 }}>{section.title}</h3>
               <ul className="space-y-2">
                 {section.items.map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs text-[#3a4a6a]">
-                    <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-3.5 h-3.5 text-[#0f2d6b] mt-0.5 flex-shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -130,7 +130,7 @@ export default function AuthorResourcesPage() {
       <section id="ethics" className="mb-14 scroll-mt-40">
         <h2 className="text-[#0f2d6b] mb-6" style={{ fontSize: "1.3rem", fontWeight: 700 }}>Peer Review & Publication Ethics</h2>
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl border border-border p-5">
+          <div className="border-b border-gray-200 p-5">
             <div className="w-10 h-10 rounded-full bg-[#0f2d6b]/10 flex items-center justify-center mb-3">
               <Shield className="w-5 h-5 text-[#0f2d6b]" />
             </div>
@@ -139,18 +139,18 @@ export default function AuthorResourcesPage() {
               AML employs double-blind peer review for all research articles. Authors and reviewers remain anonymous to each other throughout the process. Typically 2–3 reviewers are assigned per manuscript.
             </p>
           </div>
-          <div className="bg-white rounded-xl border border-border p-5">
-            <div className="w-10 h-10 rounded-full bg-[#c9a227]/15 flex items-center justify-center mb-3">
-              <CheckCircle className="w-5 h-5 text-[#c9a227]" />
+          <div className="border-b border-gray-200 p-5">
+            <div className="w-10 h-10 rounded-full bg-[#0f2d6b]/10 flex items-center justify-center mb-3">
+              <CheckCircle className="w-5 h-5 text-[#0f2d6b]" />
             </div>
             <h3 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 700 }}>COPE Compliance</h3>
             <p className="text-[#3a4a6a] text-xs leading-relaxed">
               AML is a member of the Committee on Publication Ethics (COPE) and follows COPE guidelines for handling ethical issues including authorship disputes, data fabrication, and duplicate publication.
             </p>
           </div>
-          <div className="bg-white rounded-xl border border-border p-5">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center mb-3">
-              <FileText className="w-5 h-5 text-emerald-600" />
+          <div className="border-b border-gray-200 p-5">
+            <div className="w-10 h-10 rounded-full bg-[#0f2d6b]/10 flex items-center justify-center mb-3">
+              <FileText className="w-5 h-5 text-[#0f2d6b]" />
             </div>
             <h3 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 700 }}>Data Availability</h3>
             <p className="text-[#3a4a6a] text-xs leading-relaxed">
@@ -160,14 +160,14 @@ export default function AuthorResourcesPage() {
         </div>
 
         {/* Review timeline */}
-        <div className="mt-6 bg-[#f0f4fb] rounded-xl border border-border p-5">
+        <div className="mt-6 border-b border-gray-200 p-5">
           <h3 className="text-[#0f2d6b] text-sm mb-5" style={{ fontWeight: 700 }}>Typical Review Timeline</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { step: "01", label: "Submission", time: "Day 1", color: "bg-[#0f2d6b]" },
               { step: "02", label: "Editorial Check", time: "3–5 days", color: "bg-[#1a3f8f]" },
-              { step: "03", label: "Peer Review", time: "3–5 weeks", color: "bg-[#c9a227]" },
-              { step: "04", label: "Editorial Decision", time: "5–8 weeks", color: "bg-emerald-600" },
+              { step: "03", label: "Peer Review", time: "3–5 weeks", color: "bg-[#254b9d]" },
+              { step: "04", label: "Editorial Decision", time: "5–8 weeks", color: "bg-[#3260b5]" },
             ].map((s) => (
               <div key={s.step} className="text-center">
                 <div className={`w-10 h-10 rounded-full ${s.color} text-white flex items-center justify-center mx-auto mb-2 text-sm`} style={{ fontWeight: 700 }}>
@@ -184,10 +184,10 @@ export default function AuthorResourcesPage() {
       {/* Open Access */}
       <section id="open-access" className="mb-14 scroll-mt-40">
         <h2 className="text-[#0f2d6b] mb-6" style={{ fontSize: "1.3rem", fontWeight: 700 }}>Fees & Open Access Policy</h2>
-        <div className="bg-gradient-to-br from-[#0f2d6b] to-[#1a3f8f] rounded-2xl p-8 text-white">
+        <div className="bg-gradient-to-br from-[#0f2d6b] to-[#1a3f8f] p-8 text-white">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c9a227]/25 border border-[#c9a227]/40 text-[#c9a227] text-xs mb-4" style={{ fontWeight: 600 }}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/30 text-white text-xs mb-4" style={{ fontWeight: 600 }}>
                 Diamond Open Access
               </div>
               <h3 className="text-2xl mb-4" style={{ fontWeight: 700 }}>Zero Fees for Authors & Readers</h3>
@@ -197,19 +197,19 @@ export default function AuthorResourcesPage() {
               <ul className="space-y-2">
                 {["No Article Processing Charges (APCs)", "No submission fees", "No reading or download fees", "Immediate open access upon publication", "CC BY 4.0 license — maximum reuse rights"].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-white/90">
-                    <CheckCircle className="w-4 h-4 text-[#c9a227] flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-white flex-shrink-0" />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-white/10 rounded-xl p-6 text-center">
-              <div className="text-[#c9a227] mb-2" style={{ fontSize: "3rem", fontWeight: 800, lineHeight: 1 }}>$0</div>
+            <div className="bg-white/10 p-6 text-center">
+              <div className="text-white mb-2" style={{ fontSize: "3rem", fontWeight: 800, lineHeight: 1 }}>$0</div>
               <div className="text-white text-lg mb-2" style={{ fontWeight: 700 }}>Article Processing Charge</div>
               <div className="text-white/70 text-sm">Forever free to publish & read</div>
               <Link
                 href="/submit"
-                className="inline-block mt-5 px-6 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors"
+                className="inline-block mt-5 px-6 py-2.5 bg-white text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] transition-colors"
                 style={{ fontWeight: 700 }}
               >
                 Submit Your Manuscript
@@ -226,7 +226,7 @@ export default function AuthorResourcesPage() {
         </h2>
         <div className="space-y-3">
           {FAQ_ITEMS.map((faq, i) => (
-            <div key={faq.q} className="bg-white rounded-xl border border-border overflow-hidden">
+            <div key={faq.q} className="border-b border-gray-200 overflow-hidden">
               <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#f0f4fb] transition-colors"

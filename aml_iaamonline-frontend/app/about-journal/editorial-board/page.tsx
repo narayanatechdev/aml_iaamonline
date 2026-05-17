@@ -253,7 +253,7 @@ export default function EditorialBoard() {
         </div>
 
         {/* Editor-in-Chief */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Star className="w-5 h-5 text-[#c9a227]" />
@@ -261,7 +261,7 @@ export default function EditorialBoard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-gradient-to-r from-[#f0f4fb] to-[#e8f1ff] p-6 rounded-lg border border-[#0f2d6b]/10">
+            <div className="py-2">
               <div className="flex flex-col lg:flex-row gap-6">
                 <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-xl flex-shrink-0">
                   <img 
@@ -313,7 +313,7 @@ export default function EditorialBoard() {
         </Card>
 
         {/* Managing Editor */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Star className="w-5 h-5 text-[#c9a227]" />
@@ -321,7 +321,7 @@ export default function EditorialBoard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-gradient-to-r from-[#f8fafe] to-[#f0f4fb] p-6 rounded-lg border border-[#0f2d6b]/10">
+            <div className="py-2">
               <div className="flex flex-col lg:flex-row gap-6">
                 <div className="w-28 h-28 rounded-full overflow-hidden border-3 border-[#c9a227] shadow-lg flex-shrink-0">
                   <img 
@@ -348,7 +348,7 @@ export default function EditorialBoard() {
         </Card>
 
         {/* Academic Editors */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Users className="w-5 h-5" />
@@ -359,7 +359,7 @@ export default function EditorialBoard() {
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {academicEditors.map((member, index) => (
-                <div key={index} className="p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors group">
+                <div key={index} className="p-4 border-b border-gray-200 group">
                   <div className="text-center">
                     <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-border mx-auto mb-3 group-hover:border-[#0f2d6b] transition-colors">
                       <img 
@@ -389,7 +389,7 @@ export default function EditorialBoard() {
         </Card>
 
         {/* Advisory Board Members */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Globe className="w-5 h-5" />
@@ -400,7 +400,7 @@ export default function EditorialBoard() {
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {advisoryBoardMembers.map((member, index) => (
-                <div key={index} className="p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors group">
+                <div key={index} className="p-4 border-b border-gray-200 group">
                   <div className="text-center">
                     <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-border mx-auto mb-3 group-hover:border-[#0f2d6b] transition-colors">
                       <img 
@@ -426,7 +426,7 @@ export default function EditorialBoard() {
                 </div>
               ))}
             </div>
-            <div className="mt-6 p-4 bg-[#f0f4fb] rounded-lg border border-[#0f2d6b]/10">
+            <div className="mt-6 p-4">
               <h4 className="text-[#0f2d6b] text-sm mb-2 font-semibold">Global Representation</h4>
               <p className="text-[#5a6a8a] text-xs leading-relaxed">
                 Our editorial board represents leading institutions across {
@@ -439,7 +439,7 @@ export default function EditorialBoard() {
 
         {/* Editorial Policies */}
         <div className="grid lg:grid-cols-2 gap-8">
-          <Card>
+          <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
             <CardHeader>
               <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
@@ -477,7 +477,7 @@ export default function EditorialBoard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
             <CardHeader>
               <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                 <Award className="w-4 h-4" />
@@ -486,11 +486,11 @@ export default function EditorialBoard() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="p-3 bg-[#0f2d6b]/5 rounded-lg">
+                <div className="p-3">
                   <div className="text-[#0f2d6b] text-lg font-bold">50+</div>
                   <div className="text-[#5a6a8a] text-xs">Countries</div>
                 </div>
-                <div className="p-3 bg-[#0f2d6b]/5 rounded-lg">
+                <div className="p-3">
                   <div className="text-[#0f2d6b] text-lg font-bold">1000+</div>
                   <div className="text-[#5a6a8a] text-xs">Reviewers</div>
                 </div>

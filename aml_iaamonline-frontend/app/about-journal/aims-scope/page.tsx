@@ -19,7 +19,7 @@ export default function AimsScope() {
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Target className="w-5 h-5" />
@@ -40,7 +40,7 @@ export default function AimsScope() {
             </Card>
 
             {/* Research Areas */}
-            <Card className="mb-8">
+            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <Microscope className="w-5 h-5" />
@@ -71,7 +71,7 @@ export default function AimsScope() {
                       desc: "Semiconductors, conductors, dielectrics, magnetic materials, optical materials, and materials for electronic devices."
                     }
                   ].map((area, index) => (
-                    <div key={index} className="p-4 border border-border rounded-lg hover:bg-[#f0f4fb] transition-colors">
+                    <div key={index} className="py-4 border-b border-gray-200">
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-lg bg-[#0f2d6b]/10 flex items-center justify-center mt-1">
                           {area.icon}
@@ -88,7 +88,7 @@ export default function AimsScope() {
             </Card>
 
             {/* Submission Guidelines */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
                   <BookOpen className="w-5 h-5" />
@@ -121,7 +121,7 @@ export default function AimsScope() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Material Categories */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Globe className="w-4 h-4" />
@@ -162,7 +162,7 @@ export default function AimsScope() {
             </Card>
 
             {/* Application Areas */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
                   <Users className="w-4 h-4" />
@@ -192,7 +192,7 @@ export default function AimsScope() {
             </Card>
 
             {/* Characterization Methods */}
-            <Card>
+            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-[#0f2d6b] text-lg">Key Techniques</CardTitle>
               </CardHeader>
@@ -212,7 +212,7 @@ export default function AimsScope() {
         </div>
 
         {/* Special Issues & Features */}
-        <Card>
+        <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
             <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
               <Zap className="w-5 h-5" />
@@ -255,10 +255,10 @@ export default function AimsScope() {
               ].map((feature, index) => (
                 <div 
                   key={index} 
-                  className={`p-4 border rounded-lg transition-all ${
+                  className={`p-4 border-b transition-all ${
                     feature.highlight 
                       ? 'border-[#c9a227] bg-[#c9a227]/5 hover:bg-[#c9a227]/10' 
-                      : 'border-border hover:bg-[#f0f4fb]'
+                      : 'border-gray-200 hover:bg-[#f0f4fb]'
                   }`}
                 >
                   <h4 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 600 }}>
