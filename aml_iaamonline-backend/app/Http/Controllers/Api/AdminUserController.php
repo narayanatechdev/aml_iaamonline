@@ -318,6 +318,52 @@ class AdminUserController extends Controller
     }
 
     /**
+     * Get all articles authored by this user (via their linked author record).
+     * Join: users → authors (user_id) → article_authors (author_id) → articles (legacy_id)
+     */
+    public function articles(int $id): JsonResponse
+    {
+        $this->authorizeAdmin();
+
+        $user   = User::findOrFail($id);
+        $author = \App\Models\Author::where('user_id', $id)->first();
+
+        if (! $author) {
+            return response()->json([
+                'data'    => [],
+                'meta'    => ['total' => 0, 'author_linked' => false],
+                'message' => 'This user has no linked author profile.',
+            ]);
+        }
+
+        $articles = \App\Models\Article::select([
+                'articles.id', 'articles.legacy_id', 'articles.title',
+                'articles.document_type', 'articles.subject',
+                'articles.doi', 'articles.volume', 'articles.issue',
+                'articles.pages_from', 'articles.pages_to',
+                'articles.publish_year', 'articles.publish_date',
+                'articles.views_count', 'articles.pdf_downloads',
+                'articles.pdf_url', 'articles.graphical_abstract_url',
+                'article_authors.is_corresponding', 'article_authors.position as author_position',
+            ])
+            ->join('article_authors', 'articles.legacy_id', '=', 'article_authors.article_id')
+            ->where('article_authors.author_id', $author->id)
+            ->orderByDesc('articles.publish_year')
+            ->orderByDesc('articles.publish_date')
+            ->get();
+
+        return response()->json([
+            'data' => $articles,
+            'meta' => [
+                'total'         => $articles->count(),
+                'author_id'     => $author->id,
+                'author_linked' => true,
+                'author_name'   => $author->name,
+            ],
+        ]);
+    }
+
+    /**
      * Authorize that the current user has admin role.
      */
     private function authorizeAdmin(): void

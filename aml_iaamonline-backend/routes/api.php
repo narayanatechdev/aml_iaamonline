@@ -67,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
         Route::patch('/users/{id}/roles', [AdminUserController::class, 'updateRoles'])->name('admin.users.roles');
         Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
+        Route::get('/users/{id}/articles', [AdminUserController::class, 'articles'])->name('admin.users.articles');
 
         // Role management
         Route::get('/roles', [AdminRoleController::class, 'index'])->name('admin.roles.index');

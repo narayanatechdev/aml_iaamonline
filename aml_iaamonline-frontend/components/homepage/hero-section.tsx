@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, BookOpen, FileText, Award } from 'lucide-react';
-import { searchArticles } from '@/lib/realData';
+import { searchArticles, ARTICLE_STATS } from '@/lib/realData';
 import Link from 'next/link';
+import { NewsletterSubscription } from './newsletter-subscription';
 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1770320742319-6aa889b3130b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYXRlcmlhbHMlMjBzY2llbmNlJTIwcmVzZWFyY2glMjBsYWJvcmF0b3J5fGVufDF8fHx8MTc3MjcxMDI3OHww&ixlib=rb-4.0.3&q=80&w=1080";
 
@@ -51,107 +52,76 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-r from-[#0f2d6b]/95 via-[#0f2d6b]/80 to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-28">
-        <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs mb-6 font-semibold">
-            <Award className="w-3.5 h-3.5" />
-            Diamond Open Access · No Article Processing Charges
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-2 max-w-2xl">
+          <h3 className="text-white font-semibold text-lg mb-4">Dear Readers, Authors, and Supporters,</h3>
+          <div className="text-white/80 text-sm leading-relaxed space-y-4 mb-8">
+            <p>
+              As the Editor-in-Chief of Advanced Materials Letters, I sincerely thank all researchers, reviewers, and readers who have contributed to the journal's success. Since its launch in June 2010, Advanced Materials Letters has remained dedicated to providing a high-quality, open-access platform for publishing cutting-edge research in materials science, engineering, and technology. Published by the International Association of Advanced Materials (IAAM), a non-profit organization, the journal upholds the principles of free and accessible scientific knowledge.
+            </p>
+            <p>
+              The journal completed 15 impactful years in June 2024 and is publishing its 16th volume in 2025. Over the years, we have published 2,000 peer-reviewed articles contributed by more than 7,000 authors from 5,500+ universities and organizations across 75+ countries. With an annual readership exceeding half a million across 135+ countries, our open-access model ensures that scientific research remains freely available without article processing charges (APC) or subscription fees.
+            </p>
           </div>
 
-          <h1 className="text-white mb-3 font-serif" style={{ fontSize: "2.4rem", fontWeight: 700, lineHeight: 1.2 }}>
-            Advanced Materials Letters
-          </h1>
-
-          <p className="text-white/80 text-lg mb-2">
-            International Diamond Open Access Journal in Materials Science
-          </p>
-          <p className="text-white/60 text-sm mb-8">
-            ISSN: 0976-3961 | eISSN: 1998-0140 | Impact Factor: 3.82
-          </p>
-
-          {/* Functional search box */}
-          <form onSubmit={handleSubmit} className="relative mb-8 max-w-lg">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleSearch(e.target.value)}
-              onFocus={() => results.length > 0 && setShowDropdown(true)}
-              onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-              placeholder="Search by article title, author, keyword, or DOI..."
-              className="w-full pl-5 pr-14 py-3.5 rounded-xl bg-white text-[#0f1a2e] text-sm placeholder:text-[#9aabcc] focus:outline-none shadow-xl"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg bg-[#0f2d6b] flex items-center justify-center hover:bg-[#0d2560] transition-colors"
-            >
-              <Search className="w-4 h-4 text-white" />
-            </button>
-
-            {showDropdown && results.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-[400px] overflow-y-auto">
-                {results.map((article) => (
-                  <Link
-                    key={article.id}
-                    href={`/article/${article.id}`}
-                    className="block px-4 py-3 hover:bg-[#f0f4fb] border-b border-gray-50 last:border-b-0 transition-colors"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    <div className="text-[#0f1a2e] text-sm font-semibold line-clamp-1">{article.title}</div>
-                    <div className="text-[#5a6a8a] text-xs mt-1">
-                      {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
-                      {(article.authors || []).length > 3 ? ' et al.' : ''}
-                    </div>
-                    <div className="flex items-center gap-3 mt-1 text-[10px] text-[#5a6a8a]">
-                      <span>Vol. {article.volume}, Issue {article.issue}</span>
-                      <span>{article.year}</span>
-                      {article.doi && <span className="font-mono">{article.doi}</span>}
-                    </div>
-                  </Link>
-                ))}
-                <Link
-                  href={`/browse/current?q=${encodeURIComponent(query)}`}
-                  className="block px-4 py-3 text-center text-[#0f2d6b] text-sm font-semibold hover:bg-[#f0f4fb] bg-gray-50 transition-colors"
-                  onClick={() => setShowDropdown(false)}
-                >
-                  View all results for &quot;{query}&quot;
-                </Link>
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-white font-bold text-xl">
+                {ARTICLE_STATS.total.toLocaleString()}+
               </div>
-            )}
-
-            {showDropdown && query.trim().length >= 2 && results.length === 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 p-6 text-center z-50">
-                <div className="text-[#5a6a8a] text-sm">No articles found for &quot;{query}&quot;</div>
-                <Link
-                  href="/browse/current"
-                  className="text-[#0f2d6b] text-sm font-semibold mt-2 inline-block hover:underline"
-                >
-                  Browse all articles
-                </Link>
+              <div className="text-white/70 text-xs mt-1">Published Articles</div>
+            </div>
+            <div>
+              <div className="text-white font-bold text-xl">
+                {ARTICLE_STATS.totalDownloads > 1000 ? Math.round(ARTICLE_STATS.totalDownloads / 1000).toLocaleString() + 'K+' : ARTICLE_STATS.totalDownloads.toLocaleString()}
               </div>
-            )}
-          </form>
-
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="/browse/current"
-              className="flex items-center gap-2 px-5 py-2.5 bg-white text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] transition-colors shadow font-semibold"
-            >
-              <BookOpen className="w-4 h-4" />
-              Current Issue
-            </a>
-            <a
-              href="/submit"
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow font-semibold"
-            >
-              <FileText className="w-4 h-4" />
-              Submit Manuscript
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/20 text-white rounded-lg text-sm hover:bg-white/20 transition-colors font-medium"
-            >
-              Author Guidelines
-            </a>
+              <div className="text-white/70 text-xs mt-1">Total Downloads</div>
+            </div>
+            <div>
+              <div className="text-white font-bold text-xl">
+                {ARTICLE_STATS.totalVolumes}
+              </div>
+              <div className="text-white/70 text-xs mt-1">Journal Volumes</div>
+            </div>
+            <div>
+              <div className="text-white font-bold text-xl">
+                {ARTICLE_STATS.totalCountries}+
+              </div>
+              <div className="text-white/70 text-xs mt-1">Countries</div>
+            </div>
           </div>
+
+          </div>
+
+          {/* Newsletter Subscription and Action Buttons */}
+          <div className="lg:col-span-1">
+            <NewsletterSubscription />
+            
+            <div className="flex flex-col gap-3 mt-6">
+              <a
+                href="/browse/current"
+                className="flex items-center gap-2 px-5 py-2.5 bg-white text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] transition-colors shadow font-semibold"
+              >
+                <BookOpen className="w-4 h-4" />
+                Current Issue
+              </a>
+              <a
+                href="/submit"
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow font-semibold"
+              >
+                <FileText className="w-4 h-4" />
+                Submit Manuscript
+              </a>
+              <a
+                href="#"
+                className="flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/20 text-white rounded-lg text-sm hover:bg-white/20 transition-colors font-medium"
+              >
+                Author Guidelines
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

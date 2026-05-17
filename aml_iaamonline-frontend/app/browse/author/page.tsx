@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, ArrowLeft, Eye, Quote } from 'lucide-react';
+import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
 import { 
   Author,
@@ -13,6 +14,121 @@ import {
   sortAuthors,
   AUTHOR_COUNTS
 } from '@/lib/authorsData';
+import { FEATURED_ARTICLES } from '@/lib/realData';
+import type { FeaturedArticle } from '@/lib/realData';
+
+function getAuthorName(author: any): string {
+  if (typeof author === 'string') return author;
+  if (typeof author === 'object' && author !== null) {
+    return `${author.firstName || ''} ${author.lastName || ''}`.trim();
+  }
+  return '';
+}
+
+interface ArticleCardProps {
+  article: FeaturedArticle;
+}
+
+function ArticleCard({ article }: ArticleCardProps) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg transition-shadow">
+      {/* Open Access Badge */}
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs rounded-full font-semibold">
+          <span className="w-2 h-2 bg-[#c9a227] rounded-full"></span>
+          Open Access
+        </div>
+        <div className="text-xs text-[#5a6a8a] font-mono">
+          Vol. {article.volume}, Issue {article.issue} • {article.year}
+        </div>
+      </div>
+
+      {/* Article Type */}
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <span className="px-2 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10 font-semibold">
+          {article.type}
+        </span>
+        <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
+      </div>
+
+      {/* Article Title */}
+      <Link
+        href={`/article/${article.id}`}
+        className="block hover:text-[#0f2d6b] transition-colors"
+      >
+        <h3 className="text-sm font-semibold text-[#0f1a2e] line-clamp-2 mb-2">
+          {article.title}
+        </h3>
+      </Link>
+
+      {/* Authors */}
+      <div className="text-xs text-[#0f2d6b] mb-2 font-medium">
+        {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
+        {(article.authors || []).length > 3 ? ' et al.' : ''}
+      </div>
+
+      {/* DOI */}
+      <div className="text-xs text-[#5a6a8a] font-mono mb-3">
+        DOI: {article.doi}
+      </div>
+
+      {/* Graphical Abstract Thumbnail */}
+      {article.graphical_abstract_url && (
+        <div className="mb-3">
+          <div className="w-full max-w-xs h-32 bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
+            <img 
+              src={article.graphical_abstract_url}
+              alt={`Graphical abstract for ${article.title}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Abstract Snippet */}
+      <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed mb-3">
+        {article.abstract || 'Abstract not available.'}
+      </p>
+
+      {/* Stats */}
+      <div className="flex items-center gap-4 text-xs text-[#5a6a8a] mb-3">
+        <span className="flex items-center gap-1">
+          <Eye className="w-3 h-3" />
+          {article.views.toLocaleString()}
+        </span>
+        <span className="flex items-center gap-1">
+          <Quote className="w-3 h-3" />
+          Cited: {article.cited}
+        </span>
+        <span>pp. {article.pages}</span>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-2">
+        <Link
+          href={article.pdf_url || `#`}
+          className="inline-flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+          {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
+        >
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+          PDF
+        </Link>
+        <Link
+          href={`/article/${article.id}`}
+          className="inline-flex items-center gap-1 px-3 py-1 bg-[#0f2d6b] hover:bg-[#0d2560] text-white text-xs font-medium rounded transition-colors"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Full Text
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function AuthorPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,6 +140,7 @@ export default function AuthorPage() {
   const [showCityFilter, setShowCityFilter] = useState(true);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [selectedAuthor, setSelectedAuthor] = useState<Author | null>(null);
 
   // Get filter options from data
   const affiliations = useMemo(() => getUniqueAffiliations(), []);
@@ -53,11 +170,31 @@ export default function AuthorPage() {
     }
   };
 
+  // Get articles by selected author
+  const getArticlesByAuthor = (authorName: string) => {
+    return FEATURED_ARTICLES.filter(article => 
+      (article.authors || []).some(author => 
+        getAuthorName(author).toLowerCase().includes(authorName.toLowerCase())
+      )
+    );
+  };
+
+  const authorArticles = selectedAuthor ? getArticlesByAuthor(selectedAuthor.name) : [];
+
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedAffiliation('');
     setSelectedCountry('');
     setSelectedCity('');
+    setSelectedAuthor(null);
+  };
+
+  const handleAuthorClick = (author: Author) => {
+    setSelectedAuthor(author);
+  };
+
+  const handleBackToAuthors = () => {
+    setSelectedAuthor(null);
   };
 
   return (
@@ -184,102 +321,144 @@ export default function AuthorPage() {
             </div>
           </div>
 
-          {/* Main Content - Authors Table */}
+          {/* Main Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl border border-border overflow-hidden">
-              <div className="p-6 border-b border-border">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-[#0f2d6b] text-lg" style={{ fontWeight: 700 }}>Authors Directory</h2>
-                  <div className="text-[#5a6a8a] text-sm">
-                    {sortedAuthors.length} authors found
+            {!selectedAuthor ? (
+              /* Authors Table */
+              <div className="bg-white rounded-xl border border-border overflow-hidden">
+                <div className="p-6 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-[#0f2d6b] text-lg" style={{ fontWeight: 700 }}>Authors Directory</h2>
+                    <div className="text-[#5a6a8a] text-sm">
+                      {sortedAuthors.length} authors found
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-[#f0f4fb]">
-                      <tr>
-                        <th 
-                          onClick={() => handleSort('name')}
-                          className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
-                          style={{ fontWeight: 600 }}
-                        >
-                          Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          onClick={() => handleSort('article_count')}
-                          className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
-                          style={{ fontWeight: 600 }}
-                        >
-                          No. Articles {sortBy === 'article_count' && (sortOrder === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          onClick={() => handleSort('affiliation')}
-                          className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
-                          style={{ fontWeight: 600 }}
-                        >
-                          Affiliation {sortBy === 'affiliation' && (sortOrder === 'asc' ? '↑' : '↓')}
-                        </th>
-                        {/* <th 
-                          onClick={() => handleSort('city')}
-                          className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
-                          style={{ fontWeight: 600 }}
-                        >
-                          City {sortBy === 'city' && (sortOrder === 'asc' ? '↑' : '↓')}
-                        </th> */}
-                        <th 
-                          onClick={() => handleSort('country')}
-                          className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
-                          style={{ fontWeight: 600 }}
-                        >
-                          Country {sortBy === 'country' && (sortOrder === 'asc' ? '↑' : '↓')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedAuthors.map((author, index) => (
-                        <tr 
-                          key={author.id}
-                          className={`border-b border-border hover:bg-[#fafbff] cursor-pointer ${
-                            index % 2 === 0 ? 'bg-white' : 'bg-[#fafbff]'
-                          }`}
-                        >
-                          <td className="px-6 py-4">
-                            <div className="text-[#0f2d6b] text-sm hover:underline" style={{ fontWeight: 600 }}>
-                              {author.name}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-[#3a4a6a] text-sm">{author.article_count}</span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-[#3a4a6a] text-sm">{author.affiliation}</span>
-                          </td>
-                          {/* <td className="px-6 py-4">
-                            <span className="text-[#3a4a6a] text-sm">{author.city || '—'}</span>
-                          </td> */}
-                          <td className="px-6 py-4">
-                            <span className="text-[#3a4a6a] text-sm">{author.country || '—'}</span>
-                          </td>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                      <thead className="bg-[#f0f4fb]">
+                        <tr>
+                          <th 
+                            onClick={() => handleSort('name')}
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            style={{ fontWeight: 600 }}
+                          >
+                            Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th 
+                            onClick={() => handleSort('article_count')}
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            style={{ fontWeight: 600 }}
+                          >
+                            No. Articles {sortBy === 'article_count' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th 
+                            onClick={() => handleSort('affiliation')}
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            style={{ fontWeight: 600 }}
+                          >
+                            Affiliation {sortBy === 'affiliation' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </th>
+                          <th 
+                            onClick={() => handleSort('country')}
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            style={{ fontWeight: 600 }}
+                          >
+                            Country {sortBy === 'country' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-              </div>
-              
-              {sortedAuthors.length === 0 && (
-                <div className="p-10 text-center">
-                  <p className="text-[#5a6a8a] text-sm">No authors found matching your criteria.</p>
-                  <button 
-                    onClick={clearFilters}
-                    className="text-[#0f2d6b] text-sm mt-2 hover:underline"
-                  >
-                    Clear filters to see all authors
-                  </button>
+                      </thead>
+                      <tbody>
+                        {sortedAuthors.map((author, index) => (
+                          <tr 
+                            key={author.id}
+                            onClick={() => handleAuthorClick(author)}
+                            className={`border-b border-border hover:bg-[#fafbff] cursor-pointer ${
+                              index % 2 === 0 ? 'bg-white' : 'bg-[#fafbff]'
+                            }`}
+                          >
+                            <td className="px-6 py-4">
+                              <div className="text-[#0f2d6b] text-sm hover:underline" style={{ fontWeight: 600 }}>
+                                {author.name}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-[#3a4a6a] text-sm">{author.article_count}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-[#3a4a6a] text-sm">{author.affiliation}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-[#3a4a6a] text-sm">{author.country || '—'}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                 </div>
-              )}
-            </div>
+                
+                {sortedAuthors.length === 0 && (
+                  <div className="p-10 text-center">
+                    <p className="text-[#5a6a8a] text-sm">No authors found matching your criteria.</p>
+                    <button 
+                      onClick={clearFilters}
+                      className="text-[#0f2d6b] text-sm mt-2 hover:underline"
+                    >
+                      Clear filters to see all authors
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Author Articles */
+              <div>
+                {/* Header */}
+                <div className="bg-white rounded-xl border border-border p-6 mb-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <button
+                      onClick={handleBackToAuthors}
+                      className="inline-flex items-center gap-2 text-[#0f2d6b] font-semibold hover:underline text-sm"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                      Back to Authors
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h1 className="text-[#0f1a2e] text-xl font-bold">{selectedAuthor.name}</h1>
+                      <p className="text-[#5a6a8a] text-sm">
+                        {selectedAuthor.affiliation} • {selectedAuthor.country}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[#5a6a8a] text-xs">
+                        {authorArticles.length} article{authorArticles.length !== 1 ? 's' : ''} found
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Articles List */}
+                <div className="space-y-6">
+                  {authorArticles.length > 0 ? (
+                    authorArticles.map((article) => (
+                      <ArticleCard key={article.id} article={article} />
+                    ))
+                  ) : (
+                    <div className="bg-white rounded-xl border border-border p-10 text-center">
+                      <p className="text-[#5a6a8a] text-sm">No articles found for this author.</p>
+                      <button
+                        onClick={handleBackToAuthors}
+                        className="text-[#0f2d6b] text-sm mt-2 hover:underline"
+                      >
+                        ← Back to authors list
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -83,10 +83,6 @@ export function SubmissionWizard() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: "1.6rem", fontWeight: 700 }}>Submit Manuscript</h1>
-        <p className="text-[#5a6a8a] text-sm">Advanced Materials Letters — Diamond Open Access</p>
-      </div>
 
       {/* Step indicator */}
       <div className="flex items-center mb-10">

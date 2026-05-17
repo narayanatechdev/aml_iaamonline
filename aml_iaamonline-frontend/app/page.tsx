@@ -1,22 +1,16 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import { JournalInfoHeader } from '@/components/homepage/journal-info-header';
 import { HeroSection } from '@/components/homepage/hero-section';
-import { QuickMetrics } from '@/components/homepage/quick-metrics';
-import { AimsScope } from '@/components/homepage/aims-scope';
-import { FeaturedContent } from '@/components/homepage/featured-content';
-import { BrowseSubjects } from '@/components/homepage/browse-subjects';
+import { ContentLayout } from '@/components/homepage/content-layout';
 import { CTASection } from '@/components/homepage/cta-section';
-import { PerformanceMetrics } from '@/components/homepage/performance-metrics';
 
 export default function Home() {
   return (
     <MainLayout>
+      <JournalInfoHeader />
       <HeroSection />
-      <QuickMetrics />
-      <AimsScope />
-      <FeaturedContent />
-      <BrowseSubjects />
+      <ContentLayout />
       <CTASection />
-      <PerformanceMetrics />
     </MainLayout>
   );
 }

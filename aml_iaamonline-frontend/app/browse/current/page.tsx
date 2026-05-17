@@ -26,38 +26,102 @@ interface ArticleCardProps {
 
 function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <Link href={`/article/${article.id}`}>
-      <div className="bg-white rounded-xl border border-border p-5 hover:shadow-md transition-shadow cursor-pointer group">
-        <div className="flex items-start gap-3 mb-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="px-2 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10 font-semibold">
-                {article.type}
-              </span>
-              <span className="text-[#5a6a8a] text-xs">{article.subject}</span>
-              <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
-            </div>
-            <h3 className="text-[#0f1a2e] text-sm leading-snug mb-2 group-hover:text-[#0f2d6b] transition-colors font-semibold">
-              {article.title}
-            </h3>
-            <p className="text-[#5a6a8a] text-xs mb-2">{getAuthorDisplay(article.authors)}</p>
-            <p className="text-[#3a4a6a] text-xs leading-relaxed line-clamp-2 mb-3">{article.abstract}</p>
-            <div className="flex items-center gap-4 text-xs text-[#5a6a8a]">
-              <span className="font-mono text-[10px] text-[#0f2d6b]">DOI: {article.doi}</span>
-              <span className="flex items-center gap-1">
-                <Eye className="w-3 h-3" />
-                {article.views.toLocaleString()}
-              </span>
-              <span className="flex items-center gap-1">
-                <Quote className="w-3 h-3" />
-                Cited: {article.cited}
-              </span>
-              <span>pp. {article.pages}</span>
-            </div>
-          </div>
+    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-lg transition-shadow">
+      {/* Open Access Badge */}
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="inline-flex items-center gap-1 px-2 py-1 bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs rounded-full font-semibold">
+          <span className="w-2 h-2 bg-[#c9a227] rounded-full"></span>
+          Open Access
+        </div>
+        <div className="text-xs text-[#5a6a8a] font-mono">
+          Vol. {article.volume}, Issue {article.issue} • {article.year}
         </div>
       </div>
-    </Link>
+
+      {/* Article Type */}
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <span className="px-2 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10 font-semibold">
+          {article.type}
+        </span>
+        <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
+      </div>
+
+      {/* Article Title */}
+      <Link
+        href={`/article/${article.id}`}
+        className="block hover:text-[#0f2d6b] transition-colors"
+      >
+        <h3 className="text-sm font-semibold text-[#0f1a2e] line-clamp-2 mb-2">
+          {article.title}
+        </h3>
+      </Link>
+
+      {/* Authors */}
+      <div className="text-xs text-[#0f2d6b] mb-2 font-medium">
+        {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
+        {(article.authors || []).length > 3 ? ' et al.' : ''}
+      </div>
+
+      {/* DOI */}
+      <div className="text-xs text-[#5a6a8a] font-mono mb-3">
+        DOI: {article.doi}
+      </div>
+
+      {/* Graphical Abstract Thumbnail */}
+      {article.graphical_abstract_url && (
+        <div className="mb-3">
+          <div className="w-full max-w-xs h-32 bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
+            <img 
+              src={article.graphical_abstract_url}
+              alt={`Graphical abstract for ${article.title}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Abstract Snippet */}
+      <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed mb-3">
+        {article.abstract || 'Abstract not available.'}
+      </p>
+
+      {/* Stats */}
+      <div className="flex items-center gap-4 text-xs text-[#5a6a8a] mb-3">
+        <span className="flex items-center gap-1">
+          <Eye className="w-3 h-3" />
+          {article.views.toLocaleString()}
+        </span>
+        <span className="flex items-center gap-1">
+          <Quote className="w-3 h-3" />
+          Cited: {article.cited}
+        </span>
+        <span>pp. {article.pages}</span>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-2">
+        <Link
+          href={article.pdf_url || `#`}
+          className="inline-flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+          {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
+        >
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+          PDF
+        </Link>
+        <Link
+          href={`/article/${article.id}`}
+          className="inline-flex items-center gap-1 px-3 py-1 bg-[#0f2d6b] hover:bg-[#0d2560] text-white text-xs font-medium rounded transition-colors"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Full Text
+        </Link>
+      </div>
+    </div>
   );
 }
 

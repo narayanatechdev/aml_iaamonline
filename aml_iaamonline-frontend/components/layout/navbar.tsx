@@ -18,18 +18,26 @@ const NAV_ITEMS: NavItem[] = [
     path: '/',
   },
   {
-    label: 'About Journal',
+    label: 'About',
     path: '/about',
+  },
+  {
+    label: 'About Journal',
+    path: '/about-journal',
     children: [
-      { label: 'Aims & Scope', path: '/aims-scope' },
-      { label: 'Editorial Board', path: '/editorial-board' },
-      { label: 'Indexing & Abstracting', path: '/indexing' },
-      { label: 'Ethics & Process', path: '/ethics-process' },
-      { label: 'Review Process', path: '/process' },
+      { label: 'Aims & Scope', path: '/about-journal/aims-scope' },
+      { label: 'Editorial Board', path: '/about-journal/editorial-board' },
+      { label: 'Indexing & Abstracting', path: '/about-journal/indexing' },
+      { label: 'Ethics & Process', path: '/about-journal/ethics-process' },
+      { label: 'Review Process', path: '/about-journal/review-process' },
     ],
   },
   {
-    label: 'Browse Content',
+    label: 'Authors',
+    path: '/browse/author',
+  },
+  {
+    label: 'Browse',
     path: '/browse/current',
     children: [
       { label: 'Current Issue', path: '/browse/current' },
@@ -39,16 +47,26 @@ const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    label: 'Articles',
+    path: '/articles',
+  },
+  {
+    label: 'Announcements',
+    path: '/news',
+  },
+  {
     label: 'Author Resources',
-    path: '#author-resources',
+    path: '/author-resources',
     children: [
-      { label: 'Submission Guidelines', path: '#guidelines' },
-      { label: 'Peer Review & Ethics', path: '#ethics' },
+      { label: 'Submission Guidelines', path: '/author-resources/guidelines' },
+      { label: 'Peer Review & Ethics', path: '/author-resources/ethics' },
+      { label: 'Publishing Process', path: '/author-resources/process' },
+      { label: 'Submit Manuscript', path: '/author-resources/submit' },
     ],
   },
   {
-    label: 'News & Events',
-    path: '#news',
+    label: 'Contact',
+    path: '/contact',
   },
 ];
 
