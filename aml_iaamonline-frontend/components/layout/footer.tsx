@@ -132,13 +132,13 @@ export function Footer() {
             © 2026 IAAM – International Association of Advanced Materials. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs text-white/50">
-            <a href="#privacy" className="hover:text-white/80 transition-colors">
+            <a href="/privacy-policy" className="hover:text-white/80 transition-colors">
               Privacy Policy
             </a>
-            <a href="#terms" className="hover:text-white/80 transition-colors">
+            <a href="/terms-of-use" className="hover:text-white/80 transition-colors">
               Terms of Use
             </a>
-            <a href="#cookies" className="hover:text-white/80 transition-colors">
+            <a href="/cookie-policy" className="hover:text-white/80 transition-colors">
               Cookie Policy
             </a>
           </div>
