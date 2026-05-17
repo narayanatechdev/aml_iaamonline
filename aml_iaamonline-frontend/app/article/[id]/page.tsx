@@ -85,7 +85,7 @@ export default function ArticlePage() {
         {/* Main content */}
         <div className="lg:col-span-3">
           {/* Header */}
-          <div className="bg-white rounded-xl border border-border p-6 mb-6">
+          <div className="py-6 mb-8 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-4 flex-wrap">
               <span className="px-2.5 py-0.5 bg-[#0f2d6b] text-white text-xs rounded" style={{ fontWeight: 600 }}>
                 {article.type}
@@ -95,7 +95,7 @@ export default function ArticlePage() {
               </span>
             </div>
 
-            <h1 className="text-[#0f1a2e] mb-4 leading-snug" style={{ fontSize: "1.4rem", fontWeight: 700 }}>
+            <h1 className="article-main-title text-[#0f1a2e] mb-4 leading-snug" style={{ fontWeight: 700 }}>
               {article.title}
             </h1>
 
@@ -211,7 +211,7 @@ export default function ArticlePage() {
             </div>
 
             {/* Metadata */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-[#f0f4fb] rounded-xl p-4 mb-5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 mb-5 border-y border-gray-200">
               {[
                 { label: "Volume", value: `Vol. ${article.volume}, No. ${article.issue}` },
                 { label: "Pages", value: article.pages },
@@ -264,7 +264,7 @@ export default function ArticlePage() {
 
           {/* Graphical Abstract */}
           {article.graphical_abstract_url && (
-            <div className="bg-white rounded-xl border border-border p-6 mb-6">
+            <div className="py-6 mb-8">
               <h2 className="text-[#0f2d6b] mb-4" style={{ fontSize: "1.1rem", fontWeight: 700 }}>Graphical Abstract</h2>
               <div className="flex justify-center">
                 <img
@@ -278,13 +278,13 @@ export default function ArticlePage() {
           )}
 
           {/* Abstract */}
-          <div className="bg-white rounded-xl border border-border p-6 mb-6">
+          <div className="py-6 mb-8">
             <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1.1rem", fontWeight: 700 }}>Abstract</h2>
             <p className="text-[#3a4a6a] text-sm leading-relaxed">{article.abstract}</p>
           </div>
 
           {/* Keywords */}
-          <div className="bg-white rounded-xl border border-border p-6 mb-6">
+          <div className="py-6 mb-8">
             <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1rem", fontWeight: 700 }}>Keywords</h2>
             <div className="flex flex-wrap gap-2">
               {article.keywords.map((kw) => (
@@ -300,9 +300,9 @@ export default function ArticlePage() {
           </div>
 
           {/* Citation */}
-          <div className="bg-[#f0f4fb] rounded-xl border border-border p-6">
+          <div className="bg-gray-50 py-6 px-0">
             <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1rem", fontWeight: 700 }}>How to Cite</h2>
-            <div className="bg-white rounded-lg p-4 border border-border">
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
               <p className="text-[#3a4a6a] text-xs leading-relaxed font-mono">
                 {authorNames} ({article.year}). {article.title}. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}. https://doi.org/{article.doi}
               </p>
@@ -320,7 +320,7 @@ export default function ArticlePage() {
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-5">
           {/* Metrics */}
-          <div className="bg-white rounded-xl border border-border p-5">
+          <div className="py-5 mb-6">
             <h3 className="text-[#0f2d6b] text-sm mb-4" style={{ fontWeight: 700 }}>Article Metrics</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -339,7 +339,7 @@ export default function ArticlePage() {
           </div>
 
           {/* DOI */}
-          <div className="bg-white rounded-xl border border-border p-5">
+          <div className="py-5 mb-6">
             <h3 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 700 }}>DOI & Links</h3>
             <a
               href={`https://doi.org/${article.doi}`}
@@ -354,7 +354,7 @@ export default function ArticlePage() {
 
           {/* Related articles */}
           {related.length > 0 && (
-            <div className="bg-white rounded-xl border border-border p-5">
+            <div className="py-5 mb-6">
               <h3 className="text-[#0f2d6b] text-sm mb-4" style={{ fontWeight: 700 }}>Related Articles</h3>
               <div className="space-y-4">
                 {related.map((rel) => {

@@ -15,11 +15,11 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
           {/* Journal Title, Logo and Editorial Information */}
           <div className="flex-1">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#2E8B57] to-[#228B22] rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#0f2d6b] to-[#0d2560] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-lg">AML</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[#2E8B57] leading-tight">
+                <h1 className="text-2xl font-bold text-[#0f2d6b] leading-tight">
                   Advanced Materials Letters
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 uppercase tracking-wider">
@@ -49,7 +49,7 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
           </div>
 
           {/* Latest Issue */}
-          <div className="flex flex-col items-end gap-3 flex-shrink-0">
+          <div className="flex items-center gap-4 flex-shrink-0">
             <div className="w-28 h-36 rounded shadow-lg overflow-hidden">
               <img 
                 src="https://aml.iaamonline.org/data/aml/coversheet/cover_en.jpg" 
@@ -63,7 +63,7 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
                   if (fallbackDiv) fallbackDiv.style.display = 'flex';
                 }}
               />
-              <div className="w-full h-full bg-gradient-to-br from-[#2E8B57] to-[#1E5F3F] rounded shadow-lg flex items-center justify-center relative overflow-hidden" style={{ display: 'none' }}>
+              <div className="w-full h-full bg-gradient-to-br from-[#0f2d6b] to-[#0d2560] rounded shadow-lg flex items-center justify-center relative overflow-hidden" style={{ display: 'none' }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 <div className="relative text-center">
                   <div className="text-white text-xs font-semibold mb-1">AML</div>
@@ -73,8 +73,8 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm font-semibold text-[#2E8B57] mb-1">Latest Issue</div>
+            <div className="text-left">
+              <div className="text-sm font-semibold text-[#0f2d6b] mb-1">Latest Issue</div>
               <div className="text-sm text-foreground font-medium">Volume {JOURNAL_INFO.currentVolume}, Issue {JOURNAL_INFO.currentIssue}</div>
               <div className="text-xs text-muted-foreground">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
             </div>

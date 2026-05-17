@@ -62,7 +62,7 @@ export function VolumeRecentContent() {
       {/* On the Cover Section */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[#0f2d6b] font-semibold text-xl">On the Cover</h2>
+          <h2 className="text-[#0f2d6b] font-semibold text-2xl">On the Cover</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
@@ -155,7 +155,7 @@ export function VolumeRecentContent() {
 
       {/* Recent Articles */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4">Recent Articles</h3>
+        <h3 className="text-[#0f2d6b] font-semibold text-xl mb-4">Recent Articles</h3>
         <div className="space-y-6">
           {recentArticles.slice(0, 5).map((article, index) => (
             <div
@@ -272,7 +272,7 @@ export function VolumeRecentContent() {
 
       {/* Recent Issues */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4 flex items-center gap-2">
+        <h3 className="text-[#0f2d6b] font-semibold text-xl mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
           Recent Issues
         </h3>

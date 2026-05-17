@@ -101,7 +101,7 @@ export const ARCHIVE_VOLUMES: ArchiveVolume[] = Object.entries(yearVolumes)
         .map(article => parseInt(article.issue))
         .filter((issue, index, arr) => arr.indexOf(issue) === index)
         .sort((a, b) => a - b);
-      
+
       return {
         vol: parseInt(vol),
         issues: issues.length > 0 ? issues : [1]
@@ -117,7 +117,7 @@ export const ARCHIVE_VOLUMES: ArchiveVolume[] = Object.entries(yearVolumes)
 
 // Helper functions for filtering and searching
 export function getArticlesBySubject(subject: string): FeaturedArticle[] {
-  return FEATURED_ARTICLES.filter(article => 
+  return FEATURED_ARTICLES.filter(article =>
     article.subject.toLowerCase().includes(subject.toLowerCase())
   );
 }
@@ -135,25 +135,63 @@ export function getArticlesByVolume(volume: string, issue?: string): FeaturedArt
   });
 }
 
+function normalizeAuthorName(author: any): string {
+  if (typeof author === 'string') {
+    return author;
+  }
+
+  if (typeof author === 'object' && author !== null) {
+    const parts = [
+      author.firstName,
+      author.lastName,
+      author.name,
+      author.fullName,
+      author.displayName,
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).trim())
+      .filter(Boolean);
+
+    return parts.join(' ').trim();
+  }
+
+  return '';
+}
+
+function normalizeKeywords(keywords: unknown): string[] {
+  if (Array.isArray(keywords)) {
+    return keywords.map((keyword) => String(keyword));
+  }
+
+  if (typeof keywords === 'string') {
+    return keywords
+      .split(',')
+      .map((keyword) => keyword.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
 export function searchArticles(query: string): FeaturedArticle[] {
   const searchTerm = query.toLowerCase().trim();
   if (!searchTerm) return [];
-  return FEATURED_ARTICLES.filter(article => {
-    if (article.title.toLowerCase().includes(searchTerm)) return true;
-    if (article.abstract.toLowerCase().includes(searchTerm)) return true;
-    if (article.doi.toLowerCase().includes(searchTerm)) return true;
-    if (article.keywords.some(k => k.toLowerCase().includes(searchTerm))) return true;
-    if (article.subject.toLowerCase().includes(searchTerm)) return true;
-    const authors = article.authors || [];
-    for (const author of authors) {
-      if (typeof author === 'string') {
-        if (author.toLowerCase().includes(searchTerm)) return true;
-      } else if (typeof author === 'object' && author !== null) {
-        const name = `${(author as any).firstName || ''} ${(author as any).lastName || ''}`.toLowerCase();
-        if (name.includes(searchTerm)) return true;
-      }
-    }
-    return false;
+
+  return FEATURED_ARTICLES.filter((article) => {
+    const titleMatch = article.title.toLowerCase().includes(searchTerm);
+    const abstractMatch = article.abstract.toLowerCase().includes(searchTerm);
+    const doiMatch = article.doi.toLowerCase().includes(searchTerm);
+    const subjectMatch = article.subject.toLowerCase().includes(searchTerm);
+
+    const keywordMatch = normalizeKeywords(article.keywords).some((keyword) =>
+      keyword.toLowerCase().includes(searchTerm)
+    );
+
+    const authorMatch = (article.authors || [])
+      .map(normalizeAuthorName)
+      .some((name) => name.toLowerCase().includes(searchTerm));
+
+    return titleMatch || abstractMatch || doiMatch || subjectMatch || keywordMatch || authorMatch;
   });
 }
 
