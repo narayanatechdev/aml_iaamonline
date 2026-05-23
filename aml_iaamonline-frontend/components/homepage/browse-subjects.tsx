@@ -11,7 +11,7 @@ export function BrowseSubjects() {
     <section className="py-12 bg-[#f0f4fb]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-[#0f2d6b] font-semibold" style={{ fontSize: '1.4rem' }}>
+          <h2 className="text-black font-semibold" style={{ fontSize: '1.75rem' }}>
             Browse by Subject
           </h2>
           <Link href="/browse/subject" className="flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline font-semibold">
@@ -25,10 +25,10 @@ export function BrowseSubjects() {
               href={`/browse/subject?subject=${encodeURIComponent(subject.name)}`}
               className="bg-white rounded-xl p-4 border border-border hover:border-[#0f2d6b]/30 hover:shadow-sm transition-all text-center group"
             >
-              <div className="text-[#0f1a2e] text-sm mb-1 group-hover:text-[#0f2d6b] transition-colors font-semibold">
+              <div className="text-[#0f1a2e] text-base mb-2 group-hover:text-[#0f2d6b] transition-colors font-semibold">
                 {subject.name}
               </div>
-              <div className="text-[#5a6a8a] text-xs">{subject.count} articles</div>
+              <div className="text-[#5a6a8a] text-sm">{subject.count} articles</div>
             </Link>
           ))}
         </div>

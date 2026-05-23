@@ -45,6 +45,7 @@ export default function ArticlePage() {
 
   const [authorsWithAffiliations, setAuthorsWithAffiliations] = useState<AuthorAffiliation[]>([]);
   const [isLoadingAuthors, setIsLoadingAuthors] = useState(true);
+  const [activeSection, setActiveSection] = useState<string>('header');
 
   useEffect(() => {
     const fetchAuthors = async () => {
@@ -71,21 +72,158 @@ export default function ArticlePage() {
     }
   }, [id]);
 
+  // Track active section for highlighting sidebar navigation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        threshold: 0.3,
+        rootMargin: '-144px 0px -50% 0px', // Account for sticky navbar
+      }
+    );
+
+    // Observe all sections
+    const sections = ['header', 'abstract', 'graphical-abstract', 'keywords', 'citation', 'related'];
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const authorNames = getAuthorDisplay(article.authors);
   const pdfDownloads = (article as any).pdf_downloads || 0;
 
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <Link href="/browse/current" className="inline-flex items-center gap-1 text-[#0f2d6b] text-sm mb-6 hover:underline">
+        <Link href="/browse/current" className="inline-flex items-center gap-1 text-[#0f2d6b] text-base mb-6 hover:underline">
         <ChevronLeft className="w-4 h-4" /> Back to Browse
       </Link>
 
       <div className="grid lg:grid-cols-4 gap-8">
+        {/* Sidebar - moved to left */}
+        <div className="lg:col-span-1 order-2 lg:order-1">
+          {/* Sticky container for sidebar content */}
+          <div className="sticky top-36 space-y-5 max-h-[calc(100vh-9rem)] overflow-y-auto">
+            {/* Download PDF Button */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <a
+                href={article.pdf_url || `#`}
+                className="flex items-center gap-2 px-4 py-3 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors font-semibold w-full justify-center"
+                {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
+              >
+                <Download className="w-4 h-4" />
+                Download PDF
+              </a>
+            </div>
+
+            {/* Table of Contents / Section Links */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <h3 className="text-black text-base font-semibold mb-4">Article Sections</h3>
+            <nav className="space-y-2">
+              <a 
+                href="#header" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'header'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('header')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Article Info
+              </a>
+              <a 
+                href="#abstract" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'abstract'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('abstract')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Abstract
+              </a>
+              <a 
+                href="#graphical-abstract" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'graphical-abstract'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('graphical-abstract')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Graphical Abstract
+              </a>
+              <a 
+                href="#keywords" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'keywords'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('keywords')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Keywords
+              </a>
+              <a 
+                href="#citation" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'citation'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('citation')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                How to Cite
+              </a>
+              <a 
+                href="#related" 
+                className={`block text-sm transition-colors py-1 smooth-scroll ${
+                  activeSection === 'related'
+                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
+                    : 'text-gray-600 hover:text-black px-1'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('related')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Related Articles
+              </a>
+            </nav>
+            </div>
+          </div>
+        </div>
+
         {/* Main content */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 order-1 lg:order-2">
           {/* Header */}
-          <div className="py-6 mb-8 border-b border-gray-200">
+          <div id="header" className="py-6 mb-8 border-b border-gray-200 scroll-mt-36">
             <div className="flex items-center gap-2 mb-4 flex-wrap">
               <span className="px-2.5 py-0.5 bg-[#0f2d6b] text-white text-xs rounded" style={{ fontWeight: 600 }}>
                 {article.type}
@@ -95,7 +233,7 @@ export default function ArticlePage() {
               </span>
             </div>
 
-            <h1 className="article-main-title text-[#0f1a2e] mb-4 leading-snug" style={{ fontWeight: 700 }}>
+            <h1 className="text-3xl text-[#0f1a2e] mb-4 leading-snug" style={{ fontWeight: 700 }}>
               {article.title}
             </h1>
 
@@ -104,11 +242,11 @@ export default function ArticlePage() {
               {isLoadingAuthors ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-[#0f2d6b] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-[#5a6a8a] text-sm">Loading author information...</p>
+                  <p className="text-[#5a6a8a] text-base">Loading author information...</p>
                 </div>
               ) : authorsWithAffiliations.length > 0 ? (
                 <div className="space-y-4">
-                  <h3 className="text-[#0f2d6b] text-sm" style={{ fontWeight: 700 }}>Authors & Affiliations</h3>
+                  <h3 className="text-[#0f2d6b] text-base" style={{ fontWeight: 700 }}>Authors & Affiliations</h3>
 
                   <div className="mb-3">
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -122,7 +260,7 @@ export default function ArticlePage() {
 
                         return (
                           <span key={author.id} className="inline-flex items-baseline gap-1">
-                            <span className="text-[#0f2d6b] text-sm font-semibold">
+                            <span className="text-[#0f2d6b] text-base font-semibold">
                               {author.name}
                             </span>
                             {affiliationNumber > 0 && (
@@ -134,7 +272,7 @@ export default function ArticlePage() {
                               <sup className="text-[#c9a227] text-xs font-bold">*</sup>
                             )}
                             {index < authorsWithAffiliations.length - 1 && (
-                              <span className="text-[#5a6a8a] text-sm">,</span>
+                              <span className="text-[#5a6a8a] text-base">,</span>
                             )}
                           </span>
                         );
@@ -155,8 +293,8 @@ export default function ArticlePage() {
                       );
 
                       return uniqueAffiliations.map((affiliation, index) => (
-                        <div key={index} className="text-xs text-[#5a6a8a] leading-relaxed">
-                          <sup className="text-[#0f2d6b] font-bold text-xs">
+                        <div key={index} className="text-sm text-[#5a6a8a] leading-relaxed">
+                          <sup className="text-[#0f2d6b] font-bold text-sm">
                             {index + 1}
                           </sup>
                           {affiliation.name}
@@ -166,14 +304,14 @@ export default function ArticlePage() {
                   </div>
 
                   {authorsWithAffiliations.some(author => author.is_corresponding) && (
-                    <p className="text-[10px] text-[#5a6a8a] mt-2">
+                    <p className="text-xs text-[#5a6a8a] mt-2">
                       <sup className="text-[#c9a227] font-bold">*</sup> Corresponding author
                     </p>
                   )}
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 700 }}>Authors</h3>
+                  <h3 className="text-[#0f2d6b] text-base mb-2" style={{ fontWeight: 700 }}>Authors</h3>
                   <div className="flex flex-wrap gap-x-1 gap-y-1">
                     {(article.authors || []).map((author: any, index: number) => {
                       const name = getAuthorName(author);
@@ -181,9 +319,9 @@ export default function ArticlePage() {
                       const isCorr = typeof author === 'object' && author?.is_corresponding;
                       return (
                         <span key={index} className="inline-flex items-baseline">
-                          <span className="text-[#0f2d6b] text-sm font-semibold">{name}</span>
+                          <span className="text-[#0f2d6b] text-base font-semibold">{name}</span>
                           {isCorr && <sup className="text-[#c9a227] text-xs font-bold">*</sup>}
-                          {index < (article.authors || []).length - 1 && <span className="text-[#5a6a8a] text-sm mr-1">,</span>}
+                          {index < (article.authors || []).length - 1 && <span className="text-[#5a6a8a] text-base mr-1">,</span>}
                         </span>
                       );
                     })}
@@ -201,7 +339,7 @@ export default function ArticlePage() {
                     return (
                       <div className="mt-2 space-y-1">
                         {affList.map((af, i) => (
-                          <p key={i} className="text-[#5a6a8a] text-xs"><sup className="text-[#0f2d6b] font-bold">{i + 1}</sup> {af}</p>
+                          <p key={i} className="text-[#5a6a8a] text-sm"><sup className="text-[#0f2d6b] font-bold">{i + 1}</sup> {af}</p>
                         ))}
                       </div>
                     );
@@ -219,15 +357,15 @@ export default function ArticlePage() {
                 { label: "DOI", value: article.doi },
               ].map((m) => (
                 <div key={m.label}>
-                  <p className="text-[#5a6a8a] text-[10px] mb-0.5">{m.label}</p>
-                  <p className="text-[#0f1a2e] text-xs font-mono" style={{ fontWeight: 600 }}>{m.value}</p>
+                  <p className="text-[#5a6a8a] text-xs mb-0.5">{m.label}</p>
+                  <p className="text-[#0f1a2e] text-sm font-mono" style={{ fontWeight: 600 }}>{m.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors" style={{ fontWeight: 600 }}>
+              <button className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors" style={{ fontWeight: 600 }}>
                 <FileText className="w-4 h-4" /> View HTML
               </button>
               {(article.pdf_url || article.original_pdf_url) ? (
@@ -236,27 +374,27 @@ export default function ArticlePage() {
                   download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-base hover:bg-primary/90 transition-colors"
                   style={{ fontWeight: 600 }}
                 >
                   <Download className="w-4 h-4" /> Download PDF
                 </a>
               ) : (
                 <button
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg text-sm cursor-not-allowed"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg text-base cursor-not-allowed"
                   style={{ fontWeight: 600 }}
                   disabled
                 >
                   <Download className="w-4 h-4" /> PDF Unavailable
                 </button>
               )}
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
                 <Quote className="w-4 h-4" /> Cite
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
                 <BookmarkPlus className="w-4 h-4" /> Save
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
                 <Share2 className="w-4 h-4" /> Share
               </button>
             </div>
@@ -264,34 +402,33 @@ export default function ArticlePage() {
 
           {/* Graphical Abstract */}
           {article.graphical_abstract_url && (
-            <div className="py-6 mb-8">
-              <h2 className="text-[#0f2d6b] mb-4" style={{ fontSize: "1.1rem", fontWeight: 700 }}>Graphical Abstract</h2>
+            <div id="graphical-abstract" className="py-6 mb-8 scroll-mt-36">
+              <h2 className="text-black text-xl mb-4" style={{ fontWeight: 700 }}>Graphical Abstract</h2>
               <div className="flex justify-center">
                 <img
                   src={article.graphical_abstract_url}
                   alt={`Graphical abstract for ${article.title}`}
-                  className="max-w-full h-auto rounded-lg shadow-sm border border-border"
-                  style={{ maxHeight: '500px' }}
+                  className="max-w-full h-auto object-contain max-h-48 rounded-lg shadow-sm border border-border"
                 />
               </div>
             </div>
           )}
 
           {/* Abstract */}
-          <div className="py-6 mb-8">
-            <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1.1rem", fontWeight: 700 }}>Abstract</h2>
-            <p className="text-[#3a4a6a] text-sm leading-relaxed">{article.abstract}</p>
+          <div id="abstract" className="py-6 mb-8 scroll-mt-36">
+            <h2 className="text-black text-xl mb-3" style={{ fontWeight: 700 }}>Abstract</h2>
+            <p className="text-[#3a4a6a] text-base leading-relaxed">{article.abstract}</p>
           </div>
 
           {/* Keywords */}
-          <div className="py-6 mb-8">
-            <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1rem", fontWeight: 700 }}>Keywords</h2>
+          <div id="keywords" className="py-6 mb-8 scroll-mt-36">
+            <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>Keywords</h2>
             <div className="flex flex-wrap gap-2">
               {article.keywords.map((kw) => (
                 <Link
                   key={kw}
                   href={`/browse/current?q=${encodeURIComponent(kw)}`}
-                  className="px-3 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded-full border border-[#0f2d6b]/15 hover:bg-[#0f2d6b] hover:text-white transition-colors cursor-pointer"
+                  className="px-3 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-sm rounded-full border border-[#0f2d6b]/15 hover:bg-[#0f2d6b] hover:text-white transition-colors cursor-pointer"
                 >
                   {kw}
                 </Link>
@@ -300,72 +437,39 @@ export default function ArticlePage() {
           </div>
 
           {/* Citation */}
-          <div className="bg-gray-50 py-6 px-0">
-            <h2 className="text-[#0f2d6b] mb-3" style={{ fontSize: "1rem", fontWeight: 700 }}>How to Cite</h2>
+          <div id="citation" className="bg-gray-50 py-6 px-0 scroll-mt-36">
+            <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>How to Cite</h2>
             <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-[#3a4a6a] text-xs leading-relaxed font-mono">
+              <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
                 {authorNames} ({article.year}). {article.title}. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}. https://doi.org/{article.doi}
               </p>
             </div>
             <div className="flex gap-2 mt-3">
               {["APA", "MLA", "BibTeX", "RIS", "EndNote"].map((fmt) => (
-                <button key={fmt} className="px-3 py-1 border border-border rounded text-xs text-[#0f2d6b] bg-white hover:bg-[#0f2d6b] hover:text-white transition-colors">
+                <button key={fmt} className="px-3 py-1 border border-border rounded text-sm text-black bg-white hover:bg-black hover:text-white transition-colors">
                   {fmt}
                 </button>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-5">
-          {/* Metrics */}
-          <div className="py-5 mb-6">
-            <h3 className="text-[#0f2d6b] text-sm mb-4" style={{ fontWeight: 700 }}>Article Metrics</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[#5a6a8a] text-xs flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" />Total Views</span>
-                <span className="text-[#0f1a2e] text-sm" style={{ fontWeight: 700 }}>{article.views.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#5a6a8a] text-xs flex items-center gap-1.5"><Quote className="w-3.5 h-3.5" />Citations</span>
-                <span className="text-[#0f1a2e] text-sm" style={{ fontWeight: 700 }}>{article.cited}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#5a6a8a] text-xs flex items-center gap-1.5"><Download className="w-3.5 h-3.5" />Downloads</span>
-                <span className="text-[#0f1a2e] text-sm" style={{ fontWeight: 700 }}>{pdfDownloads > 0 ? pdfDownloads.toLocaleString() : '—'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* DOI */}
-          <div className="py-5 mb-6">
-            <h3 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 700 }}>DOI & Links</h3>
-            <a
-              href={`https://doi.org/${article.doi}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[#0f2d6b] text-xs hover:underline"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              {article.doi}
-            </a>
-          </div>
-
-          {/* Related articles */}
+          {/* Related Articles - moved from sidebar */}
           {related.length > 0 && (
-            <div className="py-5 mb-6">
-              <h3 className="text-[#0f2d6b] text-sm mb-4" style={{ fontWeight: 700 }}>Related Articles</h3>
-              <div className="space-y-4">
+            <div id="related" className="py-6 mt-8 scroll-mt-36">
+              <h2 className="text-black text-xl mb-6" style={{ fontWeight: 700 }}>Related Articles</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {related.map((rel) => {
                   const firstAuthor = getAuthorName((rel.authors || [])[0]);
                   return (
-                    <Link key={rel.id} href={`/article/${rel.id}`} className="block hover:bg-[#f0f4fb] rounded-lg p-2 -mx-2 transition-colors">
-                      <p className="text-[#0f1a2e] text-xs leading-snug mb-1 hover:text-[#0f2d6b]" style={{ fontWeight: 600 }}>
+                    <Link key={rel.id} href={`/article/${rel.id}`} className="block bg-white rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all">
+                      <p className="text-black text-base leading-snug mb-2 hover:text-[#0f2d6b]" style={{ fontWeight: 600 }}>
                         {rel.title}
                       </p>
-                      <p className="text-[#5a6a8a] text-[10px]">
+                      <p className="text-[#5a6a8a] text-sm">
                         {firstAuthor}{(rel.authors || []).length > 1 ? ' et al.' : ''}
+                      </p>
+                      <p className="text-[#5a6a8a] text-sm mt-1">
+                        Vol. {rel.volume}, Issue {rel.issue} • {rel.year}
                       </p>
                     </Link>
                   );
@@ -374,6 +478,7 @@ export default function ArticlePage() {
             </div>
           )}
         </div>
+
       </div>
       </div>
     </MainLayout>

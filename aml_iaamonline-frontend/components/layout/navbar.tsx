@@ -129,8 +129,35 @@ export function Navbar() {
             </div>
           </a>
 
-          {/* Functional search bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-4">
+          {/* Spacer to push content right */}
+          <div className="flex-1"></div>
+
+          {/* Right section with quick links and search */}
+          <div className="hidden md:flex items-center gap-6">
+            {/* Quick Action Links */}
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/browse/current" 
+                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
+              >
+                Current Issue
+              </Link>
+              <Link 
+                href="/author-resources/submit" 
+                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
+              >
+                Submit Manuscript
+              </Link>
+              <Link 
+                href="/author-resources/guidelines" 
+                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
+              >
+                Author Guidelines
+              </Link>
+            </div>
+
+            {/* Search bar */}
+            <div className="max-w-xs">
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
@@ -139,14 +166,14 @@ export function Navbar() {
                 onFocus={() => searchResults.length > 0 && setShowSearchDropdown(true)}
                 onBlur={() => setTimeout(() => setShowSearchDropdown(false), 200)}
                 placeholder="Search articles, authors, keywords..."
-                className="w-full pl-4 pr-10 py-2 rounded-lg border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full pl-4 pr-10 py-2 border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
                 <Search className="w-4 h-4 text-muted-foreground" />
               </button>
 
               {showSearchDropdown && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-[100] max-h-[350px] overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white shadow-xl border border-gray-200 overflow-hidden z-[100] max-h-[350px] overflow-y-auto">
                   {searchResults.map((article) => (
                     <Link
                       key={article.id}
@@ -173,6 +200,7 @@ export function Navbar() {
                 </div>
               )}
             </form>
+            </div>
           </div>
 
           {/* Mobile menu toggle */}
@@ -186,7 +214,7 @@ export function Navbar() {
       </div>
 
       {/* Navigation bar */}
-      <nav className="hidden md:block bg-[#0f2d6b] border-t border-[#0f2d6b]/20">
+      <nav className="hidden md:block bg-white border-t border-b border-border">
         <div className="max-w-7xl mx-auto px-4">
           <ul className="flex items-center">
             {NAV_ITEMS.map((item) => (
@@ -198,8 +226,8 @@ export function Navbar() {
               >
                 <a
                   href={item.path}
-                  className={`flex items-center gap-1 px-4 py-3 text-sm text-white/90 hover:text-white hover:bg-primary/80 transition-colors font-medium ${
-                    activeDropdown === item.label ? 'bg-primary/80 text-white' : ''
+                  className={`flex items-center gap-1 px-4 py-3 text-base text-primary border-b-2 border-transparent hover:border-primary hover:text-primary hover:bg-gray-50 hover:shadow-sm transition-all duration-200 font-medium ${
+                    activeDropdown === item.label ? 'border-primary text-primary bg-gray-50' : ''
                   }`}
                 >
                   {item.label}
@@ -207,12 +235,12 @@ export function Navbar() {
                 </a>
 
                 {item.children && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 w-56 bg-white rounded-b-lg shadow-xl border border-border z-50">
+                  <div className="absolute top-full left-0 w-56 bg-white rounded-b-lg shadow-xl border border-border z-50 transform origin-top animate-in slide-in-from-top-4 fade-in duration-300 ease-out">
                     {item.children.map((child, idx) => (
                       <a
                         key={child.label}
                         href={child.path}
-                        className={`block px-4 py-2.5 text-sm text-foreground hover:bg-secondary hover:text-primary transition-colors ${
+                        className={`block px-4 py-2.5 text-base text-foreground hover:bg-secondary hover:text-primary hover:border-l-2 hover:border-primary transition-all ${
                           idx === 0 ? 'pt-3' : ''
                         } ${idx === item.children!.length - 1 ? 'pb-3' : ''}`}
                       >
@@ -241,12 +269,41 @@ export function Navbar() {
               />
             </form>
           </div>
+          
+          {/* Quick Links for Mobile */}
+          <div className="px-4 py-2 border-b border-border/50">
+            <div className="text-xs text-[#5a6a8a] font-semibold mb-2">Quick Links</div>
+            <div className="grid grid-cols-1 gap-1">
+              <Link 
+                href="/browse/current" 
+                className="text-sm text-[#0f2d6b] font-medium py-1.5"
+                onClick={() => setMobileOpen(false)}
+              >
+                Current Issue
+              </Link>
+              <Link 
+                href="/author-resources/submit" 
+                className="text-sm text-[#0f2d6b] font-medium py-1.5"
+                onClick={() => setMobileOpen(false)}
+              >
+                Submit Manuscript
+              </Link>
+              <Link 
+                href="/author-resources/guidelines" 
+                className="text-sm text-[#0f2d6b] font-medium py-1.5"
+                onClick={() => setMobileOpen(false)}
+              >
+                Author Guidelines
+              </Link>
+            </div>
+          </div>
+          
           <nav className="px-4 pb-4">
             {NAV_ITEMS.map((item) => (
               <div key={item.label}>
                 <a
                   href={item.path}
-                  className="block py-2.5 text-sm text-foreground border-b border-border/50 font-medium"
+                  className="block py-2.5 text-base text-foreground border-b border-border/50 font-medium"
                 >
                   {item.label}
                 </a>
@@ -256,7 +313,7 @@ export function Navbar() {
                       <a
                         key={child.label}
                         href={child.path}
-                        className="block py-2 text-sm text-muted-foreground border-b border-border/30"
+                        className="block py-2 text-base text-muted-foreground border-b border-border/30"
                       >
                         {child.label}
                       </a>

@@ -15,7 +15,7 @@ export function AimsScope() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-8 items-center">
           <div className="md:col-span-2">
-            <h2 className="text-[#0f2d6b] mb-3 font-semibold" style={{ fontSize: "1.4rem" }}>
+            <h2 className="text-black mb-3 font-semibold" style={{ fontSize: "1.4rem" }}>
               Aims & Scope
             </h2>
             <p className="text-[#3a4a6a] text-sm leading-relaxed mb-4">

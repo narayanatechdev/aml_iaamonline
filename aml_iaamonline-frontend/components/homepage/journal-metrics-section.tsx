@@ -54,7 +54,7 @@ export function JournalMetricsSection() {
     <section className="py-12 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-[#0f2d6b] mb-4">
+          <h2 className="text-3xl font-bold text-black mb-4">
             Why Choose Advanced Materials Letters?
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -67,7 +67,7 @@ export function JournalMetricsSection() {
           
           {/* Publishing Parameters */}
           <div className="lg:col-span-2">
-            <h3 className="text-xl font-semibold text-[#0f2d6b] mb-6">Publishing Parameters</h3>
+            <h3 className="text-xl font-semibold text-black mb-6">Publishing Parameters</h3>
             <div className="grid md:grid-cols-2 gap-4">
               {publishingParameters.map((param) => (
                 <div key={param.label} className="bg-white p-4 rounded-lg border border-gray-100 hover:shadow-lg transition-shadow">
@@ -109,7 +109,7 @@ export function JournalMetricsSection() {
 
         {/* Why Publish With Us */}
         <div className="mb-12">
-          <h3 className="text-xl font-semibold text-[#0f2d6b] mb-6 text-center">Why Publish With Us</h3>
+          <h3 className="text-xl font-semibold text-black mb-6 text-center">Why Publish With Us</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {whyPublishBenefits.map((benefit) => (
               <div key={benefit.title} className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-lg transition-shadow text-center">
@@ -125,7 +125,7 @@ export function JournalMetricsSection() {
 
         {/* Detailed Metrics */}
         <div className="bg-white rounded-xl border border-gray-100 p-8">
-          <h3 className="text-xl font-semibold text-[#0f2d6b] mb-6 text-center">Journal Impact & Reach</h3>
+          <h3 className="text-xl font-semibold text-black mb-6 text-center">Journal Impact & Reach</h3>
           <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
             {detailedMetrics.map((metric) => (
               <div key={metric.metric}>

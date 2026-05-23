@@ -1,6 +1,7 @@
 'use client';
 
 import { MainLayout } from '@/components/layout/main-layout';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Mail, MapPin, Phone, Clock, Send, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 
@@ -29,6 +30,10 @@ export default function ContactPage() {
     <MainLayout>
       <div className="bg-[#0f2d6b] text-white py-12">
         <div className="max-w-7xl mx-auto px-6">
+          <Breadcrumb 
+            items={[{ label: 'Contact' }]} 
+            className="mb-6"
+          />
           <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
           <p className="text-lg text-white/80">
             Get in touch with the Advanced Materials Letters editorial team

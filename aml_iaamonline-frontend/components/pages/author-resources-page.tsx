@@ -3,6 +3,7 @@
 import { FileText, CheckCircle, Shield, DollarSign, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const FAQ_ITEMS = [
   {
@@ -36,6 +37,12 @@ export default function AuthorResourcesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[{ label: 'Author Resources' }]} 
+        className="mb-6"
+      />
+      
       {/* Section Navigation */}
       <nav className="flex gap-4 mb-8">
         <a href="#guidelines" className="text-[#0f2d6b] text-xs hover:underline">Guide for Authors</a>
@@ -45,8 +52,8 @@ export default function AuthorResourcesPage() {
       </nav>
 
       <div className="mb-10 border-b border-border pb-8">
-        <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: "1.8rem", fontWeight: 700 }}>Author Resources</h1>
-        <p className="text-[#5a6a8a] text-sm">Everything you need to submit and publish in Advanced Materials Letters</p>
+        <h1 className="text-black mb-6" style={{ fontSize: "2.5rem", fontWeight: 700 }}>Author Resources</h1>
+        <p className="text-[#5a6a8a] text-xl leading-relaxed">Everything you need to submit and publish in Advanced Materials Letters</p>
       </div>
 
       {/* Quick actions */}
@@ -71,7 +78,7 @@ export default function AuthorResourcesPage() {
 
       {/* Guidelines */}
       <section id="guidelines" className="mb-14 scroll-mt-40">
-        <h2 className="text-[#0f2d6b] mb-6" style={{ fontSize: "1.3rem", fontWeight: 700 }}>Guide for Authors</h2>
+        <h2 className="text-[#0f2d6b] mb-6 text-2xl" style={{ fontWeight: 700 }}>Guide for Authors</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {[
             {

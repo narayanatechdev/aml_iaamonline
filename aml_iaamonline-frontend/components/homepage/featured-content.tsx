@@ -29,7 +29,7 @@ export function FeaturedContent() {
     <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-[#0f2d6b] font-semibold" style={{ fontSize: '1.4rem' }}>
+          <h2 className="text-black font-semibold" style={{ fontSize: '1.4rem' }}>
             Featured Articles
           </h2>
           <Link href="/browse/current" className="flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline font-semibold transition-all">

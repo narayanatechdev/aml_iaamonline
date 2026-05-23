@@ -136,14 +136,14 @@ export function NewsletterSubscription({ className = '' }: NewsletterSubscriptio
   const isError = status === 'error';
 
   return (
-    <div className={`bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm ${className}`}>
+    <div className={`bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm ${className}`}>
       <div className="flex items-center gap-3 mb-4">
         <div className="w-8 h-8 rounded-lg bg-[#c9a227] flex items-center justify-center">
           <Mail className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h3 className="text-white font-semibold text-lg">Stay Updated</h3>
-          <p className="text-white/70 text-sm">Get latest articles & journal updates</p>
+          <h3 className="text-black font-semibold text-lg">Stay Updated</h3>
+          <p className="text-black/70 text-sm">Get latest articles & journal updates</p>
         </div>
       </div>
 
@@ -168,7 +168,7 @@ export function NewsletterSubscription({ className = '' }: NewsletterSubscriptio
             disabled={isLoading || isSuccess}
             maxLength={254}
             autoComplete="email"
-            className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:border-[#c9a227] focus:bg-white/15 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 text-black placeholder:text-gray-500 focus:outline-none focus:border-[#c9a227] focus:ring-2 focus:ring-[#c9a227]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           />
           {isSuccess && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -198,13 +198,13 @@ export function NewsletterSubscription({ className = '' }: NewsletterSubscriptio
         </button>
 
         {(isError || isSuccess) && (
-          <div className={`flex items-center gap-2 text-sm ${isError ? 'text-red-400' : 'text-green-400'}`}>
+          <div className={`flex items-center gap-2 text-sm ${isError ? 'text-red-600' : 'text-green-600'}`}>
             {isError ? <AlertCircle className="w-4 h-4 flex-shrink-0" /> : <Check className="w-4 h-4 flex-shrink-0" />}
             <span>{message}</span>
           </div>
         )}
 
-        <div className="flex items-center gap-2 text-white/60 text-xs">
+        <div className="flex items-center gap-2 text-black/60 text-xs">
           <Shield className="w-3 h-3" />
           <span>Secure subscription. No spam. Unsubscribe anytime.</span>
         </div>

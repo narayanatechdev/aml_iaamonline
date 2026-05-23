@@ -19,7 +19,7 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
                 <span className="text-white font-bold text-lg">AML</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[#0f2d6b] leading-tight">
+                <h1 className="text-2xl font-bold text-black leading-tight">
                   Advanced Materials Letters
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 uppercase tracking-wider">

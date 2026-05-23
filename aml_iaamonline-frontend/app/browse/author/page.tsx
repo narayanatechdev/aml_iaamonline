@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Search, ChevronDown, ChevronUp, ArrowLeft, Eye, Quote } from 'lucide-react';
 import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { 
   Author,
   AUTHORS,
@@ -37,17 +38,17 @@ function ArticleCard({ article }: ArticleCardProps) {
           <span className="w-1.5 h-1.5 bg-[#c9a227] rounded-full"></span>
           Open Access
         </div>
-        <div className="text-xs text-[#5a6a8a] font-mono">
-          Vol. {article.volume}, Issue {article.issue} • {article.year}
+        <div className="text-sm text-[#5a6a8a] font-mono">
+          Vol. {article.volume}, Issue {article.issue} • {article.year}{article.pages && ` • Pages: ${article.pages}`}
         </div>
       </div>
 
       {/* Article Type */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-[#0f2d6b] text-xs">
+        <span className="text-[#0f2d6b] text-sm">
           {article.type}
         </span>
-        <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
+        <span className="text-[#5a6a8a] text-sm ml-auto">{article.published}</span>
       </div>
 
       {/* Article Title */}
@@ -55,42 +56,42 @@ function ArticleCard({ article }: ArticleCardProps) {
         href={`/article/${article.id}`}
         className="block hover:text-[#0f2d6b] transition-colors"
       >
-        <h3 className="text-lg text-[#0f1a2e] leading-snug mb-2">
+        <h3 className="text-xl text-[#0f1a2e] leading-snug mb-4">
           {article.title}
         </h3>
       </Link>
 
       {/* Authors */}
-      <div className="text-xs text-[#0f2d6b] mb-2 font-medium">
+      <div className="text-sm text-[#0f2d6b] mb-4 font-medium">
         {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
         {(article.authors || []).length > 3 ? ' et al.' : ''}
       </div>
 
       {/* DOI */}
-      <div className="text-xs text-[#5a6a8a] font-mono mb-3">
+      <div className="text-sm text-[#5a6a8a] font-mono mb-4">
         DOI: {article.doi}
       </div>
 
       {/* Graphical Abstract Thumbnail */}
       {article.graphical_abstract_url && (
         <div className="mb-3">
-          <div className="w-full max-w-xs h-32 bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
+          <div className="w-full h-auto bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden rounded">
             <img 
               src={article.graphical_abstract_url}
               alt={`Graphical abstract for ${article.title}`}
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-contain max-h-48"
             />
           </div>
         </div>
       )}
 
       {/* Abstract Snippet */}
-      <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed mb-3">
+      <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-4">
         {article.abstract || 'Abstract not available.'}
       </p>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 text-xs text-[#5a6a8a] mb-3">
+      <div className="flex items-center gap-4 text-sm text-[#5a6a8a] mb-4">
         <span className="flex items-center gap-1">
           <Eye className="w-3 h-3" />
           {article.views.toLocaleString()}
@@ -106,7 +107,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       <div className="flex items-center gap-2">
         <Link
           href={article.pdf_url || `#`}
-          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline"
           {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -116,7 +117,7 @@ function ArticleCard({ article }: ArticleCardProps) {
         </Link>
         <Link
           href={`/article/${article.id}`}
-          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -137,8 +138,8 @@ export default function AuthorPage() {
   const [showAffiliationFilter, setShowAffiliationFilter] = useState(true);
   const [showCountryFilter, setShowCountryFilter] = useState(true);
   const [showCityFilter, setShowCityFilter] = useState(true);
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState('article_count');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedAuthor, setSelectedAuthor] = useState<Author | null>(null);
 
   // Get filter options from data
@@ -157,6 +158,16 @@ export default function AuthorPage() {
   }, [searchTerm, selectedAffiliation, selectedCountry, selectedCity]);
 
   const sortedAuthors = useMemo(() => {
+    if (sortBy === 'recent') {
+      // Sort by author ID (assuming lower ID = newer author)
+      return [...filteredAuthors].sort((a, b) => {
+        if (sortOrder === 'asc') {
+          return a.id - b.id;
+        } else {
+          return b.id - a.id;
+        }
+      });
+    }
     return sortAuthors(filteredAuthors, sortBy as keyof Author, sortOrder);
   }, [filteredAuthors, sortBy, sortOrder]);
 
@@ -199,20 +210,45 @@ export default function AuthorPage() {
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Breadcrumb */}
+        <Breadcrumb 
+          items={[{ label: 'Browse', href: '/browse' }, { label: 'By Author' }]} 
+          className="mb-6"
+        />
+        
         <div className="mb-8">
-          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: "1.8rem", fontWeight: 700 }}>Browse Authors</h1>
-          <p className="text-[#5a6a8a] text-sm">Discover researchers and their contributions to Advanced Materials Letters</p>
+          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: "2rem", fontWeight: 700 }}>Browse Authors</h1>
+          <p className="text-[#5a6a8a] text-base">Discover researchers and their contributions to Advanced Materials Letters</p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Filters */}
           <div className="lg:col-span-1">
             <div className="border-b border-gray-200 pb-6 sticky top-40">
+              {/* Quick Stats */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <h4 className="text-[#0f2d6b] text-sm mb-3" style={{ fontWeight: 600 }}>Quick Stats</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#5a6a8a]">Total Authors:</span>
+                    <span className="text-[#0f2d6b] font-semibold">{AUTHOR_COUNTS.total}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#5a6a8a]">Filtered Results:</span>
+                    <span className="text-[#0f2d6b] font-semibold">{sortedAuthors.length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#5a6a8a]">Top Author Articles:</span>
+                    <span className="text-[#0f2d6b] font-semibold">{Math.max(...filteredAuthors.map(a => a.article_count), 0)}</span>
+                  </div>
+                </div>
+              </div>
+              
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[#0f2d6b] text-sm" style={{ fontWeight: 700 }}>Refine Results</h3>
+                <h3 className="text-[#0f2d6b] text-base" style={{ fontWeight: 700 }}>Refine Results</h3>
                 <button 
                   onClick={clearFilters}
-                  className="text-[#c9a227] text-xs hover:underline"
+                  className="text-[#c9a227] text-sm hover:underline"
                 >
                   Clear all
                 </button>
@@ -220,14 +256,14 @@ export default function AuthorPage() {
               
               {/* Search */}
               <div className="mb-6">
-                <label className="text-[#0f2d6b] text-xs mb-2 block" style={{ fontWeight: 600 }}>Search Authors</label>
+                <label className="text-[#0f2d6b] text-sm mb-2 block" style={{ fontWeight: 600 }}>Search Authors</label>
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Author name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 text-xs border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+                    className="w-full pl-8 pr-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
                   />
                   <Search className="w-3 h-3 absolute left-3 top-1/2 -translate-y-1/2 text-[#5a6a8a]" />
                 </div>
@@ -237,7 +273,7 @@ export default function AuthorPage() {
               <div className="mb-6">
                 <button 
                   onClick={() => setShowAffiliationFilter(!showAffiliationFilter)}
-                  className="flex items-center justify-between w-full text-[#0f2d6b] text-xs mb-3"
+                  className="flex items-center justify-between w-full text-[#0f2d6b] text-sm mb-3"
                   style={{ fontWeight: 600 }}
                 >
                   Affiliation
@@ -248,7 +284,7 @@ export default function AuthorPage() {
                     <select
                       value={selectedAffiliation}
                       onChange={(e) => setSelectedAffiliation(e.target.value)}
-                      className="w-full p-2 text-xs border border-border rounded focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20"
+                      className="w-full p-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20"
                     >
                       <option value="">All affiliations</option>
                       {affiliations.map((affiliation, index) => (
@@ -263,7 +299,7 @@ export default function AuthorPage() {
               <div className="mb-6">
                 <button 
                   onClick={() => setShowCountryFilter(!showCountryFilter)}
-                  className="flex items-center justify-between w-full text-[#0f2d6b] text-xs mb-3"
+                  className="flex items-center justify-between w-full text-[#0f2d6b] text-sm mb-3"
                   style={{ fontWeight: 600 }}
                 >
                   Country
@@ -274,7 +310,7 @@ export default function AuthorPage() {
                     <select
                       value={selectedCountry}
                       onChange={(e) => setSelectedCountry(e.target.value)}
-                      className="w-full p-2 text-xs border border-border rounded focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20"
+                      className="w-full p-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20"
                     >
                       <option value="">All countries</option>
                       {countries.map(country => (
@@ -311,9 +347,32 @@ export default function AuthorPage() {
                 )}
               </div> */}
 
+              {/* Sort Options */}
+              <div className="mb-6">
+                <label className="text-[#0f2d6b] text-sm mb-2 block" style={{ fontWeight: 600 }}>Sort By</label>
+                <select
+                  value={`${sortBy}-${sortOrder}`}
+                  onChange={(e) => {
+                    const [field, order] = e.target.value.split('-');
+                    setSortBy(field);
+                    setSortOrder(order as 'asc' | 'desc');
+                  }}
+                  className="w-full p-2 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20"
+                >
+                  <option value="article_count-desc">Most Articles</option>
+                  <option value="article_count-asc">Fewest Articles</option>
+                  <option value="name-asc">Name (A-Z)</option>
+                  <option value="name-desc">Name (Z-A)</option>
+                  <option value="affiliation-asc">Affiliation (A-Z)</option>
+                  <option value="country-asc">Country (A-Z)</option>
+                  <option value="recent-desc">Newest Authors</option>
+                  <option value="recent-asc">Oldest Authors</option>
+                </select>
+              </div>
+
               {/* Results count */}
               <div className="pt-4 border-t border-border">
-                <p className="text-[#5a6a8a] text-xs">
+                <p className="text-[#5a6a8a] text-sm">
                   Showing {sortedAuthors.length} of {AUTHOR_COUNTS.total} authors
                 </p>
               </div>
@@ -327,8 +386,8 @@ export default function AuthorPage() {
               <div className="border-b border-gray-200 overflow-hidden">
                 <div className="pb-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-[#0f2d6b] text-lg" style={{ fontWeight: 700 }}>Authors Directory</h2>
-                    <div className="text-[#5a6a8a] text-sm">
+                    <h2 className="text-[#0f2d6b] text-xl" style={{ fontWeight: 700 }}>Authors Directory</h2>
+                    <div className="text-[#5a6a8a] text-base">
                       {sortedAuthors.length} authors found
                     </div>
                   </div>
@@ -340,28 +399,28 @@ export default function AuthorPage() {
                         <tr>
                           <th 
                             onClick={() => handleSort('name')}
-                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-sm cursor-pointer hover:bg-[#e8f1ff]"
                             style={{ fontWeight: 600 }}
                           >
                             Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                           </th>
                           <th 
                             onClick={() => handleSort('article_count')}
-                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-sm cursor-pointer hover:bg-[#e8f1ff]"
                             style={{ fontWeight: 600 }}
                           >
                             No. Articles {sortBy === 'article_count' && (sortOrder === 'asc' ? '↑' : '↓')}
                           </th>
                           <th 
                             onClick={() => handleSort('affiliation')}
-                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-sm cursor-pointer hover:bg-[#e8f1ff]"
                             style={{ fontWeight: 600 }}
                           >
                             Affiliation {sortBy === 'affiliation' && (sortOrder === 'asc' ? '↑' : '↓')}
                           </th>
                           <th 
                             onClick={() => handleSort('country')}
-                            className="px-6 py-4 text-left text-[#0f2d6b] text-xs cursor-pointer hover:bg-[#e8f1ff]"
+                            className="px-6 py-4 text-left text-[#0f2d6b] text-sm cursor-pointer hover:bg-[#e8f1ff]"
                             style={{ fontWeight: 600 }}
                           >
                             Country {sortBy === 'country' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -378,18 +437,18 @@ export default function AuthorPage() {
                             }`}
                           >
                             <td className="px-6 py-4">
-                              <div className="text-[#0f2d6b] text-sm hover:underline" style={{ fontWeight: 600 }}>
+                              <div className="text-[#0f2d6b] text-base hover:underline" style={{ fontWeight: 600 }}>
                                 {author.name}
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="text-[#3a4a6a] text-sm">{author.article_count}</span>
+                              <span className="text-[#3a4a6a] text-base">{author.article_count}</span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="text-[#3a4a6a] text-sm">{author.affiliation}</span>
+                              <span className="text-[#3a4a6a] text-base">{author.affiliation}</span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="text-[#3a4a6a] text-sm">{author.country || '—'}</span>
+                              <span className="text-[#3a4a6a] text-base">{author.country || '—'}</span>
                             </td>
                           </tr>
                         ))}
@@ -399,10 +458,10 @@ export default function AuthorPage() {
                 
                 {sortedAuthors.length === 0 && (
                   <div className="p-10 text-center">
-                    <p className="text-[#5a6a8a] text-sm">No authors found matching your criteria.</p>
+                    <p className="text-[#5a6a8a] text-base">No authors found matching your criteria.</p>
                     <button 
                       onClick={clearFilters}
-                      className="text-[#0f2d6b] text-sm mt-2 hover:underline"
+                      className="text-[#0f2d6b] text-base mt-2 hover:underline"
                     >
                       Clear filters to see all authors
                     </button>
@@ -417,7 +476,7 @@ export default function AuthorPage() {
                   <div className="flex items-center gap-4 mb-4">
                     <button
                       onClick={handleBackToAuthors}
-                      className="inline-flex items-center gap-2 text-[#0f2d6b] font-semibold hover:underline text-sm"
+                      className="inline-flex items-center gap-2 text-[#0f2d6b] font-semibold hover:underline text-base"
                     >
                       <ArrowLeft className="w-4 h-4" />
                       Back to Authors
@@ -425,13 +484,13 @@ export default function AuthorPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-[#0f1a2e] text-xl font-bold">{selectedAuthor.name}</h1>
-                      <p className="text-[#5a6a8a] text-sm">
+                      <h1 className="text-[#0f1a2e] text-2xl font-bold">{selectedAuthor.name}</h1>
+                      <p className="text-[#5a6a8a] text-base">
                         {selectedAuthor.affiliation} • {selectedAuthor.country}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[#5a6a8a] text-xs">
+                      <p className="text-[#5a6a8a] text-sm">
                         {authorArticles.length} article{authorArticles.length !== 1 ? 's' : ''} found
                       </p>
                     </div>
@@ -446,10 +505,10 @@ export default function AuthorPage() {
                     ))
                   ) : (
                     <div className="py-10 text-center border-b border-gray-200">
-                      <p className="text-[#5a6a8a] text-sm">No articles found for this author.</p>
+                      <p className="text-[#5a6a8a] text-base">No articles found for this author.</p>
                       <button
                         onClick={handleBackToAuthors}
-                        className="text-[#0f2d6b] text-sm mt-2 hover:underline"
+                        className="text-[#0f2d6b] text-base mt-2 hover:underline"
                       >
                         ← Back to authors list
                       </button>

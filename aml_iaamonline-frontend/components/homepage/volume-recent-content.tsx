@@ -60,49 +60,18 @@ export function VolumeRecentContent() {
   return (
     <div className="space-y-6">
       {/* On the Cover Section */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
+      <div className="bg-white rounded-xl border border-gray-100 p-6 fade-in-left">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[#0f2d6b] font-semibold text-2xl">On the Cover</h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className={`px-3 py-1 text-xs font-medium rounded ${isPlaying ? 'bg-gray-500 text-white' : 'bg-gray-400 text-white'}`}
-            >
-              {isPlaying ? (
-                <>
-                  <Pause className="w-3 h-3 inline mr-1" />
-                  Pause
-                </>
-              ) : (
-                <>
-                  <Play className="w-3 h-3 inline mr-1" />
-                  Play
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Slide Indicators */}
-        <div className="flex justify-center gap-2 mb-4">
-          {coverContent.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full ${
-                index === currentSlide ? 'bg-[#0f2d6b]' : 'bg-gray-300'
-              }`}
-            />
-          ))}
+          <h2 className="text-black font-semibold text-3xl">On the Cover</h2>
         </div>
 
         <div className="flex gap-4">
           <div className="flex-shrink-0">
-            <div className="w-48 h-64 bg-gradient-to-br from-[#2E8B57] to-[#1E5F3F] rounded border flex items-center justify-center relative overflow-hidden">
+            <div className="w-48 h-64 bg-gradient-to-br from-[#2E8B57] to-[#1E5F3F] rounded border flex items-center justify-center relative overflow-hidden transition-all duration-500 ease-in-out">
               <img 
                 src="https://aml.iaamonline.org/data/aml/coversheet/cover_en.jpg" 
                 alt={`Advanced Materials Letters Volume ${currentCover.volume}, Issue ${currentCover.issue} Cover`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 ease-in-out transform"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -122,13 +91,13 @@ export function VolumeRecentContent() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h4 className="text-lg font-semibold text-[#0f2d6b] mb-3">{currentCover.title}</h4>
-            <p className="text-sm text-gray-700 leading-relaxed mb-4">
+            <h4 className="text-xl font-semibold text-black mb-4 transition-all duration-500 ease-in-out transform">{currentCover.title}</h4>
+            <p className="text-base text-gray-700 leading-relaxed mb-6 transition-all duration-500 ease-in-out transform">
               {currentCover.description}
             </p>
             <Link 
               href={`/browse/archive?volume=${currentCover.volume}&issue=${currentCover.issue}`}
-              className="text-[#0f2d6b] text-sm font-semibold hover:underline flex items-center gap-1"
+              className="text-[#0f2d6b] text-sm font-semibold hover:underline flex items-center gap-1 transition-all duration-500 ease-in-out transform"
             >
               Browse issue {currentCover.issue} (vol. {currentCover.volume}, 2026)
               <ExternalLink className="w-3 h-3" />
@@ -136,7 +105,7 @@ export function VolumeRecentContent() {
           </div>
         </div>
 
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows and Slide Indicators */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePrev}
@@ -144,6 +113,20 @@ export function VolumeRecentContent() {
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
+          
+          {/* Slide Indicators */}
+          <div className="flex justify-center gap-2">
+            {coverContent.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  index === currentSlide ? 'bg-[#0f2d6b]' : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          
           <button
             onClick={handleNext}
             className="w-10 h-10 border border-[#0f2d6b] rounded flex items-center justify-center hover:bg-[#0f2d6b] hover:text-white transition-colors"
@@ -154,13 +137,13 @@ export function VolumeRecentContent() {
       </div>
 
       {/* Recent Articles */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-xl mb-4">Recent Articles</h3>
+      <div className="bg-white rounded-xl border border-gray-100 p-6 fade-in-left">
+        <h3 className="text-black font-semibold text-2xl mb-6">Recent Articles</h3>
         <div className="space-y-6">
           {recentArticles.slice(0, 5).map((article, index) => (
             <div
               key={article.id}
-              className="border border-gray-100 rounded-lg p-4 hover:shadow-lg transition-shadow"
+              className="border border-gray-100 rounded-lg p-4 hover:shadow-lg transition-shadow fade-in-up"
             >
               {/* Open Access Badge */}
               <div className="flex items-start justify-between gap-2 mb-2">
@@ -170,6 +153,7 @@ export function VolumeRecentContent() {
                 </div>
                 <div className="text-xs text-[#5a6a8a] font-mono">
                   Vol. {article.volume}, Issue {article.issue} • {article.year}
+                  {article.pages && ` • Pages: ${article.pages}`}
                 </div>
               </div>
 
@@ -178,30 +162,30 @@ export function VolumeRecentContent() {
                 href={`/article/${article.id}`}
                 className="block hover:text-[#0f2d6b] transition-colors"
               >
-                <h4 className="text-sm font-semibold text-[#0f1a2e] line-clamp-2 mb-2">
+                <h4 className="text-lg font-semibold text-[#0f1a2e] line-clamp-2 mb-4">
                   {article.title}
                 </h4>
               </Link>
 
               {/* Authors */}
-              <div className="text-xs text-[#0f2d6b] mb-2 font-medium">
+              <div className="text-base text-[#0f2d6b] mb-4 font-medium">
                 {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
                 {(article.authors || []).length > 3 ? ' et al.' : ''}
               </div>
 
               {/* DOI */}
-              <div className="text-xs text-[#5a6a8a] font-mono mb-3">
+              <div className="text-sm text-[#5a6a8a] font-mono mb-4">
                 DOI: {article.doi || '10.5185/amlett.2025.011771'}
               </div>
 
               {/* Graphical Abstract Thumbnail */}
               <div className="mb-3">
-                <div className="w-full max-w-xs h-32 bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
+                <div className="w-full h-auto bg-gray-100 rounded border flex items-center justify-center overflow-hidden">
                   {article.graphical_abstract_url ? (
                     <img 
                       src={article.graphical_abstract_url}
                       alt={`Graphical abstract for ${article.title}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto object-contain max-h-48"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
@@ -217,7 +201,7 @@ export function VolumeRecentContent() {
               </div>
 
               {/* Abstract Snippet */}
-              <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed mb-3">
+              <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-5">
                 {article.abstract || 'Abstract not available.'}
               </p>
 
@@ -225,7 +209,7 @@ export function VolumeRecentContent() {
               <div className="flex items-center gap-2">
                 <Link
                   href={article.pdf_url || `#`}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-white border border-primary text-primary hover:bg-primary hover:text-white text-xs font-medium rounded transition-colors"
                   {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
                 >
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -272,7 +256,7 @@ export function VolumeRecentContent() {
 
       {/* Recent Issues */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-xl mb-4 flex items-center gap-2">
+        <h3 className="text-black font-semibold text-xl mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
           Recent Issues
         </h3>

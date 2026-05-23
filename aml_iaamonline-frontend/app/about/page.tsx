@@ -3,15 +3,20 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Award, Globe, Users, Calendar, Target, BookOpen, Zap, CheckCircle } from 'lucide-react';
 
 export default function About() {
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-6 py-10">
+        <Breadcrumb 
+          items={[{ label: 'About' }]} 
+          className="mb-6"
+        />
         <div className="mb-10 border-b border-border pb-8">
-          <h1 className="text-[#0f2d6b] mb-4" style={{ fontSize: "2rem", fontWeight: 700 }}>About Advanced Materials Letters</h1>
-          <p className="text-[#5a6a8a] text-lg leading-relaxed">
+          <h1 className="text-black mb-6" style={{ fontSize: "2.5rem", fontWeight: 700 }}>About Advanced Materials Letters</h1>
+          <p className="text-[#5a6a8a] text-xl leading-relaxed">
             A premier international, peer-reviewed, open access journal dedicated to advancing the field of materials science and engineering through high-quality research publications.
           </p>
         </div>
@@ -21,19 +26,19 @@ export default function About() {
           <div className="lg:col-span-2">
             <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
+                <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <BookOpen className="w-5 h-5" />
                   Journal Overview
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] leading-relaxed">
+                <p className="text-[#3a4a6a] text-base leading-relaxed">
                   <strong>Advanced Materials Letters (AML)</strong> is an international scientific journal published by the International Association of Advanced Materials (IAAM). The journal serves as a platform for researchers, scientists, and engineers to share their latest discoveries and innovations in the rapidly evolving field of materials science.
                 </p>
-                <p className="text-[#3a4a6a] leading-relaxed">
+                <p className="text-[#3a4a6a] text-base leading-relaxed">
                   Since its inception, AML has been committed to maintaining the highest standards of scientific excellence while ensuring rapid dissemination of research findings. The journal operates under a Diamond Open Access model, making all content freely available to readers worldwide without any financial barriers.
                 </p>
-                <p className="text-[#3a4a6a] leading-relaxed">
+                <p className="text-[#3a4a6a] text-base leading-relaxed">
                   Our mission is to bridge the gap between fundamental research and practical applications, fostering collaboration across disciplines and geographical boundaries. We welcome submissions from researchers at all career stages, from emerging scientists to established leaders in the field.
                 </p>
               </CardContent>
@@ -42,7 +47,7 @@ export default function About() {
             {/* Publication Types */}
             <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
+                <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <Target className="w-5 h-5" />
                   Publication Types
                 </CardTitle>
@@ -56,8 +61,8 @@ export default function About() {
                     { type: "Perspectives", desc: "Forward-looking opinion pieces by invited experts in the field" }
                   ].map((item) => (
                     <div key={item.type} className="py-3 border-b border-gray-200">
-                      <h4 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 600 }}>{item.type}</h4>
-                      <p className="text-[#5a6a8a] text-xs leading-relaxed">{item.desc}</p>
+                      <h4 className="text-black text-base mb-3" style={{ fontWeight: 600 }}>{item.type}</h4>
+                      <p className="text-[#5a6a8a] text-sm leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -67,13 +72,13 @@ export default function About() {
             {/* Open Access Commitment */}
             <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
+                <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <Globe className="w-5 h-5" />
                   Diamond Open Access
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] leading-relaxed">
+                <p className="text-[#3a4a6a] text-base leading-relaxed">
                   AML is proud to operate under a <strong>Diamond Open Access</strong> model, which means:
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -87,7 +92,7 @@ export default function About() {
                   ].map((item, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                      <span className="text-[#3a4a6a] text-sm">{item}</span>
+                      <span className="text-[#3a4a6a] text-base">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -100,12 +105,12 @@ export default function About() {
             {/* Key Metrics */}
             <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-lg">Key Information</CardTitle>
+                <CardTitle className="text-black text-xl">Key Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-sm">ISSN (Print)</span>
+                    <span className="text-[#5a6a8a] text-base">ISSN (Print)</span>
                     <Badge variant="secondary">0976-3961</Badge>
                   </div>
                   <div className="flex justify-between items-center">
@@ -114,15 +119,15 @@ export default function About() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#5a6a8a] text-sm">Publisher</span>
-                    <span className="text-[#0f2d6b] text-sm" style={{ fontWeight: 600 }}>IAAM</span>
+                    <span className="text-black text-base" style={{ fontWeight: 600 }}>IAAM</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#5a6a8a] text-sm">Frequency</span>
-                    <span className="text-[#0f2d6b] text-sm" style={{ fontWeight: 600 }}>Monthly</span>
+                    <span className="text-black text-base" style={{ fontWeight: 600 }}>Monthly</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#5a6a8a] text-sm">Language</span>
-                    <span className="text-[#0f2d6b] text-sm" style={{ fontWeight: 600 }}>English</span>
+                    <span className="text-black text-base" style={{ fontWeight: 600 }}>English</span>
                   </div>
                 </div>
               </CardContent>
@@ -131,7 +136,7 @@ export default function About() {
             {/* Focus Areas */}
             <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
+                <CardTitle className="text-black text-xl flex items-center gap-2">
                   <Zap className="w-4 h-4" />
                   Focus Areas
                 </CardTitle>
@@ -161,26 +166,26 @@ export default function About() {
             {/* Contact */}
             <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
-                <CardTitle className="text-[#0f2d6b] text-lg flex items-center gap-2">
+                <CardTitle className="text-black text-xl flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Editorial Office
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <p className="text-[#0f2d6b] text-sm mb-1" style={{ fontWeight: 600 }}>International Association of Advanced Materials</p>
-                  <p className="text-[#5a6a8a] text-xs leading-relaxed">
+                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>International Association of Advanced Materials</p>
+                  <p className="text-[#5a6a8a] text-sm leading-relaxed">
                     Gammalkilsvägen 18A<br />
                     16974 Vaxholm, Sweden
                   </p>
                 </div>
                 <div>
-                  <p className="text-[#0f2d6b] text-sm mb-1" style={{ fontWeight: 600 }}>Email</p>
-                  <p className="text-[#5a6a8a] text-xs">aml@iaamonline.org</p>
+                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>Email</p>
+                  <p className="text-[#5a6a8a] text-sm">aml@iaamonline.org</p>
                 </div>
                 <div>
-                  <p className="text-[#0f2d6b] text-sm mb-1" style={{ fontWeight: 600 }}>Website</p>
-                  <p className="text-[#5a6a8a] text-xs">www.iaamonline.org</p>
+                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>Website</p>
+                  <p className="text-[#5a6a8a] text-sm">www.iaamonline.org</p>
                 </div>
               </CardContent>
             </Card>
@@ -190,7 +195,7 @@ export default function About() {
         {/* Awards & Recognition */}
         <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
           <CardHeader>
-            <CardTitle className="text-[#0f2d6b] text-xl flex items-center gap-2">
+            <CardTitle className="text-black text-2xl flex items-center gap-2">
               <Award className="w-5 h-5" />
               Recognition & Indexing
             </CardTitle>
@@ -207,8 +212,8 @@ export default function About() {
                   <div className="w-12 h-12 bg-[#0f2d6b]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Award className="w-6 h-6 text-[#0f2d6b]" />
                   </div>
-                  <h4 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 600 }}>{item.title}</h4>
-                  <p className="text-[#5a6a8a] text-xs leading-relaxed">{item.desc}</p>
+                  <h4 className="text-black text-base mb-3" style={{ fontWeight: 600 }}>{item.title}</h4>
+                  <p className="text-[#5a6a8a] text-sm leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>

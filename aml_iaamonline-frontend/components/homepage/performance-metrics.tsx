@@ -30,7 +30,7 @@ export function PerformanceMetrics() {
   return (
     <section className="py-12 bg-[#f0f4fb]">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-[#0f2d6b] mb-8 text-center font-semibold" style={{ fontSize: '1.4rem' }}>
+        <h2 className="text-black mb-8 text-center font-semibold" style={{ fontSize: '1.4rem' }}>
           Journal Performance & Metrics
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">

@@ -81,12 +81,61 @@
     border-color: hsl(var(--border));
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 144px; /* Account for sticky header */
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-lexia);
     font-weight: 400;
     font-style: normal;
+    /* Improve scroll performance */
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Enhanced smooth scrolling for all scrollable elements */
+  * {
+    scroll-behavior: smooth;
+  }
+
+  /* Improve scrolling performance for mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Optimize rendering for smooth scrolling */
+  body, 
+  main, 
+  section, 
+  div {
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Ensure animations are ready immediately */
+  .fade-in-up,
+  .fade-in-left,
+  .fade-in-right,
+  .fade-in,
+  .scale-in {
+    will-change: opacity, transform;
+    transform: translateZ(0);
+  }
+
+  /* Remove any additional delays */
+  .fade-in-up.visible,
+  .fade-in-left.visible,
+  .fade-in-right.visible,
+  .fade-in.visible,
+  .scale-in.visible {
+    will-change: auto;
   }
 
   h1,
@@ -149,6 +198,102 @@
 
   .animate-slide-in {
     animation: slide-in 0.3s ease-out forwards;
+  }
+
+  /* Smooth scrolling utilities */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .scroll-auto {
+    scroll-behavior: auto;
+  }
+
+  /* Custom scroll behaviors for different scroll speeds */
+  .scroll-slow {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+
+  /* Improve scroll performance on long lists */
+  .scroll-optimized {
+    contain: layout style paint;
+    overflow-anchor: none;
+  }
+
+  /* Better momentum scrolling on iOS */
+  .scroll-momentum {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+
+  /* Prevent layout shift during scroll */
+  .scroll-stable {
+    content-visibility: auto;
+    contain-intrinsic-size: 200px;
+  }
+
+  /* Scroll fade-in animations - Faster and more responsive */
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+
+  .fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fade-in-left {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+
+  .fade-in-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .fade-in-right {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+
+  .fade-in-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .fade-in {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+  }
+
+  /* Reduced staggered animation delays for faster loading */
+  .fade-in-up:nth-child(1) { transition-delay: 0s; }
+  .fade-in-up:nth-child(2) { transition-delay: 0.05s; }
+  .fade-in-up:nth-child(3) { transition-delay: 0.1s; }
+  .fade-in-up:nth-child(4) { transition-delay: 0.15s; }
+  .fade-in-up:nth-child(5) { transition-delay: 0.2s; }
+  .fade-in-up:nth-child(6) { transition-delay: 0.25s; }
+
+  /* Scale animation for cards - Faster */
+  .scale-in {
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  }
+
+  .scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

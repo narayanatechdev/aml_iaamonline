@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Filter, Eye, Quote, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { FEATURED_ARTICLES, SUBJECTS, JOURNAL_INFO, searchArticles } from '@/lib/realData';
 import type { FeaturedArticle } from '@/lib/realData';
 
@@ -26,23 +27,24 @@ interface ArticleCardProps {
 
 function ArticleCard({ article }: ArticleCardProps) {
   return (
-    <article className="border-b border-gray-200 py-6">
+    <article className="border-b border-gray-200 py-6 fade-in-up">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="inline-flex items-center gap-1 text-[#8c7220] text-xs">
           <span className="w-1.5 h-1.5 bg-[#c9a227] rounded-full"></span>
           Open Access
         </div>
-        <div className="text-xs text-[#5a6a8a] font-mono">
+        <div className="text-sm text-[#5a6a8a] font-mono">
           Vol. {article.volume}, Issue {article.issue} • {article.year}
+          {article.pages && ` • Pages: ${article.pages}`}
         </div>
       </div>
 
       {/* Article Type */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="text-[#0f2d6b] text-xs">
+        <span className="text-[#0f2d6b] text-sm">
           {article.type}
         </span>
-        <span className="text-[#5a6a8a] text-xs ml-auto">{article.published}</span>
+        <span className="text-[#5a6a8a] text-sm ml-auto">{article.published}</span>
       </div>
 
       {/* Article Title */}
@@ -50,42 +52,42 @@ function ArticleCard({ article }: ArticleCardProps) {
         href={`/article/${article.id}`}
         className="block hover:text-[#0f2d6b] transition-colors"
       >
-        <h3 className="text-lg text-[#0f1a2e] leading-snug mb-2">
+        <h3 className="text-xl text-[#0f1a2e] leading-snug mb-3">
           {article.title}
         </h3>
       </Link>
 
       {/* Authors */}
-      <div className="text-xs text-[#0f2d6b] mb-2 font-medium">
+      <div className="text-sm text-[#0f2d6b] mb-3 font-medium">
         {(article.authors || []).slice(0, 3).map(getAuthorName).filter(Boolean).join(', ')}
         {(article.authors || []).length > 3 ? ' et al.' : ''}
       </div>
 
       {/* DOI */}
-      <div className="text-xs text-[#5a6a8a] font-mono mb-3">
+      <div className="text-sm text-[#5a6a8a] font-mono mb-4">
         DOI: {article.doi}
       </div>
 
       {/* Graphical Abstract Thumbnail */}
       {article.graphical_abstract_url && (
-        <div className="mb-3">
-          <div className="w-full max-w-xs h-32 bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
+        <div className="mb-4">
+          <div className="w-full h-auto bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden rounded">
             <img 
               src={article.graphical_abstract_url}
               alt={`Graphical abstract for ${article.title}`}
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-contain max-h-48"
             />
           </div>
         </div>
       )}
 
       {/* Abstract Snippet */}
-      <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed mb-3">
+      <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-4">
         {article.abstract || 'Abstract not available.'}
       </p>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 text-xs text-[#5a6a8a] mb-3">
+      <div className="flex items-center gap-4 text-sm text-[#5a6a8a] mb-4">
         <span className="flex items-center gap-1">
           <Eye className="w-3 h-3" />
           {article.views.toLocaleString()} View
@@ -101,7 +103,7 @@ function ArticleCard({ article }: ArticleCardProps) {
       <div className="flex items-center gap-2">
         <Link
           href={article.pdf_url || `#`}
-          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline"
           {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -111,7 +113,7 @@ function ArticleCard({ article }: ArticleCardProps) {
         </Link>
         <Link
           href={`/article/${article.id}`}
-          className="inline-flex items-center gap-1 text-[#0f2d6b] text-xs hover:underline"
+          className="inline-flex items-center gap-1 text-[#0f2d6b] text-sm hover:underline"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -176,30 +178,36 @@ function CurrentIssueContent() {
 
 return (
     <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Breadcrumb */}
+        <Breadcrumb 
+          items={[{ label: 'Browse', href: '/browse' }, { label: 'Current Issue' }]} 
+          className="mb-6"
+        />
+        
         {/* Navigation Links */}
         <div className="mb-8">
           <div className="flex items-center gap-6 border-b border-border">
             <Link
               href="/browse/current"
-              className="px-4 py-3 text-sm font-semibold text-[#0f2d6b] border-b-2 border-[#0f2d6b]"
+              className="px-4 py-3 text-base font-semibold text-[#0f2d6b] border-b-2 border-[#0f2d6b]"
             >
               Current Issue
             </Link>
             <Link
               href="/browse/archive"
-              className="px-4 py-3 text-sm font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
+              className="px-4 py-3 text-base font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
             >
               By Issue / Archive
             </Link>
             <Link
               href="/browse/subject"
-              className="px-4 py-3 text-sm font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
+              className="px-4 py-3 text-base font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
             >
               By Subject
             </Link>
             <Link
               href="/browse/author"
-              className="px-4 py-3 text-sm font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
+              className="px-4 py-3 text-base font-medium text-[#5a6a8a] hover:text-[#0f2d6b] transition-colors"
             >
               By Author
             </Link>
@@ -211,7 +219,7 @@ return (
           <div className="lg:col-span-1 space-y-6">
             {/* Search Filter */}
             <div className="border-b border-gray-200 pb-5">
-              <h3 className="text-[#0f2d6b] text-sm font-semibold mb-3 flex items-center gap-2">
+              <h3 className="text-[#0f2d6b] text-base font-semibold mb-4 flex items-center gap-2">
                 <Search className="w-4 h-4" />
                 Search Articles
               </h3>
@@ -221,7 +229,7 @@ return (
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Title, author, keyword, DOI..."
-                  className="w-full pl-3 pr-8 py-2 rounded-lg border border-border text-xs focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+                  className="w-full pl-3 pr-8 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
                 />
                 {searchQuery && (
                   <button onClick={clearSearch} className="absolute right-2 top-1/2 -translate-y-1/2">
@@ -233,7 +241,7 @@ return (
 
             {/* Article Types Filter */}
             <div className="border-b border-gray-200 pb-5">
-              <h3 className="text-[#0f2d6b] text-sm font-semibold mb-3 flex items-center gap-2">
+              <h3 className="text-[#0f2d6b] text-base font-semibold mb-4 flex items-center gap-2">
                 <Filter className="w-4 h-4" />
                 Article Types
               </h3>
@@ -246,7 +254,7 @@ return (
                       onChange={() => toggleType(type)}
                       className="rounded border-border text-[#0f2d6b] focus:ring-[#0f2d6b]"
                     />
-                    <span className="text-xs text-[#3a4a6a]">{type}</span>
+                    <span className="text-sm text-[#3a4a6a]">{type}</span>
                   </label>
                 ))}
               </div>
@@ -264,8 +272,8 @@ return (
                       onChange={() => toggleSubject(subject.name)}
                       className="rounded border-border text-[#0f2d6b] focus:ring-[#0f2d6b]"
                     />
-                    <span className="text-xs text-[#3a4a6a] flex-1">{subject.name}</span>
-                    <span className="text-xs text-[#5a6a8a]">({subject.count})</span>
+                    <span className="text-sm text-[#3a4a6a] flex-1">{subject.name}</span>
+                    <span className="text-sm text-[#5a6a8a]">({subject.count})</span>
                   </label>
                 ))}
               </div>
@@ -280,15 +288,15 @@ return (
                 <div>
                   {isSearchMode ? (
                     <>
-                      <h1 className="text-[#0f1a2e] text-2xl font-bold">Search Results</h1>
-                      <p className="text-[#5a6a8a] text-base">
+                      <h1 className="text-[#0f1a2e] text-3xl font-bold">Search Results</h1>
+                      <p className="text-[#5a6a8a] text-lg">
                         {filteredArticles.length} result{filteredArticles.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
                       </p>
                     </>
                   ) : (
                     <>
-                      <h1 className="text-[#0f1a2e] text-2xl font-bold">Current Issue</h1>
-                      <p className="text-[#5a6a8a] text-base">
+                      <h1 className="text-[#0f1a2e] text-3xl font-bold">Current Issue</h1>
+                      <p className="text-[#5a6a8a] text-lg">
                         Vol. {JOURNAL_INFO.currentVolume}, Issue {JOURNAL_INFO.currentIssue} ({JOURNAL_INFO.currentYear})
                       </p>
                     </>
@@ -307,7 +315,7 @@ return (
                   {isSearchMode && (
                     <span
                       onClick={clearSearch}
-                      className="px-2 py-1 bg-[#0f2d6b] text-white text-xs rounded cursor-pointer hover:bg-[#0d2560] transition-colors"
+                      className="px-2 py-1 bg-[#0f2d6b] text-white text-sm rounded cursor-pointer hover:bg-[#0d2560] transition-colors"
                     >
                       Search: {searchQuery} ×
                     </span>
@@ -316,7 +324,7 @@ return (
                     <span
                       key={type}
                       onClick={() => toggleType(type)}
-                      className="px-2 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/20 cursor-pointer hover:bg-[#0f2d6b] hover:text-white transition-colors"
+                      className="px-2 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-sm rounded border border-[#0f2d6b]/20 cursor-pointer hover:bg-[#0f2d6b] hover:text-white transition-colors"
                     >
                       {type} ×
                     </span>
@@ -325,7 +333,7 @@ return (
                     <span
                       key={subject}
                       onClick={() => toggleSubject(subject)}
-                      className="px-2 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/20 cursor-pointer hover:bg-[#0f2d6b] hover:text-white transition-colors"
+                      className="px-2 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-sm rounded border border-[#0f2d6b]/20 cursor-pointer hover:bg-[#0f2d6b] hover:text-white transition-colors"
                     >
                       {subject} ×
                     </span>
@@ -335,10 +343,12 @@ return (
             </div>
 
             {/* Articles List */}
-            <div>
+            <div className="scroll-optimized">
               {filteredArticles.length > 0 ? (
                 filteredArticles.slice(0, 50).map((article) => (
-                  <ArticleCard key={article.id} article={article} />
+                  <div key={article.id} className="scroll-stable">
+                    <ArticleCard article={article} />
+                  </div>
                 ))
               ) : (
                 <div className="py-10 text-center border-b border-gray-200">
@@ -354,7 +364,7 @@ return (
                       setSelectedSubjects([]);
                       setSearchQuery('');
                     }}
-                    className="mt-3 text-[#0f2d6b] text-sm hover:underline"
+                    className="mt-3 text-[#0f2d6b] text-base hover:underline"
                   >
                     Clear all filters
                   </button>

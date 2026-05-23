@@ -5,12 +5,6 @@ import Link from 'next/link';
 import { ARTICLE_STATS, SUBJECTS } from '@/lib/realData';
 
 export function ReadersAuthorsSidebar() {
-  const quickStats = [
-    { label: 'Published Articles', value: ARTICLE_STATS.total.toLocaleString() + '+', icon: FileText },
-    { label: 'Total Citations', value: ARTICLE_STATS.totalCitations.toLocaleString() + '+', icon: TrendingUp },
-    { label: 'Countries', value: ARTICLE_STATS.totalCountries + '+', icon: Users },
-    { label: 'Journal Volumes', value: ARTICLE_STATS.totalVolumes.toString(), icon: BookOpen },
-  ];
 
   const newsArticles = [
     {
@@ -66,26 +60,55 @@ export function ReadersAuthorsSidebar() {
 
   return (
     <div className="space-y-6">
-      {/* Quick Stats */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4">Journal Impact</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {quickStats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="w-10 h-10 bg-[#0f2d6b]/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <stat.icon className="w-5 h-5 text-[#0f2d6b]" />
-              </div>
-              <div className="text-lg font-bold text-[#0f2d6b]">{stat.value}</div>
-              <div className="text-xs text-gray-600">{stat.label}</div>
-            </div>
-          ))}
+      {/* For Readers */}
+      <div className="bg-white rounded-xl border border-gray-100 p-8 fade-in-up">
+        <BookOpen className="w-8 h-8 text-[#0f2d6b] mb-4" />
+        <h3 className="text-black text-2xl mb-4 font-bold">For Readers</h3>
+        <p className="text-black text-base leading-relaxed mb-6">
+          Access {ARTICLE_STATS.total.toLocaleString()}+ peer-reviewed articles across all areas of materials science — completely free, no subscription required. Stay current with the latest research from {ARTICLE_STATS.totalCountries}+ countries.
+        </p>
+        <div className="flex gap-3">
+          <a
+            href="/browse/current"
+            className="px-5 py-3 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors font-semibold"
+          >
+            Current Issue
+          </a>
+          <a
+            href="/browse/archive"
+            className="px-5 py-3 bg-white border border-gray-300 text-black rounded-lg text-base hover:bg-gray-50 transition-colors"
+          >
+            Browse Archive
+          </a>
         </div>
       </div>
 
+      {/* For Authors */}
+      <div className="bg-white rounded-xl border border-gray-100 p-8 fade-in-up">
+        <FileText className="w-8 h-8 text-[#c9a227] mb-4" />
+        <h3 className="text-black text-2xl mb-4 font-bold">For Authors</h3>
+        <p className="text-black text-base leading-relaxed mb-6">
+          Publish your research in a Diamond Open Access journal — free to read, free to publish. Fast peer review, high visibility, and global reach.
+        </p>
+        <div className="flex gap-3">
+          <a
+            href="/submit"
+            className="px-5 py-3 bg-[#c9a227] text-white rounded-lg text-base hover:bg-[#b8911f] transition-colors font-semibold"
+          >
+            Submit Now
+          </a>
+          <a
+            href="#guidelines"
+            className="px-5 py-3 bg-white border border-gray-300 text-black rounded-lg text-base hover:bg-gray-50 transition-colors"
+          >
+            Author Guidelines
+          </a>
+        </div>
+      </div>
 
       {/* Browse by Subject */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4 flex items-center gap-2">
+      <div className="bg-white rounded-xl border border-gray-100 p-6 fade-in-up">
+        <h3 className="text-black font-semibold text-lg mb-4 flex items-center gap-2">
           <Tag className="w-5 h-5" />
           Browse by Subject
         </h3>
@@ -117,8 +140,8 @@ export function ReadersAuthorsSidebar() {
       </div>
 
       {/* News Articles */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4 flex items-center gap-2">
+      <div className="bg-white rounded-xl border border-gray-100 p-6 fade-in-up">
+        <h3 className="text-black font-semibold text-xl mb-4 flex items-center gap-2">
           <Newspaper className="w-5 h-5" />
           News & Announcements
         </h3>
@@ -137,10 +160,10 @@ export function ReadersAuthorsSidebar() {
                   {new Date(news.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
               </div>
-              <h4 className="text-sm font-semibold text-[#0f1a2e] group-hover:text-[#0f2d6b] transition-colors line-clamp-2 mb-2">
+              <h4 className="text-base font-semibold text-black group-hover:text-[#0f2d6b] transition-colors line-clamp-2 mb-3">
                 {news.title}
               </h4>
-              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+              <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
                 {news.excerpt}
               </p>
             </Link>
@@ -185,7 +208,7 @@ export function ReadersAuthorsSidebar() {
 
       {/* Publishing Parameters */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4">Publishing Parameters</h3>
+        <h3 className="text-black font-semibold text-lg mb-4">Publishing Parameters</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Impact Factor</span>
@@ -202,40 +225,6 @@ export function ReadersAuthorsSidebar() {
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Acceptance Rate</span>
             <span className="text-sm font-semibold text-[#0f2d6b]">35%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Why Publish With Us */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h3 className="text-[#0f2d6b] font-semibold text-lg mb-4">Why Publish With Us</h3>
-        <div className="space-y-4">
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 bg-[#c9a227]/10 rounded flex items-center justify-center flex-shrink-0">
-              <Award className="w-3 h-3 text-[#c9a227]" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-900 mb-1">Diamond Open Access</div>
-              <div className="text-xs text-gray-600 leading-relaxed">No publication fees, completely free for authors</div>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 bg-blue-50 rounded flex items-center justify-center flex-shrink-0">
-              <Globe className="w-3 h-3 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-900 mb-1">Global Visibility</div>
-              <div className="text-xs text-gray-600 leading-relaxed">Indexed in Scopus, Web of Science, and 25+ databases</div>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 bg-green-50 rounded flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-3 h-3 text-green-600" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-900 mb-1">Quality Assurance</div>
-              <div className="text-xs text-gray-600 leading-relaxed">Rigorous peer review by international experts</div>
-            </div>
           </div>
         </div>
       </div>
