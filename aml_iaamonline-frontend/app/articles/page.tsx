@@ -8,14 +8,14 @@ import { BookOpen, Search, Filter } from 'lucide-react';
 export default function ArticlesPage() {
   return (
     <MainLayout>
-      <div className="bg-[#0f2d6b] text-white py-12">
+      <div className="bg-gray-100 text-black py-12">
         <div className="max-w-7xl mx-auto px-6">
           <Breadcrumb 
             items={[{ label: 'Articles' }]} 
             className="mb-6"
           />
           <h1 className="text-3xl font-bold mb-4">Articles</h1>
-          <p className="text-lg text-white/80">
+          <p className="text-lg text-gray-700">
             Browse and search all published articles in Advanced Materials Letters
           </p>
         </div>

@@ -8,14 +8,14 @@ import { BookOpen, Users, Award, Globe, FileText, CheckCircle } from 'lucide-rea
 export default function AboutJournalPage() {
   return (
     <MainLayout>
-      <div className="bg-[#0f2d6b] text-white py-12">
+      <div className="bg-gray-100 text-black py-12">
         <div className="max-w-7xl mx-auto px-6">
           <Breadcrumb 
             items={[{ label: 'About Journal' }]} 
             className="mb-6"
           />
           <h1 className="text-3xl font-bold mb-4">About Journal</h1>
-          <p className="text-lg text-white/80">
+          <p className="text-lg text-gray-700">
             Learn more about Advanced Materials Letters and our commitment to materials science research
           </p>
         </div>

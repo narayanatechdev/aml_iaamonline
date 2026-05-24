@@ -25,11 +25,19 @@ const NAV_ITEMS: NavItem[] = [
     label: 'About Journal',
     path: '/about-journal',
     children: [
-      { label: 'Aims & Scope', path: '/about-journal/aims-scope' },
-      { label: 'Editorial Board', path: '/about-journal/editorial-board' },
-      { label: 'Indexing & Abstracting', path: '/about-journal/indexing' },
-      { label: 'Ethics & Process', path: '/about-journal/ethics-process' },
-      { label: 'Review Process', path: '/about-journal/review-process' },
+      { label: 'Journal Staff', path: '/about-journal/journal-staff' },
+      { label: 'About the Editors', path: '/about-journal/about-editors' },
+      { label: 'Research Cross-Journal Editorial Team', path: '/about-journal/editorial-team' },
+      { label: 'Journal Information', path: '/about-journal/journal-information' },
+      { label: 'Journal Metrics', path: '/about-journal/journal-metrics' },
+      { label: 'Our Publishing Models', path: '/about-journal/publishing-models' },
+      { label: 'Editorial Values Statement', path: '/about-journal/editorial-values' },
+      { label: 'Editorial Policies', path: '/about-journal/editorial-policies' },
+      { label: 'Journalistic Principles', path: '/about-journal/journalistic-principles' },
+      { label: 'History of Nature', path: '/about-journal/history' },
+      { label: 'Awards', path: '/about-journal/awards' },
+      { label: 'Contact', path: '/about-journal/contact' },
+      { label: 'Send a News Tip', path: '/about-journal/news-tip' },
     ],
   },
   {
@@ -235,18 +243,18 @@ export function Navbar() {
                 </a>
 
                 {item.children && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 w-56 bg-white rounded-b-lg shadow-xl border border-border z-50 transform origin-top animate-in slide-in-from-top-4 fade-in duration-300 ease-out">
-                    {item.children.map((child, idx) => (
-                      <a
-                        key={child.label}
-                        href={child.path}
-                        className={`block px-4 py-2.5 text-base text-foreground hover:bg-secondary hover:text-primary hover:border-l-2 hover:border-primary transition-all ${
-                          idx === 0 ? 'pt-3' : ''
-                        } ${idx === item.children!.length - 1 ? 'pb-3' : ''}`}
-                      >
-                        {child.label}
-                      </a>
-                    ))}
+                  <div className="absolute top-full left-0 w-96 bg-white rounded-b-lg shadow-xl border border-border z-[100] max-h-80 overflow-y-auto">
+                    <div className={`${item.children.length > 8 ? 'grid grid-cols-2 gap-1' : 'space-y-1'} p-2`}>
+                      {item.children.map((child, idx) => (
+                        <a
+                          key={child.label}
+                          href={child.path}
+                          className="block px-3 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary transition-all rounded"
+                        >
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 )}
               </li>
@@ -308,12 +316,13 @@ export function Navbar() {
                   {item.label}
                 </a>
                 {item.children && (
-                  <div className="pl-4">
+                  <div className="pl-4 max-h-64 overflow-y-auto">
                     {item.children.map((child) => (
                       <a
                         key={child.label}
                         href={child.path}
-                        className="block py-2 text-base text-muted-foreground border-b border-border/30"
+                        className="block py-2 text-sm text-muted-foreground hover:text-primary border-b border-border/30"
+                        onClick={() => setMobileOpen(false)}
                       >
                         {child.label}
                       </a>
