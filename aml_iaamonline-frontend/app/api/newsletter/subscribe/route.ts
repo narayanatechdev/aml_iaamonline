@@ -54,8 +54,7 @@ function isDisposableEmail(email: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     // Get client IP for rate limiting
-    const ip = request.ip || 
-               request.headers.get('x-forwarded-for')?.split(',')[0] ||
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ||
                request.headers.get('x-real-ip') ||
                '127.0.0.1';
 
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify request headers for basic CSRF protection
-    const headersList = headers();
+    const headersList = await headers();
     const requestedWith = headersList.get('X-Requested-With');
     const contentType = headersList.get('Content-Type');
 

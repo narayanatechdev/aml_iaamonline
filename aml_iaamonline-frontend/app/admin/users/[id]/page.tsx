@@ -27,6 +27,7 @@ interface UserDetails extends UserFormData {
   article_count: number;
   author_id: number | null;
   is_admin: boolean;
+  verified?: boolean;
 }
 
 interface Article {

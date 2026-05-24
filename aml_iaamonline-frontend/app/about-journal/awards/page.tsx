@@ -11,7 +11,7 @@ export default function AwardsPage() {
         <div className="max-w-7xl mx-auto px-6">
           <Breadcrumb 
             items={[
-              { label: 'About Journal', path: '/about-journal' },
+              { label: 'About Journal', href: '/about-journal' },
               { label: 'Awards' }
             ]} 
             className="mb-6"

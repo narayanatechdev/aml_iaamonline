@@ -1,20 +1,17 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
-// Initialize Redis client for rate limiting
-// In production, you should use environment variables for Redis connection
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || 'redis://localhost:6379',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
-});
+const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-// Create rate limiter instance
-export const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(3, '1h'), // 3 requests per hour
-  analytics: true,
-  prefix: 'newsletter_subscription',
-});
+const upstashRatelimit = upstashUrl && upstashToken
+  ? new Ratelimit({
+      redis: new Redis({ url: upstashUrl, token: upstashToken }),
+      limiter: Ratelimit.slidingWindow(3, '1h'),
+      analytics: true,
+      prefix: 'newsletter_subscription',
+    })
+  : null;
 
 // Alternative in-memory rate limiter for development (if Redis not available)
 class SimpleRateLimiter {
@@ -71,6 +68,9 @@ class SimpleRateLimiter {
 
 // Fallback rate limiter for development
 export const fallbackRatelimit = new SimpleRateLimiter();
+
+// Export Upstash if configured, otherwise fall back to in-memory limiter
+export const ratelimit = upstashRatelimit ?? fallbackRatelimit;
 
 // Clean up fallback rate limiter every 10 minutes
 if (typeof window === 'undefined') { // Server-side only
