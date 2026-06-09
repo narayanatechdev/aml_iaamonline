@@ -143,7 +143,7 @@ export function NewsletterSubscription({ className = '' }: NewsletterSubscriptio
         </div>
         <div>
           <h3 className="text-black font-semibold text-lg">Stay Updated</h3>
-          <p className="text-black/70 text-sm">Get latest articles & journal updates</p>
+          <p className="text-black/70 text-sm">Receive New Issue Alerts</p>
         </div>
       </div>
 

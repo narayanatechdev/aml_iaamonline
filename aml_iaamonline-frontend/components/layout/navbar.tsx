@@ -80,7 +80,7 @@ const NAV_CATEGORIES: NavCategory[] = [
       { label: 'Publication Ethics & Policy', description: 'Integrity, regulation, ethics', path: '/about-journal/editorial-policies' },
       { label: 'Access & Membership', description: 'Consortium & cooperation models', path: '/about-journal' },
       { label: 'Indexing & Metrics', description: 'Reach, citations, Altmetrics', path: '/about-journal/journal-metrics' },
-      { label: '15+ Years & History', description: 'Published by IAAM since June 2010', path: '/about-journal' },
+      { label: '15+ Years & History', description: 'Published by International Association of Advanced Materials since June 2010', path: '/about-journal' },
       { label: 'FAQ & Contact', description: 'Reach the editorial office', path: '/contact' },
     ],
   },
@@ -170,7 +170,7 @@ export function Navbar() {
             </div>
             <div>
               <div className="text-lg font-semibold text-black">Advanced Materials Letters</div>
-              <div className="text-xs text-gray-600">Published by IAAM</div>
+              <div className="text-xs text-gray-600">Published by International Association of Advanced Materials</div>
             </div>
           </a>
           <div className="flex items-center gap-4">

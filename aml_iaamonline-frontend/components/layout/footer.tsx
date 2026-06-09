@@ -4,21 +4,21 @@ import { BookOpen, X, MailIcon, Rss } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-[#0a1e4a] text-white mt-16">
+    <footer className="bg-gray-100 text-black mt-16">
       {/* Newsletter bar */}
-      <div className="bg-[#0f2d6b] border-b border-white/10">
+      <div className="bg-gray-200 border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Rss className="w-5 h-5 text-[#c9a227]" />
-            <span className="text-sm font-semibold">Subscribe to AML Newsletter & New Issue Alerts</span>
+            <Rss className="w-5 h-5 text-black" />
+            <span className="text-sm font-semibold text-black">Subscribe to Journal Newsletter & Receive New Issue Alerts</span>
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <input
               type="email"
               placeholder="Your email address"
-              className="flex-1 sm:w-64 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-[#c9a227]"
+              className="flex-1 sm:w-64 px-4 py-2 rounded-lg bg-white border border-gray-300 text-sm text-black placeholder:text-gray-500 focus:outline-none focus:border-black focus:ring-2 focus:ring-black/20"
             />
-            <button className="px-4 py-2 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors whitespace-nowrap font-semibold">
+            <button className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 transition-colors whitespace-nowrap font-semibold">
               Subscribe
             </button>
           </div>
@@ -35,30 +35,30 @@ export function Footer() {
                 <BookOpen className="w-4 h-4 text-white" />
               </div>
               <div>
-                <div className="text-sm leading-tight font-bold">Advanced Materials Letters</div>
-                <div className="text-xs text-white/60 leading-tight">IAAM Open Access Journal</div>
+                <div className="text-sm leading-tight font-bold text-black">Advanced Materials Letters</div>
+                <div className="text-xs text-gray-700 leading-tight">IAAM Open Access Journal</div>
               </div>
             </div>
-            <p className="text-xs text-white/60 leading-relaxed mb-4">
+            <p className="text-xs text-gray-700 leading-relaxed mb-4">
               An international, peer-reviewed, diamond open access journal covering all aspects of
               materials science and engineering.
             </p>
             <div className="flex gap-3">
               <a
                 href="#twitter"
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#c9a227] transition-colors"
+                className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
               >
                 <X className="w-3.5 h-3.5" />
               </a>
               <a
                 href="#rss"
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#c9a227] transition-colors"
+                className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
               >
                 <Rss className="w-3.5 h-3.5" />
               </a>
               <a
                 href="mailto:info@iaamonline.org"
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#c9a227] transition-colors"
+                className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
               >
                 <MailIcon className="w-3.5 h-3.5" />
               </a>
@@ -67,7 +67,7 @@ export function Footer() {
 
           {/* About */}
           <div>
-            <h4 className="text-sm mb-4 text-[#c9a227] font-bold">About</h4>
+            <h4 className="text-sm mb-4 text-black font-bold">About</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Aims & Scope', href: '/about#aims' },
@@ -77,7 +77,7 @@ export function Footer() {
                 { label: 'Contact Us', href: '/about#contact' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-white/70 hover:text-white transition-colors">
+                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
                   </a>
                 </li>
@@ -87,7 +87,7 @@ export function Footer() {
 
           {/* Browse */}
           <div>
-            <h4 className="text-sm mb-4 text-[#c9a227] font-bold">Browse Content</h4>
+            <h4 className="text-sm mb-4 text-black font-bold">Browse Content</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Current Issue', href: '/browse' },
@@ -97,7 +97,7 @@ export function Footer() {
                 { label: 'News & Announcements', href: '/news' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-white/70 hover:text-white transition-colors">
+                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
                   </a>
                 </li>
@@ -107,7 +107,7 @@ export function Footer() {
 
           {/* Author Resources */}
           <div>
-            <h4 className="text-sm mb-4 text-[#c9a227] font-bold">Author Resources</h4>
+            <h4 className="text-sm mb-4 text-black font-bold">Author Resources</h4>
             <ul className="space-y-2">
               {[
                 { label: 'Submission Guidelines', href: '/author-resources' },
@@ -117,7 +117,7 @@ export function Footer() {
                 { label: 'Track Submission', href: '/track' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-white/70 hover:text-white transition-colors">
+                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
                   </a>
                 </li>
@@ -127,18 +127,18 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/50">
+        <div className="border-t border-gray-300 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-gray-700">
             © 2026 IAAM – International Association of Advanced Materials. All rights reserved.
           </p>
-          <div className="flex gap-4 text-xs text-white/50">
-            <a href="/privacy-policy" className="hover:text-white/80 transition-colors">
+          <div className="flex gap-4 text-xs text-gray-700">
+            <a href="/privacy-policy" className="hover:text-black transition-colors">
               Privacy Policy
             </a>
-            <a href="/terms-of-use" className="hover:text-white/80 transition-colors">
+            <a href="/terms-of-use" className="hover:text-black transition-colors">
               Terms of Use
             </a>
-            <a href="/cookie-policy" className="hover:text-white/80 transition-colors">
+            <a href="/cookie-policy" className="hover:text-black transition-colors">
               Cookie Policy
             </a>
           </div>

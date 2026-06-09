@@ -73,7 +73,7 @@ export function ArticleCategories() {
             </h3>
 
             <p className="text-sm text-gray-600 mb-6">
-              Published by IAAM (non-profit) since June 2010 · now in Volume 17 (2026)
+              Published by International Association of Advanced Materials (non-profit) since June 2010 · now in Volume 17 (2026)
             </p>
 
             {/* Stats Grid */}
