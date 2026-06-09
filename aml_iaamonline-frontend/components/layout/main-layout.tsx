@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { AnnouncementBar } from './announcement-bar';
 import { Navbar } from './navbar';
 import { Footer } from './footer';
 import { CookieConsent } from './cookie-consent';
@@ -61,6 +62,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-screen scroll-smooth">
+      <AnnouncementBar />
       <Navbar />
       <main className="flex-1 public-academic scroll-momentum">
         {children}

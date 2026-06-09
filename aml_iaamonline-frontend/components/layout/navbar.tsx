@@ -1,80 +1,99 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Menu, X, Search, BookOpen } from 'lucide-react';
+import { ChevronDown, Menu, X, Search, BookOpen, Moon, Sun, Bell as BellIcon, Rss } from 'lucide-react';
 import Link from 'next/link';
 import { searchArticles } from '@/lib/realData';
 
-interface NavItem {
+const dropdownStyles = `
+  @keyframes slideDownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mega-dropdown {
+    animation: slideDownFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  }
+
+  .mega-dropdown a {
+    transition: background-color 0.15s ease;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  }
+
+  .mega-dropdown a:hover {
+    background-color: #f9fafb;
+  }
+
+  nav {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  }
+
+  nav button {
+    transition: all 0.2s ease;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  }
+
+  nav button:hover {
+    transition: all 0.2s ease;
+  }
+`;
+
+interface MegaNavItem {
   label: string;
+  description?: string;
   path: string;
-  children?: NavItem[];
 }
 
-const NAV_ITEMS: NavItem[] = [
+interface NavCategory {
+  label: string;
+  items: MegaNavItem[];
+}
+
+const NAV_CATEGORIES: NavCategory[] = [
   {
-    label: 'Home',
-    path: '/',
-  },
-  {
-    label: 'About',
-    path: '/about',
-  },
-  {
-    label: 'About Journal',
-    path: '/about-journal',
-    children: [
-      { label: 'Journal Staff', path: '/about-journal/journal-staff' },
-      { label: 'About the Editors', path: '/about-journal/about-editors' },
-      { label: 'Research Cross-Journal Editorial Team', path: '/about-journal/editorial-team' },
-      { label: 'Journal Information', path: '/about-journal/journal-information' },
-      { label: 'Journal Metrics', path: '/about-journal/journal-metrics' },
-      { label: 'Our Publishing Models', path: '/about-journal/publishing-models' },
-      { label: 'Editorial Values Statement', path: '/about-journal/editorial-values' },
-      { label: 'Editorial Policies', path: '/about-journal/editorial-policies' },
-      { label: 'Journalistic Principles', path: '/about-journal/journalistic-principles' },
-      { label: 'History of Nature', path: '/about-journal/history' },
-      { label: 'Awards', path: '/about-journal/awards' },
-      { label: 'Contact', path: '/about-journal/contact' },
-      { label: 'Send a News Tip', path: '/about-journal/news-tip' },
+    label: 'Explore content',
+    items: [
+      { label: 'Research Articles', description: 'Original peer-reviewed studies', path: '/articles' },
+      { label: 'Reviews & Perspectives', description: 'Expert syntheses & commentary', path: '/browse/current' },
+      { label: 'Invited & Fellow Articles', description: 'Curated by the IAAM community', path: '/about' },
+      { label: 'Thematic Collections', description: 'Fellow-led special issues', path: '/browse/current' },
+      { label: 'Challenge Divisions', description: 'Five grand-challenge streams', path: '/browse/current' },
+      { label: 'Articles in Press', description: 'Accepted, awaiting issue', path: '/browse/archive' },
+      { label: 'News & Commentary', description: 'From the editorial desk', path: '/news' },
+      { label: 'Browse by Subject / Volume', description: '16 years of archives', path: '/browse/subject' },
     ],
   },
   {
-    label: 'Authors',
-    path: '/browse/author',
-  },
-  {
-    label: 'Browse',
-    path: '/browse/current',
-    children: [
-      { label: 'Current Issue', path: '/browse/current' },
-      { label: 'By Issue / Archive', path: '/browse/archive' },
-      { label: 'By Subject', path: '/browse/subject' },
-      { label: 'By Author', path: '/browse/author' },
+    label: 'About the journal',
+    items: [
+      { label: 'Aims & Scope', description: 'A Translational Materials Impact Platform', path: '/about-journal' },
+      { label: 'Editorial & Advisory Board', description: 'Led by IAAM Fellows', path: '/about' },
+      { label: 'TRL Publishing Framework', description: 'Classifying translational maturity', path: '/about-journal' },
+      { label: 'Publication Ethics & Policy', description: 'Integrity, regulation, ethics', path: '/about-journal/editorial-policies' },
+      { label: 'Access & Membership', description: 'Consortium & cooperation models', path: '/about-journal' },
+      { label: 'Indexing & Metrics', description: 'Reach, citations, Altmetrics', path: '/about-journal/journal-metrics' },
+      { label: '15+ Years & History', description: 'Published by IAAM since June 2010', path: '/about-journal' },
+      { label: 'FAQ & Contact', description: 'Reach the editorial office', path: '/contact' },
     ],
   },
   {
-    label: 'Articles',
-    path: '/articles',
-  },
-  {
-    label: 'Announcements',
-    path: '/news',
-  },
-  {
-    label: 'Author Resources',
-    path: '/author-resources',
-    children: [
-      { label: 'Submission Guidelines', path: '/author-resources/guidelines' },
-      { label: 'Peer Review & Ethics', path: '/author-resources/ethics' },
-      { label: 'Publishing Process', path: '/author-resources/process' },
-      { label: 'Submit Manuscript', path: '/author-resources/submit' },
+    label: 'Publish with us',
+    items: [
+      { label: 'For IAAM Fellows & Invited Authors', description: 'How invitations work', path: '/author-resources' },
+      { label: 'Submission Guidelines', description: 'Formats & requirements', path: '/author-resources/guidelines' },
+      { label: 'TRL Classification Guide', description: 'Declare translational stage', path: '/author-resources' },
+      { label: 'Article Categories', description: 'Beyond research & reviews', path: '/author-resources' },
+      { label: 'Peer Review & Editorial Process', description: 'Curated, transparent review', path: '/author-resources/process' },
+      { label: 'For Reviewers', description: 'Open reviewer recognition', path: '/author-resources/ethics' },
     ],
-  },
-  {
-    label: 'Contact',
-    path: '/contact',
   },
 ];
 
@@ -93,6 +112,9 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState('All subjects');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   function handleSearchChange(value: string) {
     setSearchQuery(value);
@@ -114,226 +136,280 @@ export function Navbar() {
     }
   }
 
-  return (
-    <header className="sticky top-0 z-50">
-      {/* Top bar */}
-      <div className="bg-[#0f2d6b] text-white py-1.5 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <span className="text-xs opacity-80">ISSN: 0976-3961 | eISSN: 1998-0140 | Diamond Open Access</span>
-        </div>
-      </div>
+  // Handle Escape key to close search modal
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowSearchModal(false);
+      }
+    };
 
-      {/* Main header */}
-      <div className="bg-white px-4 py-3 border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Logo + Title */}
-          <a href="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-accent" />
+    if (showSearchModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showSearchModal]);
+
+  return (
+    <>
+      <style>{dropdownStyles}</style>
+      <header className="sticky top-0 z-50 bg-white">
+      {/* ===== MASTHEAD ===== */}
+      <div className="border-b border-gray-200 px-4 py-4" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
+          <a href="/" className="flex items-center gap-4 flex-shrink-0">
+            <div className="w-11 h-11 rounded-lg bg-black">
+              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full p-1.5">
+                <path d="M16 3 4 9v14l12 6 12-6V9L16 3Z" stroke="#fff" strokeWidth="1.4" opacity=".9"/>
+                <path d="M16 3v26M4 9l24 14M28 9 4 23" stroke="#ccc" strokeWidth="1" opacity=".7"/>
+                <circle cx="16" cy="16" r="3.4" fill="#fff"/>
+              </svg>
             </div>
             <div>
-              <div className="text-primary text-sm font-bold leading-tight">Advanced Materials Letters</div>
-              <div className="text-muted-foreground text-xs leading-tight">IAAM Journal Management System</div>
+              <div className="text-lg font-semibold text-black">Advanced Materials Letters</div>
+              <div className="text-xs text-gray-600">Published by IAAM</div>
             </div>
           </a>
-
-          {/* Spacer to push content right */}
-          <div className="flex-1"></div>
-
-          {/* Right section with quick links and search */}
-          <div className="hidden md:flex items-center gap-6">
-            {/* Quick Action Links */}
-            <div className="flex items-center gap-4">
-              <Link 
-                href="/browse/current" 
-                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
-              >
-                Current Issue
-              </Link>
-              <Link 
-                href="/author-resources/submit" 
-                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
-              >
-                Submit Manuscript
-              </Link>
-              <Link 
-                href="/author-resources/guidelines" 
-                className="text-sm text-[#0f2d6b] hover:text-[#0d2560] font-medium border-b border-transparent hover:border-[#0f2d6b] transition-all duration-200"
-              >
-                Author Guidelines
-              </Link>
-            </div>
-
-            {/* Search bar */}
-            <div className="max-w-xs">
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                onFocus={() => searchResults.length > 0 && setShowSearchDropdown(true)}
-                onBlur={() => setTimeout(() => setShowSearchDropdown(false), 200)}
-                placeholder="Search articles, authors, keywords..."
-                className="w-full pl-4 pr-10 py-2 border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
-                <Search className="w-4 h-4 text-muted-foreground" />
-              </button>
-
-              {showSearchDropdown && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white shadow-xl border border-gray-200 overflow-hidden z-[100] max-h-[350px] overflow-y-auto">
-                  {searchResults.map((article) => (
-                    <Link
-                      key={article.id}
-                      href={`/article/${article.id}`}
-                      className="block px-4 py-2.5 hover:bg-[#f0f4fb] border-b border-gray-50 last:border-b-0 transition-colors"
-                      onClick={() => setShowSearchDropdown(false)}
-                    >
-                      <div className="text-[#0f1a2e] text-xs font-semibold line-clamp-1">{article.title}</div>
-                      <div className="text-[#5a6a8a] text-[10px] mt-0.5">
-                        {(article.authors || []).slice(0, 2).map(getAuthorName).filter(Boolean).join(', ')}
-                        {(article.authors || []).length > 2 ? ' et al.' : ''}
-                        <span className="mx-1">·</span>
-                        {article.year}
-                      </div>
-                    </Link>
-                  ))}
-                  <Link
-                    href={`/browse/current?q=${encodeURIComponent(searchQuery)}`}
-                    className="block px-4 py-2.5 text-center text-[#0f2d6b] text-xs font-semibold hover:bg-[#f0f4fb] bg-gray-50"
-                    onClick={() => setShowSearchDropdown(false)}
-                  >
-                    View all results
-                  </Link>
-                </div>
-              )}
-            </form>
-            </div>
+          <div className="flex items-center gap-4">
+            <a href="/feed" className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded transition text-gray-700 text-sm font-semibold" title="RSS Feed">
+              <Rss className="w-4 h-4" />
+              RSS feed
+            </a>
+            <div className="border-l border-gray-300 h-6"></div>
+            <a href="https://aml.iaamonline.org/contacts" className="text-sm font-semibold text-black hover:text-gray-700 transition">
+              Log in
+            </a>
+            <a href="https://aml.iaamonline.org/contacts?_action=signup" className="text-sm font-semibold px-4 py-2 rounded bg-black text-white hover:bg-gray-800 transition">
+              Register
+            </a>
           </div>
-
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
       </div>
 
-      {/* Navigation bar */}
-      <nav className="hidden md:block bg-white border-t border-b border-border">
-        <div className="max-w-7xl mx-auto px-4">
-          <ul className="flex items-center">
-            {NAV_ITEMS.map((item) => (
-              <li
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => item.children && setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
+      {/* ===== PRIMARY NAV ===== */}
+      <nav className="hidden md:block bg-white border-b border-gray-200 shadow-sm">
+        <div
+          style={{ height: '3px', background: '#000' }}
+        />
+        <div className="max-w-7xl mx-auto px-4 flex items-stretch">
+          {NAV_CATEGORIES.map((cat, idx) => (
+            <div
+              key={cat.label}
+              className="relative group"
+              onMouseEnter={() => setActiveDropdown(cat.label)}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button
+                className="flex items-center gap-2 px-6 py-3.5 text-sm font-semibold transition-all"
+                style={{
+                  color: activeDropdown === cat.label ? '#000' : '#333',
+                  background: activeDropdown === cat.label ? '#f5f5f5' : 'transparent',
+                  borderBottom: activeDropdown === cat.label ? '3px solid #000' : '3px solid transparent',
+                  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+                }}
               >
-                <a
-                  href={item.path}
-                  className={`flex items-center gap-1 px-4 py-3 text-base text-primary border-b-2 border-transparent hover:border-primary hover:text-primary hover:bg-gray-50 hover:shadow-sm transition-all duration-200 font-medium ${
-                    activeDropdown === item.label ? 'border-primary text-primary bg-gray-50' : ''
-                  }`}
-                >
-                  {item.label}
-                  {item.children && <ChevronDown className="w-3.5 h-3.5 opacity-70" />}
-                </a>
+                {cat.label}
+                <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform ${activeDropdown === cat.label ? 'rotate-180' : ''}`} />
+              </button>
 
-                {item.children && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 w-96 bg-white rounded-b-lg shadow-xl border border-border z-[100] max-h-80 overflow-y-auto">
-                    <div className={`${item.children.length > 8 ? 'grid grid-cols-2 gap-1' : 'space-y-1'} p-2`}>
-                      {item.children.map((child, idx) => (
-                        <a
-                          key={child.label}
-                          href={child.path}
-                          className="block px-3 py-2 text-sm text-foreground hover:bg-secondary hover:text-primary transition-all rounded"
-                        >
-                          {child.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+              {/* Mega Dropdown */}
+              {activeDropdown === cat.label && (
+                <div
+                  className="mega-dropdown absolute top-full left-0 w-[560px] bg-white rounded-b-lg shadow-2xl border border-gray-200 z-[100] p-6 grid grid-cols-2 gap-6"
+                  style={{ borderTop: '3px solid #000' }}
+                >
+                  {cat.items.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.path}
+                      className="block p-2.5 rounded-lg transition-all hover:bg-gray-50"
+                    >
+                      <div className="text-sm font-semibold" style={{ color: '#171a1f' }}>
+                        {item.label}
+                      </div>
+                      {item.description && (
+                        <div className="text-xs mt-1" style={{ color: '#6a7382' }}>
+                          {item.description}
+                        </div>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Search, Alerts, and CTA on right */}
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => setShowSearchModal(true)}
+              className="p-2.5 rounded hover:bg-gray-100 transition text-gray-700"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+            <a
+              href="#alerts"
+              className="px-4 py-2.5 text-sm font-semibold rounded transition-all flex items-center gap-2 text-gray-700 hover:bg-gray-100"
+              style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
+            >
+              <BellIcon className="w-4 h-4" />
+              Sign up for alerts
+            </a>
+            <Link
+              href="/author-resources/submit"
+              className="px-5 py-2.5 text-sm font-bold rounded transition-all bg-black text-white hover:bg-gray-800"
+              style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
+            >
+              Submit / Get invited →
+            </Link>
+          </div>
         </div>
       </nav>
 
+      {/* Mobile menu button and search */}
+      <div className="md:hidden px-4 py-3 border-t border-gray-200 flex items-center gap-3" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="p-2 rounded-lg hover:bg-gray-100 transition"
+        >
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+        <form onSubmit={handleSearchSubmit} className="flex-1 flex gap-2">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Search..."
+            className="flex-1 px-3 py-2 rounded border border-gray-200 text-sm"
+          />
+          <button type="submit" className="p-2">
+            <Search className="w-4 h-4" />
+          </button>
+        </form>
+      </div>
+
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-border shadow-lg">
-          <div className="px-4 py-3">
-            <form onSubmit={handleSearchSubmit}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                placeholder="Search articles, DOI, authors..."
-                className="w-full pl-4 pr-10 py-2 rounded-lg border border-border bg-secondary text-sm focus:outline-none"
-              />
-            </form>
-          </div>
-          
-          {/* Quick Links for Mobile */}
-          <div className="px-4 py-2 border-b border-border/50">
-            <div className="text-xs text-[#5a6a8a] font-semibold mb-2">Quick Links</div>
-            <div className="grid grid-cols-1 gap-1">
-              <Link 
-                href="/browse/current" 
-                className="text-sm text-[#0f2d6b] font-medium py-1.5"
-                onClick={() => setMobileOpen(false)}
-              >
-                Current Issue
-              </Link>
-              <Link 
-                href="/author-resources/submit" 
-                className="text-sm text-[#0f2d6b] font-medium py-1.5"
-                onClick={() => setMobileOpen(false)}
-              >
-                Submit Manuscript
-              </Link>
-              <Link 
-                href="/author-resources/guidelines" 
-                className="text-sm text-[#0f2d6b] font-medium py-1.5"
-                onClick={() => setMobileOpen(false)}
-              >
-                Author Guidelines
-              </Link>
-            </div>
-          </div>
-          
-          <nav className="px-4 pb-4">
-            {NAV_ITEMS.map((item) => (
-              <div key={item.label}>
-                <a
-                  href={item.path}
-                  className="block py-2.5 text-base text-foreground border-b border-border/50 font-medium"
-                >
-                  {item.label}
-                </a>
-                {item.children && (
-                  <div className="pl-4 max-h-64 overflow-y-auto">
-                    {item.children.map((child) => (
-                      <a
-                        key={child.label}
-                        href={child.path}
-                        className="block py-2 text-sm text-muted-foreground hover:text-primary border-b border-border/30"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {child.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
+          <nav className="px-4 py-4">
+            {NAV_CATEGORIES.map((cat) => (
+              <div key={cat.label}>
+                <div className="text-xs font-bold uppercase tracking-widest py-3" style={{ color: '#9a4e1c' }}>
+                  {cat.label}
+                </div>
+                <div className="space-y-2 ml-2">
+                  {cat.items.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.path}
+                      className="block text-sm font-medium hover:text-[#c2682a] transition"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             ))}
           </nav>
         </div>
       )}
+
+      {/* Search Modal */}
+      {showSearchModal && (
+        <div
+          className="w-full bg-white border-b border-gray-200 shadow-sm py-8 relative"
+          style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
+        >
+            <button
+              onClick={() => setShowSearchModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded transition"
+            >
+              <X className="w-5 h-5 text-gray-700" />
+            </button>
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Left: Search and filters */}
+                <div className="lg:col-span-1">
+                  <h2 className="text-2xl font-bold text-black mb-6">Search Advanced Materials Letters</h2>
+
+                  {/* Search input and button */}
+                  <div className="flex gap-3 mb-6">
+                    <input
+                      type="text"
+                      placeholder="Search 2,000+ articles, authors, keywords..."
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black"
+                      value={searchQuery}
+                      onChange={(e) => handleSearchChange(e.target.value)}
+                    />
+                    <select
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                      className="px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black bg-white"
+                    >
+                      <option>All subjects</option>
+                      <option>Materials Science</option>
+                      <option>Chemistry</option>
+                      <option>Physics</option>
+                      <option>Biology</option>
+                      <option>Engineering</option>
+                    </select>
+                    <button
+                      onClick={() => {
+                        if (searchQuery.trim()) {
+                          setShowSearchModal(false);
+                          router.push(`/browse/current?q=${encodeURIComponent(searchQuery.trim())}`);
+                        }
+                      }}
+                      className="px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-lg transition-colors"
+                    >
+                      Search
+                    </button>
+                  </div>
+
+                  {/* Quick links */}
+                  <div className="flex gap-4 text-sm">
+                    <a href="/search/advanced" className="font-semibold text-amber-700 hover:text-amber-800">
+                      Advanced search
+                    </a>
+                    <a href="/search/authors" className="font-semibold text-amber-700 hover:text-amber-800">
+                      By author
+                    </a>
+                    <a href="/search/issues" className="font-semibold text-amber-700 hover:text-amber-800">
+                      By issue
+                    </a>
+                    <a href="/search/keywords" className="font-semibold text-amber-700 hover:text-amber-800">
+                      Keyword index
+                    </a>
+                  </div>
+                </div>
+
+                {/* Right: Featured cards */}
+                <div className="grid grid-cols-2 gap-3">
+                  <a
+                    href="/browse/divisions"
+                    className="block px-4 py-3 bg-blue-900 text-white rounded hover:opacity-90 transition-opacity"
+                  >
+                    <h3 className="font-bold text-sm leading-tight">Browse Divisions</h3>
+                    <p className="text-xs text-blue-200 leading-tight">Five challenge streams</p>
+                  </a>
+
+                  <a
+                    href="/browse/collections"
+                    className="block px-4 py-3 bg-slate-700 text-white rounded hover:opacity-90 transition-opacity"
+                  >
+                    <h3 className="font-bold text-sm leading-tight">Collections</h3>
+                    <p className="text-xs text-slate-300 leading-tight">Fellow-led special issues</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+        </div>
+      )}
     </header>
+    </>
   );
 }

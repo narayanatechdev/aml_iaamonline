@@ -75,6 +75,7 @@
     --font-lexia-advertising: "lexia-advertising", serif;
     --font-sans: "lexia", serif;
     --font-serif: "lexia-advertising", serif;
+    --font-heading: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif;
   }
 
   * {
@@ -144,12 +145,23 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-lexia);
+    font-family: var(--font-heading);
     font-style: normal;
     letter-spacing: 0.01em;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  p,
+  a,
+  span,
+  li,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   }
 }
 
@@ -160,7 +172,7 @@
   .public-academic h4,
   .public-academic h5,
   .public-academic h6 {
-    font-family: var(--font-lexia);
+    font-family: var(--font-heading);
     font-style: normal;
     letter-spacing: 0.01em;
     text-rendering: optimizeLegibility;
