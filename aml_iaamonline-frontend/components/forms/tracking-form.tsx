@@ -118,15 +118,12 @@ export function TrackingForm() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Track Your Submission</CardTitle>
-          <CardDescription>Enter your Submission ID and email to check the status</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className="mb-8 rounded-xl border-gray-200 shadow-sm">
+        <CardContent className="pt-6">
+          <p className="text-sm text-gray-500 mb-4">Enter your Submission ID and email to check the status.</p>
           <form onSubmit={handleSearch} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-gray-900 mb-1">
                 Submission ID
               </label>
               <Input
@@ -139,7 +136,7 @@ export function TrackingForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-gray-900 mb-1">
                 Email Address
               </label>
               <Input
@@ -152,7 +149,7 @@ export function TrackingForm() {
             </div>
 
             {error && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded text-sm text-destructive">
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -168,7 +165,7 @@ export function TrackingForm() {
       {searched && submission && (
         <div className="space-y-6">
           {/* Manuscript Info */}
-          <Card>
+          <Card className="rounded-xl border-gray-200 shadow-sm">
             <CardHeader>
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -183,11 +180,11 @@ export function TrackingForm() {
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Submission ID</p>
+                  <p className="text-sm text-gray-500">Submission ID</p>
                   <p className="font-mono text-sm font-medium">{submission.submissionId}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Submitted Date</p>
+                  <p className="text-sm text-gray-500">Submitted Date</p>
                   <p className="text-sm font-medium">
                     {new Date(submission.submittedDate).toLocaleDateString('en-US', {
                       year: 'numeric',
@@ -201,7 +198,7 @@ export function TrackingForm() {
           </Card>
 
           {/* Progress */}
-          <Card>
+          <Card className="rounded-xl border-gray-200 shadow-sm">
             <CardHeader>
               <CardTitle>Review Progress</CardTitle>
             </CardHeader>
@@ -209,11 +206,11 @@ export function TrackingForm() {
               <div>
                 <div className="flex justify-between mb-2">
                   <span className="text-sm font-medium">{submission.currentStage}</span>
-                  <span className="text-sm font-medium text-primary">{submission.progress}%</span>
+                  <span className="text-sm font-medium text-[#0f2d6b]">{submission.progress}%</span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                    className="bg-[#0f2d6b] h-2 rounded-full transition-all duration-300"
                     style={{ width: `${submission.progress}%` }}
                   />
                 </div>
@@ -223,12 +220,12 @@ export function TrackingForm() {
               <div className="mt-8 space-y-4">
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="w-3 h-3 bg-primary rounded-full"></div>
-                    <div className="w-0.5 h-12 bg-primary mt-2"></div>
+                    <div className="w-3 h-3 bg-[#0f2d6b] rounded-full"></div>
+                    <div className="w-0.5 h-12 bg-[#0f2d6b] mt-2"></div>
                   </div>
                   <div>
                     <p className="font-medium text-sm">Submitted</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-500">
                       {new Date(submission.submittedDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -236,12 +233,12 @@ export function TrackingForm() {
 
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className={`w-3 h-3 ${submission.progress >= 30 ? 'bg-primary' : 'bg-muted'} rounded-full`}></div>
-                    <div className={`w-0.5 h-12 ${submission.progress >= 30 ? 'bg-primary' : 'bg-muted'} mt-2`}></div>
+                    <div className={`w-3 h-3 ${submission.progress >= 30 ? 'bg-[#0f2d6b]' : 'bg-gray-200'} rounded-full`}></div>
+                    <div className={`w-0.5 h-12 ${submission.progress >= 30 ? 'bg-[#0f2d6b]' : 'bg-gray-200'} mt-2`}></div>
                   </div>
                   <div>
                     <p className="font-medium text-sm">Editor Review</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-500">
                       {submission.progress >= 30 ? 'Completed' : 'In Progress'}
                     </p>
                   </div>
@@ -249,12 +246,12 @@ export function TrackingForm() {
 
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className={`w-3 h-3 ${submission.progress >= 60 ? 'bg-primary' : 'bg-muted'} rounded-full`}></div>
-                    <div className={`w-0.5 h-12 ${submission.progress >= 60 ? 'bg-primary' : 'bg-muted'} mt-2`}></div>
+                    <div className={`w-3 h-3 ${submission.progress >= 60 ? 'bg-[#0f2d6b]' : 'bg-gray-200'} rounded-full`}></div>
+                    <div className={`w-0.5 h-12 ${submission.progress >= 60 ? 'bg-[#0f2d6b]' : 'bg-gray-200'} mt-2`}></div>
                   </div>
                   <div>
                     <p className="font-medium text-sm">Peer Review</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-500">
                       {submission.progress >= 60 ? 'Completed' : 'In Progress'}
                     </p>
                   </div>
@@ -262,11 +259,11 @@ export function TrackingForm() {
 
                 <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className={`w-3 h-3 ${submission.progress >= 100 ? 'bg-primary' : 'bg-muted'} rounded-full`}></div>
+                    <div className={`w-3 h-3 ${submission.progress >= 100 ? 'bg-[#0f2d6b]' : 'bg-gray-200'} rounded-full`}></div>
                   </div>
                   <div>
                     <p className="font-medium text-sm">Final Decision</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-gray-500">
                       {submission.progress >= 100 ? 'Completed' : 'Pending'}
                     </p>
                   </div>
@@ -277,12 +274,12 @@ export function TrackingForm() {
 
           {/* Next Steps */}
           {submission.status === 'revision-requested' && (
-            <Card className="border-accent">
+            <Card className="rounded-xl border-amber-300 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-accent">Revision Requested</CardTitle>
+                <CardTitle className="text-amber-700">Revision Requested</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-gray-500">
                   The reviewers have requested revisions to your manuscript. Please review the feedback
                   and submit your revised manuscript with a detailed response letter.
                 </p>
@@ -292,12 +289,12 @@ export function TrackingForm() {
           )}
 
           {submission.status === 'accepted' && (
-            <Card className="border-green-500">
+            <Card className="rounded-xl border-emerald-300 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-green-600">Manuscript Accepted!</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-gray-500 mb-4">
                   Congratulations! Your manuscript has been accepted for publication.
                   Our production team will be in touch shortly with next steps.
                 </p>

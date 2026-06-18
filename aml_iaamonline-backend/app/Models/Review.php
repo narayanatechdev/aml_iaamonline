@@ -14,6 +14,7 @@ class Review extends Model
         'strengths',
         'weaknesses',
         'comments',
+        'confidential_comments',
         'questions',
         'quality_score',
         'novelty_score',

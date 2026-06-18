@@ -71,7 +71,7 @@ export function FeaturedArticles() {
               className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0 w-80 flex flex-col"
             >
               {/* Image */}
-              <div className="bg-gray-100 h-48 overflow-hidden flex-shrink-0">
+              <div className="bg-gray-100 aspect-[4/3] overflow-hidden flex-shrink-0">
                 <img
                   src={article.graphical_abstract_url || 'https://images.unsplash.com/photo-1578926078328-123456789012?w=400&h=300&fit=crop'}
                   alt={article.title}
@@ -83,12 +83,12 @@ export function FeaturedArticles() {
               </div>
 
               {/* Content */}
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="font-bold text-base mb-2 line-clamp-2 text-black" style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif" }}>
+              <div className="p-4 flex flex-col">
+                <h3 className="font-bold text-base mb-2 line-clamp-2 min-h-[3rem] text-black" style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif" }}>
                   {article.title}
                 </h3>
 
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                <p className="text-sm text-gray-600 mb-3 line-clamp-1 min-h-[1.25rem]">
                   {(article.authors as any[])
                     .slice(0, 2)
                     .map(formatAuthor)
@@ -97,23 +97,20 @@ export function FeaturedArticles() {
                   {(article.authors as any[]).length > 2 ? ' et al.' : ''}
                 </p>
 
-                <div className="space-y-1 text-xs text-gray-700 mb-4 flex-grow">
-                  <div>
-                    <span className="font-semibold">Volume:</span> {article.volume}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Issue:</span> {article.issue}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Pages:</span> {article.pages}
-                  </div>
-                  <div className="break-all">
-                    <span className="font-semibold">DOI:</span> <span className="text-blue-600">{article.doi}</span>
-                  </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-700 mb-4">
+                  {article.volume && (
+                    <span><span className="font-semibold">Vol.</span> {article.volume}</span>
+                  )}
+                  {article.issue && (
+                    <span><span className="font-semibold">Issue</span> {article.issue}</span>
+                  )}
+                  {article.pages && (
+                    <span><span className="font-semibold">pp.</span> {article.pages}</span>
+                  )}
                 </div>
 
-                {/* Action buttons - Fixed at bottom */}
-                <div className="flex gap-2 pt-3 border-t border-gray-200 mt-auto flex-shrink-0">
+                {/* Action buttons */}
+                <div className="flex gap-2 pt-3 border-t border-gray-200">
                   {article.pdf_url && (
                     <a
                       href={article.pdf_url}

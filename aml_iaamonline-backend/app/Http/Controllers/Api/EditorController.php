@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
+use App\Models\Notification;
 use App\Models\ReviewAssignment;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class EditorController extends Controller
@@ -53,7 +55,10 @@ class EditorController extends Controller
         $stats = [
             'total_manuscripts' => Manuscript::count(),
             'new_submissions' => Manuscript::where('status', 'submitted')->count(),
+            'new_triage' => Manuscript::whereIn('status', ['submitted', 'with_editor'])->count(),
             'under_review' => Manuscript::where('status', 'under_review')->count(),
+            'pending_decision' => Manuscript::where('status', 'decision')->count(),
+            'in_revision' => Manuscript::where('status', 'revision_required')->count(),
             'accepted' => Manuscript::where('status', 'accepted')->count(),
             'rejected' => Manuscript::where('status', 'rejected')->count(),
             'pending_assignments' => Manuscript::where('status', 'submitted')->count(),
@@ -68,6 +73,93 @@ class EditorController extends Controller
     /**
      * Invite a reviewer.
      */
+    /**
+     * Move an accepted manuscript into production.
+     */
+    public function sendToProduction(Request $request, int $id)
+    {
+        $manuscript = Manuscript::findOrFail($id);
+        if ($manuscript->status !== 'accepted') {
+            return response()->json(['success' => false, 'message' => 'Only accepted manuscripts can enter production.'], 422);
+        }
+        $manuscript->update(['status' => 'production']);
+
+        return response()->json(['success' => true, 'data' => $manuscript]);
+    }
+
+    /**
+     * Toggle a production checklist step.
+     */
+    public function updateProduction(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'step' => 'required|in:prod_copyedit,prod_typeset,prod_proof,prod_xml',
+            'value' => 'required|boolean',
+        ]);
+        $manuscript = Manuscript::findOrFail($id);
+        $manuscript->update([$validated['step'] => $validated['value']]);
+
+        return response()->json(['success' => true, 'data' => $manuscript]);
+    }
+
+    /**
+     * Publish a manuscript: assign volume/issue/pages, register a DOI.
+     */
+    public function publish(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'volume' => 'required|string|max:50',
+            'issue' => 'required|string|max:50',
+            'pages' => 'nullable|string|max:50',
+            'doi' => 'nullable|string|max:255',
+        ]);
+        $manuscript = Manuscript::findOrFail($id);
+        if (! $manuscript->prod_copyedit || ! $manuscript->prod_typeset || ! $manuscript->prod_proof || ! $manuscript->prod_xml) {
+            return response()->json(['success' => false, 'message' => 'Complete all production steps before publishing.'], 422);
+        }
+
+        $doi = ($validated['doi'] ?? null) ?: '10.5185/amlett.'.now()->year.'.'.str_pad((string) $manuscript->id, 6, '0', STR_PAD_LEFT);
+
+        $manuscript->update([
+            'status' => 'published',
+            'volume' => $validated['volume'],
+            'issue' => $validated['issue'],
+            'pages' => $validated['pages'] ?? null,
+            'doi' => $doi,
+            'published_at' => now(),
+        ]);
+
+        AuditLog::create([
+            'action' => 'decision_made',
+            'actor_email' => $request->user()->email,
+            'actor_type' => 'editor',
+            'manuscript_id' => $manuscript->id,
+            'description' => 'Published manuscript: '.$manuscript->submission_id." (DOI {$doi})",
+            'status' => 'success',
+            'actor_ip' => $request->ip(),
+        ]);
+
+        Notification::add($manuscript->author_email, 'published', 'Your manuscript is published',
+            '"'.$manuscript->title.'" is now published. DOI: '.$doi, '/dashboard');
+
+        return response()->json(['success' => true, 'message' => 'Manuscript published.', 'data' => $manuscript]);
+    }
+
+    /**
+     * List reviewers the editor can assign (excludes the editor themselves).
+     */
+    public function reviewers(Request $request)
+    {
+        $reviewers = User::whereHas('activeRoles', function ($q) {
+            $q->where('name', 'reviewer');
+        })
+            ->where('id', '!=', $request->user()?->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return response()->json(['data' => $reviewers]);
+    }
+
     public function inviteReviewer(Request $request)
     {
         $validated = $request->validate([
@@ -102,6 +194,9 @@ class EditorController extends Controller
             'actor_ip' => $request->ip(),
         ]);
 
+        Notification::add($validated['reviewer_email'], 'review_invitation', 'New review invitation',
+            'You have been invited to review a manuscript. Due '.$validated['due_date'].'.', '/reviewer');
+
         return response()->json([
             'success' => true,
             'message' => 'Reviewer invited successfully.',
@@ -123,7 +218,7 @@ class EditorController extends Controller
         $manuscript = Manuscript::findOrFail($validated['manuscript_id']);
 
         $manuscript->update([
-            'status' => $validated['decision'] === 'accept' ? 'accepted' : ($validated['decision'] === 'reject' ? 'rejected' : 'revision_requested'),
+            'status' => $validated['decision'] === 'accept' ? 'accepted' : ($validated['decision'] === 'reject' ? 'rejected' : 'revision_required'),
             'final_decision' => $validated['decision'],
             'decision_date' => now(),
             'decision_notes' => $validated['notes'],
@@ -138,6 +233,9 @@ class EditorController extends Controller
             'status' => 'success',
             'actor_ip' => $request->ip(),
         ]);
+
+        Notification::add($manuscript->author_email, 'decision', 'Editorial decision: '.$validated['decision'],
+            'A decision has been recorded for "'.$manuscript->title.'".', '/dashboard');
 
         return response()->json([
             'success' => true,

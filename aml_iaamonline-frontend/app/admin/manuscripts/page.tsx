@@ -1,20 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText, Send, Search, ClipboardCheck, CheckCircle,
-  AlertCircle, Clock, PlusCircle, ArrowRight, BookOpen,
-  BarChart3, Users, RefreshCw,
+  PlusCircle, ArrowRight, BookOpen,
+  BarChart3, Users, RefreshCw, Inbox, RotateCcw, ChevronRight,
 } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { authFetch, API_BASE } from '@/lib/adminAuth';
 
 interface EditorStats {
   total_manuscripts?: number;
+  new_triage?: number;
   under_review?: number;
   pending_decision?: number;
+  in_revision?: number;
   accepted?: number;
   rejected?: number;
 }
@@ -25,7 +26,14 @@ interface Manuscript {
   status: string;
   submitted_at: string;
   authors?: string;
+  category?: string;
+  division?: string;
+  reviewers_total?: number;
+  reviews_completed?: number;
 }
+
+// Statuses that require the editor's attention on the dashboard queue
+const ATTENTION_STATUSES = ['decision', 'with_editor', 'submitted', 'revision_required'];
 
 const WORKFLOW_STAGES = [
   {
@@ -74,6 +82,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   submitted: { label: 'Submitted', color: 'bg-blue-100 text-blue-800' },
   under_review: { label: 'Under Review', color: 'bg-amber-100 text-amber-800' },
   with_editor: { label: 'With Editor', color: 'bg-purple-100 text-purple-800' },
+  decision: { label: 'Decision Due', color: 'bg-purple-100 text-purple-800' },
   revision_required: { label: 'Revision Required', color: 'bg-orange-100 text-orange-800' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-800' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-800' },
@@ -99,46 +108,67 @@ export default function ManuscriptsPage() {
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasData, setHasData] = useState(false);
+  const [editors, setEditors] = useState<{ id: number; name: string; email: string }[]>([]);
+  const [assigningId, setAssigningId] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [statsRes, msRes] = await Promise.allSettled([
-          fetch(`${API_BASE}/editor/stats`),
-          fetch(`${API_BASE}/editor/manuscripts?per_page=10`),
-        ]);
-
-        if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
-          const data = await statsRes.value.json();
-          setEditorStats(data);
-          setHasData(true);
-        }
-
-        if (msRes.status === 'fulfilled' && msRes.value.ok) {
-          const data = await msRes.value.json();
-          const items = data.data || data.manuscripts || data || [];
-          if (items.length > 0) {
-            setManuscripts(items);
-            setHasData(true);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch manuscript data:', err);
-      } finally {
-        setIsLoading(false);
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [statsRes, msRes, edRes] = await Promise.allSettled([
+        authFetch(`${API_BASE}/editor/stats`),
+        authFetch(`${API_BASE}/editor/manuscripts?per_page=50`),
+        authFetch(`${API_BASE}/admin/editors`),
+      ]);
+      if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
+        const json = await statsRes.value.json();
+        setEditorStats(json.data ?? json); // endpoint returns { success, data }
+        setHasData(true);
       }
-    };
-
-    fetchData();
+      if (msRes.status === 'fulfilled' && msRes.value.ok) {
+        const data = await msRes.value.json();
+        const items = data.data || data.manuscripts || data || [];
+        setManuscripts(items);
+        if (items.length > 0) setHasData(true);
+      }
+      if (edRes.status === 'fulfilled' && edRes.value.ok) {
+        const data = await edRes.value.json();
+        setEditors(data.data ?? []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch manuscript data:', err);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
+  const assignEditor = async (manuscriptId: number, editorId: string) => {
+    if (!editorId) return;
+    setAssigningId(manuscriptId);
+    try {
+      const res = await authFetch(`${API_BASE}/managing-editor/assign-editor/${manuscriptId}`, {
+        method: 'POST',
+        body: JSON.stringify({ editor_id: Number(editorId) }),
+      });
+      if (res.ok) await fetchData();
+    } finally {
+      setAssigningId(null);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const statCards = [
-    { label: 'Total Manuscripts', value: editorStats?.total_manuscripts ?? 0, icon: <FileText className="w-5 h-5" />, color: 'text-blue-600 bg-blue-50' },
-    { label: 'Under Review', value: editorStats?.under_review ?? 0, icon: <Clock className="w-5 h-5" />, color: 'text-amber-600 bg-amber-50' },
-    { label: 'Pending Decision', value: editorStats?.pending_decision ?? 0, icon: <AlertCircle className="w-5 h-5" />, color: 'text-purple-600 bg-purple-50' },
+    { label: 'New / Triage', value: editorStats?.new_triage ?? 0, icon: <Inbox className="w-5 h-5" />, color: 'text-blue-600 bg-blue-50' },
+    { label: 'Under Review', value: editorStats?.under_review ?? 0, icon: <Search className="w-5 h-5" />, color: 'text-amber-600 bg-amber-50' },
+    { label: 'Decision Due', value: editorStats?.pending_decision ?? 0, icon: <ClipboardCheck className="w-5 h-5" />, color: 'text-purple-600 bg-purple-50' },
+    { label: 'In Revision', value: editorStats?.in_revision ?? 0, icon: <RotateCcw className="w-5 h-5" />, color: 'text-orange-600 bg-orange-50' },
     { label: 'Accepted', value: editorStats?.accepted ?? 0, icon: <CheckCircle className="w-5 h-5" />, color: 'text-green-600 bg-green-50' },
   ];
+
+  // Manuscripts that need the editor's attention now
+  const attentionList = manuscripts.filter((m) => ATTENTION_STATUSES.includes(m.status));
 
   return (
     <div className="min-h-full">
@@ -157,13 +187,13 @@ export default function ManuscriptsPage() {
 
       {/* Stats row */}
       {isLoading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          {[...Array(5)].map((_, i) => (
             <div key={i} className="h-24 bg-white rounded-2xl animate-pulse border border-gray-100" />
           ))}
         </div>
       ) : hasData ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           {statCards.map((card, idx) => (
             <motion.div
               key={card.label}
@@ -235,39 +265,93 @@ export default function ManuscriptsPage() {
           transition={{ delay: 0.5 }}
           className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
         >
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-base font-semibold text-gray-900">Recent Manuscripts</h2>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">Needs your attention</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Manuscripts awaiting triage, assignment, or a decision</p>
+            </div>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#0f2d6b]/8 text-[#0f2d6b]">
+              {attentionList.length} {attentionList.length === 1 ? 'item' : 'items'}
+            </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-50">
-                  <th className="text-left text-xs font-semibold text-gray-500 px-6 py-3">Title</th>
-                  <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 hidden md:table-cell">Status</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-6 py-3">Manuscript</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 hidden md:table-cell">Stage</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 hidden lg:table-cell">Reviews</th>
                   <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 hidden lg:table-cell">Submitted</th>
+                  <th className="px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody>
-                {manuscripts.map((ms, idx) => (
-                  <motion.tr
-                    key={ms.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 + idx * 0.04 }}
-                    className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors"
-                  >
-                    <td className="px-6 py-3.5">
-                      <p className="text-sm font-medium text-gray-900 line-clamp-1">{ms.title}</p>
-                      {ms.authors && <p className="text-xs text-gray-400 mt-0.5">{ms.authors}</p>}
+                {attentionList.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center">
+                      <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">Nothing waiting — nice work.</p>
                     </td>
-                    <td className="px-3 py-3.5 hidden md:table-cell">
-                      <StatusBadge status={ms.status} />
-                    </td>
-                    <td className="px-3 py-3.5 hidden lg:table-cell">
-                      <span className="text-xs text-gray-500">{formatDate(ms.submitted_at)}</span>
-                    </td>
-                  </motion.tr>
-                ))}
+                  </tr>
+                ) : (
+                  attentionList.map((ms, idx) => (
+                    <motion.tr
+                      key={ms.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 + idx * 0.04 }}
+                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors group"
+                    >
+                      <td className="px-6 py-3.5">
+                        <p className="text-xs font-mono text-[#c9a227] font-semibold mb-0.5">
+                          {`MS-${String(ms.id).padStart(4, '0')}`}
+                        </p>
+                        <p className="text-sm font-medium text-gray-900 line-clamp-1 max-w-md group-hover:text-[#0f2d6b] transition-colors">
+                          {ms.title}
+                        </p>
+                        {(ms.category || ms.division || ms.authors) && (
+                          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
+                            {[ms.category, ms.division].filter(Boolean).join(' · ') || ms.authors}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-3 py-3.5 hidden md:table-cell">
+                        <StatusBadge status={ms.status} />
+                      </td>
+                      <td className="px-3 py-3.5 hidden lg:table-cell">
+                        {ms.reviewers_total ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-600">
+                            {ms.reviews_completed ?? 0}/{ms.reviewers_total} complete
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">none assigned</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-3.5 hidden lg:table-cell">
+                        <span className="text-xs text-gray-500">{formatDate(ms.submitted_at)}</span>
+                      </td>
+                      <td className="px-6 py-3.5 text-right">
+                        {['submitted', 'with_editor'].includes(ms.status) ? (
+                          <select
+                            defaultValue=""
+                            disabled={assigningId === ms.id || editors.length === 0}
+                            onChange={(e) => assignEditor(ms.id, e.target.value)}
+                            className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 disabled:opacity-50"
+                          >
+                            <option value="" disabled>
+                              {assigningId === ms.id ? 'Assigning…' : 'Assign editor…'}
+                            </option>
+                            {editors.map((ed) => (
+                              <option key={ed.id} value={ed.id}>{ed.name}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="text-xs text-gray-400">Assigned</span>
+                        )}
+                      </td>
+                    </motion.tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

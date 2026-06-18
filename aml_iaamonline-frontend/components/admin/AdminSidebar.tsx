@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { getUser } from '@/lib/adminAuth';
 import {
   LayoutDashboard,
   Users,
@@ -95,8 +96,13 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
   const { sidebarCollapsed, setSidebarCollapsed, mobileMenuOpen, setMobileMenuOpen } = useAdminLayout();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  // TODO: Get this from auth context
-  const isAdmin = true;
+  // Derive admin status from the logged-in user (stored at login). Read after
+  // mount to avoid SSR/hydration mismatch, since it comes from localStorage.
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAdmin(getUser()?.roles?.includes('admin') ?? false);
+  }, []);
 
   const toggleMenu = (label: string) => {
     setExpandedMenus((prev) =>
@@ -125,18 +131,18 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-[#0f2d6b] text-white z-50 transition-all duration-300 hidden lg:block ${
+        className={`fixed top-0 left-0 h-full bg-gray-100 text-gray-700 border-r border-gray-200 z-50 transition-all duration-300 hidden lg:block ${
           sidebarCollapsed ? 'w-16' : 'w-64'
         }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           {!sidebarCollapsed && (
             <Link href="/admin" className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-[#c9a227] flex items-center justify-center flex-shrink-0">
                 <BookOpen className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm font-bold truncate">AML Admin</span>
+              <span className="text-sm font-bold truncate text-gray-900">AML Admin</span>
             </Link>
           )}
           {sidebarCollapsed && (
@@ -149,7 +155,7 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
         {/* Toggle button */}
         <button
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-[#0f2d6b] border-2 border-white/20 flex items-center justify-center hover:bg-[#1a3d7c] transition-colors"
+          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-gray-100 border-2 border-gray-300 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors"
         >
           {sidebarCollapsed ? (
             <ChevronRight className="w-3 h-3" />
@@ -169,8 +175,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                       onClick={() => !sidebarCollapsed && toggleMenu(item.label)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                         isChildActive(item.children)
-                          ? 'bg-white/15 text-white'
-                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                          ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                          : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                       }`}
                       title={sidebarCollapsed ? item.label : undefined}
                     >
@@ -190,15 +196,15 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                     </button>
                     {!sidebarCollapsed &&
                       expandedMenus.includes(item.label) && (
-                        <ul className="mt-1 ml-4 pl-4 border-l border-white/20 space-y-1">
+                        <ul className="mt-1 ml-4 pl-4 border-l border-gray-200 space-y-1">
                           {item.children.map((child) => (
                             <li key={child.path}>
                               <Link
                                 href={child.path}
                                 className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
                                   pathname === child.path
-                                    ? 'bg-white/15 text-white'
-                                    : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                    ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                                    : 'text-gray-500 hover:bg-gray-200 hover:text-gray-900'
                                 }`}
                               >
                                 {child.label}
@@ -213,8 +219,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                     href={item.path!}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                       isActive(item.path)
-                        ? 'bg-white/15 text-white'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                        ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                        : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                     }`}
                     title={sidebarCollapsed ? item.label : undefined}
                   >
@@ -228,9 +234,9 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
         </nav>
 
         {/* Sign Out */}
-        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-white/10">
+        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-gray-200">
           <button
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors"
             title={sidebarCollapsed ? 'Sign Out' : undefined}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
@@ -241,17 +247,17 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
 
       {/* Mobile Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0f2d6b] text-white z-50 transform transition-transform duration-300 lg:hidden ${
+        className={`fixed top-0 left-0 h-full w-64 bg-gray-100 text-gray-700 border-r border-gray-200 z-50 transform transition-transform duration-300 lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           <Link href="/admin" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#c9a227] flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-bold">AML Admin</span>
+            <span className="text-sm font-bold text-gray-900">AML Admin</span>
           </Link>
         </div>
 
@@ -266,8 +272,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                       onClick={() => toggleMenu(item.label)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                         isChildActive(item.children)
-                          ? 'bg-white/15 text-white'
-                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                          ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                          : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                       }`}
                     >
                       <span className="flex-shrink-0">{item.icon}</span>
@@ -279,7 +285,7 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                       />
                     </button>
                     {expandedMenus.includes(item.label) && (
-                      <ul className="mt-1 ml-4 pl-4 border-l border-white/20 space-y-1">
+                      <ul className="mt-1 ml-4 pl-4 border-l border-gray-200 space-y-1">
                         {item.children.map((child) => (
                           <li key={child.path}>
                             <Link
@@ -287,8 +293,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                               onClick={() => setMobileMenuOpen(false)}
                               className={`block px-3 py-2 text-sm rounded-lg transition-colors ${
                                 pathname === child.path
-                                  ? 'bg-white/15 text-white'
-                                  : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                  ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                                  : 'text-gray-500 hover:bg-gray-200 hover:text-gray-900'
                               }`}
                             >
                               {child.label}
@@ -304,8 +310,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                       isActive(item.path)
-                        ? 'bg-white/15 text-white'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                        ? 'bg-white text-[#0f2d6b] font-semibold shadow-sm'
+                        : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                     }`}
                   >
                     <span className="flex-shrink-0">{item.icon}</span>
@@ -318,8 +324,8 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
         </nav>
 
         {/* Sign Out */}
-        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-white/10">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-gray-200">
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors">
             <LogOut className="w-5 h-5" />
             <span>Sign Out</span>
           </button>

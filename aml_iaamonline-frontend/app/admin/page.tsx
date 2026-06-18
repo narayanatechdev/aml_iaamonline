@@ -22,6 +22,9 @@ interface ArticleStats {
   total_views: number;
   total_downloads: number;
   total_citations: number;
+  total_authors?: number;
+  total_users?: number;
+  total_manuscripts?: number;
   by_year: Record<string, number>;
   by_subject: Record<string, number>;
   by_type: Record<string, number>;
@@ -233,18 +236,27 @@ export default function AdminDashboardPage() {
         .sort((a, b) => b.value - a.value)
     : [];
 
+  // Format a count from the DB, with a graceful loading fallback
+  const fmt = (n?: number) => (n != null ? n.toLocaleString() : '…');
+
+  const totalRecords =
+    (stats?.total ?? 0) +
+    (stats?.total_authors ?? 0) +
+    (stats?.total_users ?? 0) +
+    (stats?.total_manuscripts ?? 0);
+
   const quickActions = [
-    { label: 'Manage Users', icon: <Users className="w-5 h-5" />, href: '/admin/users', count: '1,293', color: 'bg-blue-50 text-blue-700 border-blue-100' },
-    { label: 'Browse Articles', icon: <BookOpen className="w-5 h-5" />, href: '/admin/articles', count: '1,662', color: 'bg-amber-50 text-amber-700 border-amber-100' },
-    { label: 'Manuscripts', icon: <FileText className="w-5 h-5" />, href: '/admin/manuscripts', count: 'Workflow', color: 'bg-indigo-50 text-indigo-700 border-indigo-100' },
+    { label: 'Manage Users', icon: <Users className="w-5 h-5" />, href: '/admin/users', count: `${fmt(stats?.total_users)} users`, color: 'bg-blue-50 text-blue-700 border-blue-100' },
+    { label: 'Browse Articles', icon: <BookOpen className="w-5 h-5" />, href: '/admin/articles', count: `${fmt(stats?.total)} articles`, color: 'bg-amber-50 text-amber-700 border-amber-100' },
+    { label: 'Manuscripts', icon: <FileText className="w-5 h-5" />, href: '/admin/manuscripts', count: `${fmt(stats?.total_manuscripts)} in workflow`, color: 'bg-indigo-50 text-indigo-700 border-indigo-100' },
     { label: 'Analytics', icon: <BarChart3 className="w-5 h-5" />, href: '/admin/analytics', count: 'Deep Dive', color: 'bg-green-50 text-green-700 border-green-100' },
   ];
 
   const healthItems = [
     { label: 'API Server', status: 'online', icon: <Server className="w-4 h-4" /> },
-    { label: 'Database', status: 'online', icon: <Database className="w-4 h-4" />, detail: '7k+ records' },
+    { label: 'Database', status: 'online', icon: <Database className="w-4 h-4" />, detail: stats ? `${totalRecords.toLocaleString()} records` : 'Loading...' },
     { label: 'Articles', status: 'online', icon: <Layers className="w-4 h-4" />, detail: stats ? `${stats.total.toLocaleString()} indexed` : 'Loading...' },
-    { label: 'Authors', status: 'online', icon: <Users className="w-4 h-4" />, detail: '5,051 linked' },
+    { label: 'Authors', status: 'online', icon: <Users className="w-4 h-4" />, detail: stats ? `${fmt(stats.total_authors)} linked` : 'Loading...' },
   ];
 
   return (

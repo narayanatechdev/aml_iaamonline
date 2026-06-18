@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, Shield, Loader2, RefreshCw, Lock } from 'lucide-rea
 import { AdminBreadcrumb } from '@/components/admin/AdminBreadcrumb';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
+import { authFetch, API_BASE } from '@/lib/adminAuth';
 
 interface Role {
   id: number;
@@ -18,7 +19,7 @@ interface Role {
   is_protected: boolean;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_URL = API_BASE;
 
 const ROLE_TYPE_CONFIG: Record<string, { color: string; bgColor: string }> = {
   author: { color: 'text-gray-700', bgColor: 'bg-gray-100' },
@@ -56,7 +57,7 @@ export default function RolesPage() {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/admin/roles`);
+      const response = await authFetch(`${API_URL}/admin/roles`);
       if (!response.ok) throw new Error('Failed to fetch roles');
 
       const data = await response.json();
@@ -77,7 +78,7 @@ export default function RolesPage() {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`${API_URL}/admin/roles/${deleteDialog.role.id}`, {
+      const response = await authFetch(`${API_URL}/admin/roles/${deleteDialog.role.id}`, {
         method: 'DELETE',
       });
 

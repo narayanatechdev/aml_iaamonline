@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
+use App\Models\Author;
+use App\Models\Manuscript;
+use App\Models\User;
 use App\Services\CitationFormatterService;
 use Illuminate\Http\Request;
 
@@ -36,6 +39,12 @@ class ArticleController extends Controller
 
         if ($type = $request->input('type')) {
             $query->where('document_type', $type);
+        }
+
+        // Admin scope: only articles that came through this submission system
+        // (linked to a manuscript), excluding the imported legacy archive.
+        if ($request->boolean('from_submission')) {
+            $query->whereNotNull('manuscript_id');
         }
 
         $sortBy = $request->input('sort', 'publish_date');
@@ -103,6 +112,9 @@ class ArticleController extends Controller
             'total_views' => $totalViews,
             'total_downloads' => $totalDownloads,
             'total_citations' => $totalCitations,
+            'total_authors' => Author::count(),
+            'total_users' => User::count(),
+            'total_manuscripts' => Manuscript::count(),
             'by_year' => $byYear,
             'by_subject' => $bySubject,
             'by_type' => $byType,

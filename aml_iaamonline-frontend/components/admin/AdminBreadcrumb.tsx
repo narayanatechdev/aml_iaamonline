@@ -14,8 +14,10 @@ interface AdminBreadcrumbProps {
 }
 
 export function AdminBreadcrumb({ items, showHome = true }: AdminBreadcrumbProps) {
-  const allItems = showHome
-    ? [{ label: 'Admin', href: '/admin' }, ...items]
+  // Avoid a duplicate "Dashboard" when the page already passes it as the first item
+  const firstIsDashboard = items[0]?.href === '/admin' || items[0]?.label === 'Dashboard';
+  const allItems = showHome && !firstIsDashboard
+    ? [{ label: 'Dashboard', href: '/admin' }, ...items]
     : items;
 
   return (
@@ -33,7 +35,7 @@ export function AdminBreadcrumb({ items, showHome = true }: AdminBreadcrumbProps
         const isFirst = index === 0;
 
         return (
-          <span key={item.label} className="flex items-center gap-1">
+          <span key={`${item.label}-${index}`} className="flex items-center gap-1">
             {(!showHome || !isFirst) && (
               <ChevronRight className="w-4 h-4 text-gray-400" />
             )}

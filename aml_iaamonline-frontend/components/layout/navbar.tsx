@@ -179,10 +179,10 @@ export function Navbar() {
               RSS feed
             </a>
             <div className="border-l border-gray-300 h-6"></div>
-            <a href="https://aml.iaamonline.org/contacts" className="text-sm font-semibold text-black hover:text-gray-700 transition">
+            <a href="/account/login" className="text-sm font-semibold text-black hover:text-gray-700 transition">
               Log in
             </a>
-            <a href="https://aml.iaamonline.org/contacts?_action=signup" className="text-sm font-semibold px-4 py-2 rounded bg-black text-white hover:bg-gray-800 transition">
+            <a href="/account/register" className="text-sm font-semibold px-4 py-2 rounded bg-black text-white hover:bg-gray-800 transition">
               Register
             </a>
           </div>

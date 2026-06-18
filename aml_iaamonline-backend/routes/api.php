@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminAnalyticsController;
 use App\Http\Controllers\Api\AdminManuscriptController;
 use App\Http\Controllers\Api\AdminRoleController;
@@ -9,6 +10,11 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
 use App\Http\Controllers\Api\ManagingEditorController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\OaiController;
+use App\Http\Controllers\Api\OrcidController;
+use App\Http\Controllers\Api\ProposalController;
+use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\SubmissionController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +28,7 @@ Route::get('/health', function () {
 });
 
 // Authentication Routes
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 // Author Submission Routes
@@ -43,6 +50,12 @@ Route::get('/articles/{id}/citation', [ArticleController::class, 'citation'])->n
 Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');
 Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('authors.show');
 
+// Reference data + open scholarly endpoints (public)
+Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
+Route::get('/oai', [OaiController::class, 'handle'])->name('oai');
+Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
+Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
+
 // Reviewer Routes
 Route::post('/reviewer/verify-email', [ReviewerController::class, 'verifyEmail'])->name('reviewer.verify-email');
 Route::post('/reviewer/verify-code', [ReviewerController::class, 'verifyCode'])->name('reviewer.verify-code');
@@ -54,15 +67,41 @@ Route::middleware('auth.token')->group(function () {
 
 // Editor Routes (require editor authentication)
 Route::middleware('auth:sanctum')->group(function () {
+    // Authenticated author's own workspace (any logged-in user)
+    Route::get('/my/manuscripts', [AccountController::class, 'manuscripts'])->name('my.manuscripts');
+    Route::get('/my/manuscripts/{id}', [AccountController::class, 'manuscriptDetail'])->name('my.manuscript.detail');
+    Route::post('/my/manuscripts/{id}/revise', [AccountController::class, 'revise'])->name('my.manuscript.revise');
+    Route::get('/me', [AccountController::class, 'profile'])->name('me.profile');
+    Route::patch('/me', [AccountController::class, 'updateProfile'])->name('me.update');
+    Route::put('/me/password', [AccountController::class, 'updatePassword'])->name('me.password');
+
+    // In-app notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+    // Book / proceedings proposals
+    Route::get('/my/proposals', [ProposalController::class, 'mine'])->name('proposals.mine');
+    Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/proposals', [ProposalController::class, 'index'])->name('proposals.index');
+    Route::post('/proposals/{id}/decision', [ProposalController::class, 'decide'])->name('proposals.decide');
+
+    // Editor production & publishing
+    Route::post('/editor/production/{id}/start', [EditorController::class, 'sendToProduction'])->name('editor.production.start');
+    Route::patch('/editor/production/{id}', [EditorController::class, 'updateProduction'])->name('editor.production.update');
+    Route::post('/editor/publish/{id}', [EditorController::class, 'publish'])->name('editor.publish');
+
     Route::get('/editor/manuscripts', [EditorController::class, 'index'])->name('editor.manuscripts');
     Route::get('/editor/manuscript/{id}', [EditorController::class, 'show'])->name('editor.show');
     Route::post('/editor/invite-reviewer', [EditorController::class, 'inviteReviewer'])->name('editor.invite-reviewer');
     Route::post('/editor/decision', [EditorController::class, 'makeDecision'])->name('editor.decision');
     Route::get('/editor/stats', [EditorController::class, 'stats'])->name('editor.stats');
+    Route::get('/editor/reviewers', [EditorController::class, 'reviewers'])->name('editor.reviewers');
 
     // Admin User Management Routes
     Route::prefix('admin')->group(function () {
         // User management
+        Route::get('/editors', [AdminUserController::class, 'editors'])->name('admin.editors');
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('admin.users.show');

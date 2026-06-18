@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Models\ManuscriptFile;
+use App\Models\Notification;
+use App\Models\SustainableDevelopmentGoal;
 use App\Services\AuthorImageValidationService;
+use App\Services\SimilarityCheckService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -27,9 +30,22 @@ class SubmissionController extends Controller
             'keywords' => 'required|string',
             'category' => ['required', Rule::in(['nanotechnology', 'materials-science', 'polymers', 'composites', 'functional-materials', 'sustainable', 'other'])],
             'pdf' => 'required|file|mimes:pdf|max:52428800',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            // Optional metadata
+            'funding_information' => 'nullable|string|max:2000',
+            'acknowledgements' => 'nullable|string|max:2000',
+            'conflict_of_interest' => 'nullable|string|max:2000',
+            'data_availability' => 'nullable|string|max:2000',
+            'cover_letter' => 'nullable|string|max:5000',
+            'co_authors' => 'nullable|json',
+            'sdgs' => 'nullable|json',
+            'trl' => 'nullable|integer|min:1|max:9',
+            'division' => 'nullable|string|max:255',
         ]);
 
         $submissionId = 'SUB-'.Str::random(12);
+
+        $coAuthors = $request->filled('co_authors') ? json_decode($request->input('co_authors'), true) : null;
 
         $manuscript = Manuscript::create([
             'submission_id' => $submissionId,
@@ -40,9 +56,26 @@ class SubmissionController extends Controller
             'abstract' => $validated['abstract'],
             'keywords' => $validated['keywords'],
             'category' => $validated['category'],
+            'funding_information' => $validated['funding_information'] ?? null,
+            'acknowledgements' => $validated['acknowledgements'] ?? null,
+            'conflict_of_interest' => $validated['conflict_of_interest'] ?? null,
+            'data_availability' => $validated['data_availability'] ?? null,
+            'cover_letter' => $validated['cover_letter'] ?? null,
+            'co_authors' => $coAuthors,
+            'trl' => $validated['trl'] ?? null,
+            'division' => $validated['division'] ?? null,
             'status' => 'submitted',
             'submitted_at' => now(),
         ]);
+
+        // Attach selected Sustainable Development Goals (by sdg_number)
+        if ($request->filled('sdgs')) {
+            $sdgNumbers = json_decode($request->input('sdgs'), true) ?? [];
+            if (is_array($sdgNumbers) && count($sdgNumbers) > 0) {
+                $sdgIds = SustainableDevelopmentGoal::whereIn('sdg_number', $sdgNumbers)->pluck('id');
+                $manuscript->sdgs()->sync($sdgIds);
+            }
+        }
 
         if ($request->hasFile('pdf')) {
             $file = $request->file('pdf');
@@ -66,6 +99,44 @@ class SubmissionController extends Controller
                 'file_size' => $file->getSize(),
             ]);
         }
+
+        // Optional graphical abstract / cover image
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = $submissionId.'_image.'.$image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('manuscript-images', $imageName, 'public');
+
+            ManuscriptFile::create([
+                'manuscript_id' => $manuscript->id,
+                'file_name' => $image->getClientOriginalName(),
+                'file_path' => $imagePath,
+                'file_type' => $image->getClientOriginalExtension(),
+                'file_size' => $image->getSize(),
+                'mime_type' => $image->getMimeType(),
+                'file_type_category' => 'supplementary',
+                'uploaded_at' => now(),
+            ]);
+
+            $manuscript->update([
+                'author_image_url' => $imagePath,
+                'author_image_mime_type' => $image->getMimeType(),
+                'author_image_size' => $image->getSize(),
+            ]);
+        }
+
+        // Similarity check (scaffold — returns null/pending until a provider is configured)
+        if ($manuscript->file_path) {
+            $manuscript->update(['similarity_score' => SimilarityCheckService::check($manuscript->file_path)]);
+        }
+
+        // In-app notification to the author
+        Notification::add(
+            $manuscript->author_email,
+            'submission_received',
+            'Manuscript received',
+            'Your submission "'.$manuscript->title.'" ('.$submissionId.') has been received.',
+            '/dashboard'
+        );
 
         AuditLog::create([
             'action' => 'submission_created',

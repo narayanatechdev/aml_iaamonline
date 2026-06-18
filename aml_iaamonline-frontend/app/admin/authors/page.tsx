@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Users, Globe, Mail, BookOpen, Link2, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin/AdminBreadcrumb';
 import { API_BASE } from '@/lib/adminAuth';
@@ -28,6 +29,7 @@ interface PaginatedAuthors {
 }
 
 export default function AuthorsPage() {
+  const router = useRouter();
   const [authors, setAuthors]     = useState<Author[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
@@ -40,7 +42,7 @@ export default function AuthorsPage() {
     setLoading(true);
     setError('');
     try {
-      const params = new URLSearchParams({ page: String(page), per_page: '20' });
+      const params = new URLSearchParams({ page: String(page), per_page: '20', linked: '1' });
       if (search) params.set('q', search);
 
       const res  = await fetch(`${API_BASE}/authors?${params}`);
@@ -198,7 +200,11 @@ export default function AuthorsPage() {
                 </tr>
               ) : (
                 authors.map((author) => (
-                  <tr key={author.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={author.id}
+                    onClick={() => router.push(`/admin/authors/${author.id}`)}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
                     {/* Author name + avatar */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -233,7 +239,7 @@ export default function AuthorsPage() {
                     {/* Email */}
                     <td className="px-4 py-3">
                       {author.email
-                        ? <a href={`mailto:${author.email}`} className="text-[#0f2d6b] text-xs hover:underline truncate block max-w-[160px]">{author.email}</a>
+                        ? <a href={`mailto:${author.email}`} onClick={(e) => e.stopPropagation()} className="text-[#0f2d6b] text-xs hover:underline truncate block max-w-[160px]">{author.email}</a>
                         : <span className="text-gray-300 text-xs">—</span>}
                     </td>
 

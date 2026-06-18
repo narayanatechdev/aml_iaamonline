@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\AuditLog;
+use App\Models\Author;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +16,18 @@ use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
 {
+    /**
+     * List users who can be assigned as handling editors.
+     */
+    public function editors(): JsonResponse
+    {
+        $editors = User::whereHas('activeRoles', function ($q) {
+            $q->whereIn('name', ['editor', 'managing-editor']);
+        })->get(['id', 'name', 'email']);
+
+        return response()->json(['data' => $editors]);
+    }
+
     /**
      * List users with pagination, filters (role, status, search by name/email).
      *
@@ -29,14 +43,14 @@ class AdminUserController extends Controller
         $this->authorizeAdmin();
 
         $isPostgres = config('database.default') === 'pgsql';
-        $likeOp     = $isPostgres ? 'ilike' : 'like';
+        $likeOp = $isPostgres ? 'ilike' : 'like';
 
         $query = User::select([
-                'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
-                'title', 'first_name', 'last_name', 'degree', 'position',
-                'orcid', 'affiliation', 'country', 'city',
-                'is_reviewer', 'join_date',
-            ])
+            'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
+            'title', 'first_name', 'last_name', 'degree', 'position',
+            'orcid', 'affiliation', 'country', 'city',
+            'is_reviewer', 'join_date',
+        ])
             ->with(['activeRoles:id,name,display_name'])
             ->with(['authorProfile:id,user_id,article_count,orcid']);
 
@@ -49,50 +63,51 @@ class AdminUserController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search, $likeOp) {
-                $q->where('name',        $likeOp, "%{$search}%")
-                  ->orWhere('email',       $likeOp, "%{$search}%")
-                  ->orWhere('affiliation', $likeOp, "%{$search}%")
-                  ->orWhere('country',     $likeOp, "%{$search}%")
-                  ->orWhere('orcid',       $likeOp, "%{$search}%");
+                $q->where('name', $likeOp, "%{$search}%")
+                    ->orWhere('email', $likeOp, "%{$search}%")
+                    ->orWhere('affiliation', $likeOp, "%{$search}%")
+                    ->orWhere('country', $likeOp, "%{$search}%")
+                    ->orWhere('orcid', $likeOp, "%{$search}%");
             });
         }
 
         $perPage = min($request->integer('per_page', 20), 100);
-        $users   = $query->latest()->paginate($perPage);
+        $users = $query->latest()->paginate($perPage);
 
         $items = collect($users->items())->map(function (User $u) {
             $roles = $u->activeRoles->pluck('name')->toArray();
+
             return [
-                'id'           => $u->id,
-                'name'         => $u->name,
-                'first_name'   => $u->first_name,
-                'last_name'    => $u->last_name,
-                'title'        => $u->title,
-                'email'        => $u->email,
-                'orcid'        => $u->orcid ?? $u->authorProfile?->orcid,
-                'affiliation'  => $u->affiliation,
-                'country'      => $u->country,
-                'city'         => $u->city,
-                'degree'       => $u->degree,
-                'position'     => $u->position,
-                'is_reviewer'  => (bool) $u->is_reviewer,
-                'join_date'    => $u->join_date,
-                'created_at'   => $u->created_at,
-                'article_count'=> $u->authorProfile?->article_count ?? 0,
-                'author_id'    => $u->authorProfile?->id,
-                'roles'        => $roles,
-                'is_admin'     => in_array('admin', $roles),
-                'verified'     => ! is_null($u->email_verified_at),
+                'id' => $u->id,
+                'name' => $u->name,
+                'first_name' => $u->first_name,
+                'last_name' => $u->last_name,
+                'title' => $u->title,
+                'email' => $u->email,
+                'orcid' => $u->orcid ?? $u->authorProfile?->orcid,
+                'affiliation' => $u->affiliation,
+                'country' => $u->country,
+                'city' => $u->city,
+                'degree' => $u->degree,
+                'position' => $u->position,
+                'is_reviewer' => (bool) $u->is_reviewer,
+                'join_date' => $u->join_date,
+                'created_at' => $u->created_at,
+                'article_count' => $u->authorProfile?->article_count ?? 0,
+                'author_id' => $u->authorProfile?->id,
+                'roles' => $roles,
+                'is_admin' => in_array('admin', $roles),
+                'verified' => ! is_null($u->email_verified_at),
             ];
         });
 
         return response()->json([
             'data' => $items,
             'meta' => [
-                'total'        => $users->total(),
-                'per_page'     => $users->perPage(),
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
                 'current_page' => $users->currentPage(),
-                'last_page'    => $users->lastPage(),
+                'last_page' => $users->lastPage(),
             ],
         ]);
     }
@@ -150,13 +165,13 @@ class AdminUserController extends Controller
         $this->authorizeAdmin();
 
         $user = User::select([
-                'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
-                'title', 'first_name', 'last_name', 'degree', 'position', 'specialty',
-                'field_of_study', 'orcid', 'phone', 'mobile', 'fax',
-                'affiliation', 'country', 'city', 'postal_code',
-                'home_page', 'alt_email', 'username',
-                'is_reviewer', 'receive_news', 'join_date', 'comments',
-            ])
+            'id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at',
+            'title', 'first_name', 'last_name', 'degree', 'position', 'specialty',
+            'field_of_study', 'orcid', 'phone', 'mobile', 'fax',
+            'affiliation', 'country', 'city', 'postal_code',
+            'home_page', 'alt_email', 'username',
+            'is_reviewer', 'receive_news', 'join_date', 'comments',
+        ])
             ->with(['activeRoles:id,name,display_name,description', 'authorProfile:id,user_id,article_count,orcid'])
             ->findOrFail($id);
 
@@ -164,12 +179,12 @@ class AdminUserController extends Controller
 
         return response()->json([
             'data' => array_merge($user->toArray(), [
-                'roles'         => $roles,
-                'is_admin'      => in_array('admin', $roles),
-                'verified'      => ! is_null($user->email_verified_at),
+                'roles' => $roles,
+                'is_admin' => in_array('admin', $roles),
+                'verified' => ! is_null($user->email_verified_at),
                 'article_count' => $user->authorProfile?->article_count ?? 0,
-                'author_id'     => $user->authorProfile?->id,
-                'status'        => 'active',
+                'author_id' => $user->authorProfile?->id,
+                'status' => 'active',
             ]),
             'message' => 'Success',
         ]);
@@ -325,27 +340,27 @@ class AdminUserController extends Controller
     {
         $this->authorizeAdmin();
 
-        $user   = User::findOrFail($id);
-        $author = \App\Models\Author::where('user_id', $id)->first();
+        $user = User::findOrFail($id);
+        $author = Author::where('user_id', $id)->first();
 
         if (! $author) {
             return response()->json([
-                'data'    => [],
-                'meta'    => ['total' => 0, 'author_linked' => false],
+                'data' => [],
+                'meta' => ['total' => 0, 'author_linked' => false],
                 'message' => 'This user has no linked author profile.',
             ]);
         }
 
-        $articles = \App\Models\Article::select([
-                'articles.id', 'articles.legacy_id', 'articles.title',
-                'articles.document_type', 'articles.subject',
-                'articles.doi', 'articles.volume', 'articles.issue',
-                'articles.pages_from', 'articles.pages_to',
-                'articles.publish_year', 'articles.publish_date',
-                'articles.views_count', 'articles.pdf_downloads',
-                'articles.pdf_url', 'articles.graphical_abstract_url',
-                'article_authors.is_corresponding', 'article_authors.position as author_position',
-            ])
+        $articles = Article::select([
+            'articles.id', 'articles.legacy_id', 'articles.title',
+            'articles.document_type', 'articles.subject',
+            'articles.doi', 'articles.volume', 'articles.issue',
+            'articles.pages_from', 'articles.pages_to',
+            'articles.publish_year', 'articles.publish_date',
+            'articles.views_count', 'articles.pdf_downloads',
+            'articles.pdf_url', 'articles.graphical_abstract_url',
+            'article_authors.is_corresponding', 'article_authors.position as author_position',
+        ])
             ->join('article_authors', 'articles.legacy_id', '=', 'article_authors.article_id')
             ->where('article_authors.author_id', $author->id)
             ->orderByDesc('articles.publish_year')
@@ -355,10 +370,10 @@ class AdminUserController extends Controller
         return response()->json([
             'data' => $articles,
             'meta' => [
-                'total'         => $articles->count(),
-                'author_id'     => $author->id,
+                'total' => $articles->count(),
+                'author_id' => $author->id,
                 'author_linked' => true,
-                'author_name'   => $author->name,
+                'author_name' => $author->name,
             ],
         ]);
     }

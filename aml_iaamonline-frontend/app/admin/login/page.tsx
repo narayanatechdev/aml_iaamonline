@@ -33,8 +33,16 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (data.success && data.token) {
+        const roles: string[] = data.user?.roles ?? [];
+        const isAdmin = roles.includes('admin');
+        const isEditor = roles.some((r) => ['editor', 'managing-editor'].includes(r));
+        if (!isAdmin && !isEditor) {
+          setError('This account does not have staff access.');
+          return;
+        }
         saveAuth(data.token, data.user);
-        router.replace('/admin');
+        // Admins go to the admin panel; editors go to the editorial office
+        router.replace(isAdmin ? '/admin' : '/editor');
       } else {
         setError(data.message || 'Invalid credentials. Please try again.');
       }

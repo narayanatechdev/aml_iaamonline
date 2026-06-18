@@ -180,7 +180,7 @@ class ManagingEditorController extends Controller
         $oldStatus = $manuscript->status;
 
         $manuscript->update([
-            'status' => 'under-review',
+            'status' => 'under_review',
             'editor_notes' => $validated['notes'] ?? $manuscript->editor_notes,
             'editor_review_completed_at' => now(),
         ]);

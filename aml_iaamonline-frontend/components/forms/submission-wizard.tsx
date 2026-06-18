@@ -1,10 +1,22 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, CheckCircle, FileText, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { MetadataForm } from "./metadata-form";
 import { SDGSelector } from "./sdg-selector";
+import { getUser, API_BASE } from "@/lib/userAuth";
+
+// Research areas accepted by the backend (category enum)
+const RESEARCH_AREAS: { value: string; label: string }[] = [
+  { value: "nanotechnology", label: "Nanotechnology" },
+  { value: "materials-science", label: "Materials Science" },
+  { value: "polymers", label: "Polymers" },
+  { value: "composites", label: "Composites" },
+  { value: "functional-materials", label: "Functional Materials" },
+  { value: "sustainable", label: "Sustainable Materials" },
+  { value: "other", label: "Other" },
+];
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -38,20 +50,33 @@ const COUNTRIES = [
 export function SubmissionWizard() {
   const [step, setStep] = useState<Step>(1);
   const [submitted, setSubmitted] = useState(false);
-  const [submissionId] = useState("MS-2026-" + String(Math.floor(Math.random() * 9000) + 1000));
+  const [submissionId, setSubmissionId] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     title: "",
     abstract: "",
     keywords: "",
     type: "",
+    category: "",
     authorName: "",
     authorEmail: "",
     affiliation: "",
     country: "",
     coverLetter: "",
   });
+
+  // Prefill the corresponding-author email from the logged-in account so the
+  // submission shows up on their dashboard (matched by author_email).
+  useEffect(() => {
+    const u = getUser();
+    if (u?.email) {
+      setForm((f) => ({ ...f, authorEmail: u.email, authorName: f.authorName || u.name }));
+    }
+  }, []);
 
   const [metadata, setMetadata] = useState<MetadataFormData>({
     acknowledgements: "",
@@ -63,13 +88,83 @@ export function SubmissionWizard() {
 
   const [selectedSDGs, setSelectedSDGs] = useState<number[]>([]);
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    // Clear a field's error as the user corrects it
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateStep1 = (): boolean => {
+    const e: Record<string, string> = {};
+    if (!form.title.trim()) e.title = "Manuscript title is required.";
+    if (!form.type) e.type = "Select a manuscript type.";
+    if (!form.category) e.category = "Select a research area.";
+    if (!form.abstract.trim()) e.abstract = "Abstract is required.";
+    else if (form.abstract.trim().length < 50) e.abstract = "Abstract must be at least 50 characters.";
+    if (!form.keywords.trim()) e.keywords = "Enter at least one keyword.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const e: Record<string, string> = {};
+    if (!form.authorName.trim()) e.authorName = "Corresponding author name is required.";
+    if (!form.authorEmail.trim()) e.authorEmail = "Email address is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.authorEmail)) e.authorEmail = "Enter a valid email address.";
+    if (!form.affiliation.trim()) e.affiliation = "Affiliation is required.";
+    if (!form.country) e.country = "Select a country.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const fieldError = (name: string) =>
+    errors[name] ? <p className="text-red-600 text-xs mt-1">{errors[name]}</p> : null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitError(null);
+
+    if (!pdfFile) {
+      setSubmitError("Please attach your manuscript PDF before submitting.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("title", form.title);
+      fd.append("authors", form.authorName);
+      fd.append("author_email", form.authorEmail);
+      fd.append("author_affiliation", `${form.affiliation}${form.country ? ", " + form.country : ""}`);
+      fd.append("abstract", form.abstract);
+      fd.append("keywords", form.keywords);
+      fd.append("category", form.category || "other");
+      fd.append("pdf", pdfFile);
+
+      const res = await fetch(`${API_BASE}/submit`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: fd,
+      });
+      const result = await res.json();
+
+      if (!res.ok) {
+        const firstError = result.errors ? Object.values(result.errors)[0] : null;
+        throw new Error(
+          (Array.isArray(firstError) ? firstError[0] : firstError) || result.message || "Submission failed."
+        );
+      }
+
+      setSubmissionId(result.submission_id || result.data?.submission_id || "Submitted");
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Could not submit. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -153,8 +248,8 @@ export function SubmissionWizard() {
                 onChange={handleChange}
                 placeholder="Enter the full title of your manuscript"
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                required
               />
+              {fieldError("title")}
             </div>
 
             <div>
@@ -173,6 +268,26 @@ export function SubmissionWizard() {
                   <option key={t} value={t}>{t}</option>
                 ))}
               </select>
+              {fieldError("type")}
+            </div>
+
+            <div>
+              <label className="block text-[#0f1a2e] text-sm mb-1.5" style={{ fontWeight: 600 }}>
+                Research Area <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+                required
+              >
+                <option value="">Select research area...</option>
+                {RESEARCH_AREAS.map((a) => (
+                  <option key={a.value} value={a.value}>{a.label}</option>
+                ))}
+              </select>
+              {fieldError("category")}
             </div>
 
             <div>
@@ -186,9 +301,9 @@ export function SubmissionWizard() {
                 placeholder="Provide a structured abstract (150–250 words)..."
                 rows={6}
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b] resize-none"
-                required
               />
-              <p className="text-[#5a6a8a] text-xs mt-1">{form.abstract.split(/\s+/).filter(Boolean).length} / 250 words</p>
+              {fieldError("abstract")}
+              <p className="text-[#5a6a8a] text-xs mt-1">{form.abstract.trim().length} characters · minimum 50</p>
             </div>
 
             <div>
@@ -202,17 +317,16 @@ export function SubmissionWizard() {
                 onChange={handleChange}
                 placeholder="Separate keywords with semicolons (e.g., nanoparticles; photocatalysis; ZnO)"
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                required
               />
+              {fieldError("keywords")}
               <p className="text-[#5a6a8a] text-xs mt-1">Enter 5–8 keywords separated by semicolons</p>
             </div>
 
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => setStep(2)}
-                disabled={!form.title || !form.type || !form.abstract || !form.keywords}
-                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => { if (validateStep1()) setStep(2); }}
+                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 Next: Author Details →
@@ -241,8 +355,8 @@ export function SubmissionWizard() {
                   onChange={handleChange}
                   placeholder="Full name"
                   className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                  required
                 />
+                {fieldError("authorName")}
               </div>
               <div>
                 <label className="block text-[#0f1a2e] text-sm mb-1.5" style={{ fontWeight: 600 }}>
@@ -255,8 +369,8 @@ export function SubmissionWizard() {
                   onChange={handleChange}
                   placeholder="your@institution.edu"
                   className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                  required
                 />
+                {fieldError("authorEmail")}
               </div>
             </div>
 
@@ -271,8 +385,8 @@ export function SubmissionWizard() {
                 onChange={handleChange}
                 placeholder="University / Institution name, Department"
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                required
               />
+              {fieldError("affiliation")}
             </div>
 
             <div>
@@ -284,13 +398,13 @@ export function SubmissionWizard() {
                 value={form.country}
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
-                required
               >
                 <option value="">Select country...</option>
                 {COUNTRIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
+              {fieldError("country")}
             </div>
 
             <div>
@@ -317,9 +431,8 @@ export function SubmissionWizard() {
               </button>
               <button
                 type="button"
-                onClick={() => setStep(3)}
-                disabled={!form.authorName || !form.authorEmail || !form.affiliation || !form.country}
-                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => { if (validateStep2()) setStep(3); }}
+                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 Next: Metadata →
@@ -340,12 +453,10 @@ export function SubmissionWizard() {
               acknowledgements={metadata.acknowledgements}
               fundingInformation={metadata.fundingInformation}
               conflictOfInterest={metadata.conflictOfInterest}
-              authorContributions={metadata.authorContributions}
+              authors={metadata.authorContributions}
               dataAvailability={metadata.dataAvailability}
-              onChange={(field, value) => {
-                setMetadata({ ...metadata, [field]: value });
-              }}
-              errors={[]}
+              onChange={(data) => setMetadata(data)}
+              errors={{}}
             />
 
             <div className="flex justify-between">
@@ -443,7 +554,11 @@ export function SubmissionWizard() {
                   type="file"
                   accept=".pdf"
                   className="hidden"
-                  onChange={(e) => setFileName(e.target.files?.[0]?.name || null)}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] || null;
+                    setPdfFile(f);
+                    setFileName(f?.name || null);
+                  }}
                 />
                 {fileName ? (
                   <div className="text-center">
@@ -485,6 +600,13 @@ export function SubmissionWizard() {
               </label>
             </div>
 
+            {submitError && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700">{submitError}</p>
+              </div>
+            )}
+
             <div className="flex justify-between">
               <button
                 type="button"
@@ -495,11 +617,11 @@ export function SubmissionWizard() {
               </button>
               <button
                 type="submit"
-                disabled={!fileName}
+                disabled={!fileName || submitting}
                 className="px-8 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontWeight: 700 }}
               >
-                Submit Manuscript
+                {submitting ? "Submitting…" : "Submit Manuscript"}
               </button>
             </div>
           </div>

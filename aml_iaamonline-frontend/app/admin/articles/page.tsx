@@ -177,6 +177,7 @@ export default function ArticlesPage() {
         page: String(page),
         sort: sortKey,
         dir: sortDir,
+        from_submission: '1',
       });
       if (debouncedQuery) params.set('q', debouncedQuery);
       if (yearFilter !== 'All Years') params.set('year', yearFilter);
