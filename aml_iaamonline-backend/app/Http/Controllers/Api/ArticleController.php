@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
+use App\Services\CitationFormatterService;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -50,7 +51,7 @@ class ArticleController extends Controller
     {
         $article = Article::where('legacy_id', $id)->orWhere('id', $id)->first();
 
-        if (!$article) {
+        if (! $article) {
             return response()->json(['error' => 'Article not found'], 404);
         }
 
@@ -152,6 +153,7 @@ class ArticleController extends Controller
         $affiliations = $articleAuthors->groupBy('affiliation_id')
             ->map(function ($authors) {
                 $affiliation = $authors->first()->affiliation;
+
                 return [
                     'id' => $affiliation->id,
                     'name' => $affiliation->name,
@@ -168,6 +170,40 @@ class ArticleController extends Controller
             'article_id' => $articleId,
             'affiliations' => $affiliations->toArray(),
             'total_affiliations' => $affiliations->count(),
+        ]);
+    }
+
+    public function citation(string $id, Request $request)
+    {
+        $validated = $request->validate([
+            'format' => 'required|in:apa,mla,bibtex,ris,endonote',
+        ]);
+
+        $article = Article::published()->where('legacy_id', $id)->firstOrFail();
+
+        try {
+            $citation = CitationFormatterService::format($article, $validated['format']);
+
+            return response()->json([
+                'success' => true,
+                'format' => $validated['format'],
+                'citation' => $citation,
+                'article_id' => $article->legacy_id,
+                'article_title' => $article->title,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to generate citation: '.$e->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function citationFormats()
+    {
+        return response()->json([
+            'success' => true,
+            'formats' => CitationFormatterService::getSupportedFormats(),
         ]);
     }
 }

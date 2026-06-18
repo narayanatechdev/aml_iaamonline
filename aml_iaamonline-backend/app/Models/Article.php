@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'legacy_id', 'manuscript_id', 'title', 'document_type', 'subject',
@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
     'views_count', 'pdf_downloads', 'cited_count',
     'corresponding_author', 'receive_date', 'revise_date',
     'accept_date', 'publish_date', 'publish_year', 'publish_month',
+    'acknowledgements', 'funding_information', 'conflict_of_interest',
+    'author_contributions', 'data_availability',
 ])]
 class Article extends Model
 {
@@ -28,6 +30,7 @@ class Article extends Model
             'revise_date' => 'date',
             'accept_date' => 'date',
             'publish_date' => 'date',
+            'author_contributions' => 'json',
         ];
     }
 
@@ -45,7 +48,10 @@ class Article extends Model
 
     public function getKeywordsArrayAttribute(): array
     {
-        if (!$this->keywords) return [];
+        if (! $this->keywords) {
+            return [];
+        }
+
         return array_map('trim', explode(',', $this->keywords));
     }
 
@@ -54,7 +60,8 @@ class Article extends Model
         if ($this->pages_from && $this->pages_to) {
             return "{$this->pages_from}-{$this->pages_to}";
         }
-        return $this->pages_from ? (string)$this->pages_from : '';
+
+        return $this->pages_from ? (string) $this->pages_from : '';
     }
 
     public function scopePublished($query)
@@ -68,6 +75,7 @@ class Article extends Model
         if ($issue) {
             $query->where('issue', $issue);
         }
+
         return $query;
     }
 
@@ -80,12 +88,18 @@ class Article extends Model
     {
         $like = config('database.default') === 'pgsql' ? 'ilike' : 'like';
         $searchTerm = "%{$term}%";
+
         return $query->where(function ($q) use ($like, $searchTerm) {
             $q->where('title', $like, $searchTerm)
-              ->orWhere('abstract', $like, $searchTerm)
-              ->orWhere('keywords', $like, $searchTerm)
-              ->orWhere('doi', $like, $searchTerm)
-              ->orWhere('corresponding_author', $like, $searchTerm);
+                ->orWhere('abstract', $like, $searchTerm)
+                ->orWhere('keywords', $like, $searchTerm)
+                ->orWhere('doi', $like, $searchTerm)
+                ->orWhere('corresponding_author', $like, $searchTerm);
         });
+    }
+
+    public function sdgs(): BelongsToMany
+    {
+        return $this->belongsToMany(SustainableDevelopmentGoal::class, 'article_sdgs');
     }
 }

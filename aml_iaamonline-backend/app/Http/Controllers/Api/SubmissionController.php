@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Models\ManuscriptFile;
+use App\Services\AuthorImageValidationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -112,5 +113,72 @@ class SubmissionController extends Controller
             'success' => true,
             'data' => $manuscript->load('files'),
         ]);
+    }
+
+    /**
+     * Upload author image for manuscript submission.
+     */
+    public function uploadAuthorImage(Request $request)
+    {
+        $validated = $request->validate([
+            'manuscript_id' => 'required|exists:manuscripts,id',
+            'author_image' => 'required|image|mimes:jpeg,png',
+        ]);
+
+        try {
+            $manuscript = Manuscript::findOrFail($validated['manuscript_id']);
+            $imageFile = $request->file('author_image');
+
+            // Delete old image if exists
+            if ($manuscript->author_image_url) {
+                AuthorImageValidationService::delete($manuscript->author_image_url);
+            }
+
+            // Validate and store new image
+            $imageUrl = AuthorImageValidationService::store($imageFile, $manuscript->author_email);
+
+            $imageValidation = AuthorImageValidationService::validate($imageFile);
+
+            $manuscript->update([
+                'author_image_url' => $imageUrl,
+                'author_image_mime_type' => $imageValidation['mime_type'],
+                'author_image_size' => $imageValidation['size'],
+            ]);
+
+            AuditLog::create([
+                'action' => 'author_image_uploaded',
+                'actor_email' => $manuscript->author_email,
+                'actor_type' => 'author',
+                'manuscript_id' => $manuscript->id,
+                'description' => 'Author image uploaded',
+                'status' => 'success',
+                'actor_ip' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Author image uploaded successfully',
+                'data' => [
+                    'author_image_url' => $imageUrl,
+                    'author_image_size' => $imageValidation['size'],
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            AuditLog::create([
+                'action' => 'author_image_upload_failed',
+                'actor_email' => $manuscript->author_email ?? 'unknown',
+                'actor_type' => 'author',
+                'manuscript_id' => $manuscript->id ?? null,
+                'description' => 'Author image upload failed: '.$e->getMessage(),
+                'status' => 'failed',
+                'actor_ip' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload author image',
+                'error' => $e->getMessage(),
+            ], 400);
+        }
     }
 }

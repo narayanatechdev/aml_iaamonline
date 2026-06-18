@@ -27,14 +27,17 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Author Submission Routes
 Route::post('/submit', [SubmissionController::class, 'store'])->name('submit');
 Route::post('/track', [SubmissionController::class, 'show'])->name('track');
+Route::post('/submit/author-image', [SubmissionController::class, 'uploadAuthorImage'])->name('submit.author-image');
 
 // Article Routes (public) — static routes before dynamic {id}
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/articles/search', [ArticleController::class, 'search'])->name('articles.search');
 Route::get('/articles/stats', [ArticleController::class, 'stats'])->name('articles.stats');
+Route::get('/articles/citation-formats', [ArticleController::class, 'citationFormats'])->name('articles.citation-formats');
 Route::get('/articles/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+')->name('articles.show');
 Route::get('/articles/{id}/authors', [ArticleController::class, 'getAuthorsWithAffiliations'])->name('article.authors');
 Route::get('/articles/{id}/affiliations', [ArticleController::class, 'getAffiliations'])->name('article.affiliations');
+Route::get('/articles/{id}/citation', [ArticleController::class, 'citation'])->name('article.citation');
 
 // Author Routes (public)
 Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');

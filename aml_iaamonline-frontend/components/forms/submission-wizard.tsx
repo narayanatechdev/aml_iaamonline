@@ -3,8 +3,18 @@
 import { useState } from "react";
 import { Upload, CheckCircle, FileText, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { MetadataForm } from "./metadata-form";
+import { SDGSelector } from "./sdg-selector";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4 | 5;
+
+interface MetadataFormData {
+  acknowledgements?: string;
+  fundingInformation?: string;
+  conflictOfInterest?: string;
+  authorContributions?: Array<{ name: string; contribution: string }>;
+  dataAvailability?: string;
+}
 
 const MANUSCRIPT_TYPES = [
   "Research Article",
@@ -42,6 +52,16 @@ export function SubmissionWizard() {
     country: "",
     coverLetter: "",
   });
+
+  const [metadata, setMetadata] = useState<MetadataFormData>({
+    acknowledgements: "",
+    fundingInformation: "",
+    conflictOfInterest: "",
+    authorContributions: [],
+    dataAvailability: "",
+  });
+
+  const [selectedSDGs, setSelectedSDGs] = useState<number[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -89,7 +109,9 @@ export function SubmissionWizard() {
         {[
           { num: 1, label: "Manuscript Info" },
           { num: 2, label: "Author Details" },
-          { num: 3, label: "Upload & Submit" },
+          { num: 3, label: "Metadata" },
+          { num: 4, label: "Sustainability Goals" },
+          { num: 5, label: "Upload & Submit" },
         ].map((s, i) => (
           <div key={s.num} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center">
@@ -109,7 +131,7 @@ export function SubmissionWizard() {
                 {s.label}
               </span>
             </div>
-            {i < 2 && (
+            {i < 4 && (
               <div className={`flex-1 h-0.5 mx-2 mb-4 transition-colors ${step > s.num ? "bg-emerald-500" : "bg-[#e0e8f5]"}`} />
             )}
           </div>
@@ -300,14 +322,89 @@ export function SubmissionWizard() {
                 className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontWeight: 600 }}
               >
+                Next: Metadata →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Metadata */}
+        {step === 3 && (
+          <div className="space-y-5">
+            <div className="bg-[#f0f4fb] rounded-xl border border-border p-4 text-xs text-[#5a6a8a] flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#0f2d6b]" />
+              Provide optional metadata about your manuscript including acknowledgements, funding, and author contributions.
+            </div>
+
+            <MetadataForm
+              acknowledgements={metadata.acknowledgements}
+              fundingInformation={metadata.fundingInformation}
+              conflictOfInterest={metadata.conflictOfInterest}
+              authorContributions={metadata.authorContributions}
+              dataAvailability={metadata.dataAvailability}
+              onChange={(field, value) => {
+                setMetadata({ ...metadata, [field]: value });
+              }}
+              errors={[]}
+            />
+
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="px-5 py-2.5 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(4)}
+                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                Next: Sustainability Goals →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Sustainable Development Goals */}
+        {step === 4 && (
+          <div className="space-y-5">
+            <div className="bg-[#f0f4fb] rounded-xl border border-border p-4 text-xs text-[#5a6a8a] flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#0f2d6b]" />
+              Select up to 5 UN Sustainable Development Goals that your research contributes to. This helps readers discover research aligned with global priorities.
+            </div>
+
+            <SDGSelector
+              selectedSDGs={selectedSDGs}
+              onSelectionChange={setSelectedSDGs}
+              errors={[]}
+              maxSelections={5}
+            />
+
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={() => setStep(3)}
+                className="px-5 py-2.5 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(5)}
+                className="px-6 py-2.5 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors"
+                style={{ fontWeight: 600 }}
+              >
                 Next: Upload Files →
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 3: Upload */}
-        {step === 3 && (
+        {/* Step 5: Upload & Submit */}
+        {step === 5 && (
           <div className="space-y-6">
             {/* Summary */}
             <div className="bg-[#f0f4fb] rounded-xl border border-border p-5">
@@ -391,14 +488,15 @@ export function SubmissionWizard() {
             <div className="flex justify-between">
               <button
                 type="button"
-                onClick={() => setStep(2)}
+                onClick={() => setStep(4)}
                 className="px-5 py-2.5 border border-border rounded-lg text-sm text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
               >
                 ← Back
               </button>
               <button
                 type="submit"
-                className="px-8 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow"
+                disabled={!fileName}
+                className="px-8 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontWeight: 700 }}
               >
                 Submit Manuscript

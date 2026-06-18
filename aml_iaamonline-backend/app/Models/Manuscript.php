@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Manuscript extends Model
 {
@@ -14,11 +15,19 @@ class Manuscript extends Model
         'author_affiliation',
         'abstract',
         'keywords',
+        'acknowledgements',
+        'funding_information',
+        'conflict_of_interest',
+        'author_contributions',
+        'data_availability',
         'category',
         'status',
         'file_path',
         'file_name',
         'file_size',
+        'author_image_url',
+        'author_image_mime_type',
+        'author_image_size',
         'submitted_at',
         'editor_review_completed_at',
         'editor_notes',
@@ -34,6 +43,7 @@ class Manuscript extends Model
         'editor_review_completed_at' => 'datetime',
         'peer_review_completed_at' => 'datetime',
         'decision_date' => 'datetime',
+        'author_contributions' => 'json',
     ];
 
     public function files()
@@ -54,5 +64,10 @@ class Manuscript extends Model
     public function auditLogs()
     {
         return $this->hasMany(AuditLog::class);
+    }
+
+    public function sdgs(): BelongsToMany
+    {
+        return $this->belongsToMany(SustainableDevelopmentGoal::class, 'manuscript_sdgs');
     }
 }
