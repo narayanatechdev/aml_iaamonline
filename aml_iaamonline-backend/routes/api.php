@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\OrcidController;
 use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
+use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -79,6 +80,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+    // Reviewer portal (authenticated reviewer)
+    Route::get('/reviewer/assignments', [ReviewerPortalController::class, 'assignments'])->name('reviewer.assignments');
+    Route::post('/reviewer/assignments/{id}/respond', [ReviewerPortalController::class, 'respond'])->name('reviewer.respond');
+    Route::post('/reviewer/assignments/{id}/review', [ReviewerPortalController::class, 'review'])->name('reviewer.review-submit');
 
     // Book / proceedings proposals
     Route::get('/my/proposals', [ProposalController::class, 'mine'])->name('proposals.mine');

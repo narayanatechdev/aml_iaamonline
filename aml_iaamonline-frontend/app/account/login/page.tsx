@@ -27,7 +27,9 @@ export default function AuthorLoginPage() {
       const result = await res.json();
       if (res.ok && result.success && result.token) {
         saveAuth(result.token, result.user);
-        router.push('/dashboard');
+        const roles: string[] = result.user?.roles ?? [];
+        // Reviewers go to the reviewer portal; everyone else to their dashboard
+        router.push(roles.includes('reviewer') && !roles.includes('author') ? '/reviewer' : '/dashboard');
       } else {
         setError(result.message || 'Invalid email or password.');
       }
