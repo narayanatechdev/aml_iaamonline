@@ -4,7 +4,7 @@ import { Calendar, CheckCircle2, Clock } from 'lucide-react';
 
 interface TimelineEvent {
   label: string;
-  date: string | null;
+  date: string | null | undefined;
   status: 'completed' | 'current' | 'upcoming';
   description?: string;
 }

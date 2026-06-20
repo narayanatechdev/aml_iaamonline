@@ -82,7 +82,7 @@ export function FeaturedArticle() {
               <div className="text-white">
                 <div className="text-sm font-semibold mb-1">{authorList}</div>
                 <div className="text-xs font-medium">
-                  <span className="font-bold">Article</span> | {latest.published || latest.receive_date}
+                  <span className="font-bold">Article</span> | {latest.published}
                 </div>
               </div>
             </div>

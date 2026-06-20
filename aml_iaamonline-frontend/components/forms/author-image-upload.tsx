@@ -103,11 +103,11 @@ export function AuthorImageUpload({
     setValidation(validationResult);
 
     if (!validationResult.isValid) {
-      onError?.(validationResult.error);
+      onError?.(validationResult.error ?? 'Validation failed');
       return;
     }
 
-    await uploadImage(file, validationResult.preview);
+    await uploadImage(file, validationResult.preview ?? '');
   };
 
   const uploadImage = async (file: File, preview: string) => {
