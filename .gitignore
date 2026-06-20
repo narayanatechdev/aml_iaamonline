@@ -45,3 +45,4 @@ aml_iaamonline-frontend/dist/
 # Allow hidden files in tracked directories
 !aml_iaamonline-backend/.*
 !aml_iaamonline-frontend/.*
+aml_iaamonline-backend/.env.sqlite.bak

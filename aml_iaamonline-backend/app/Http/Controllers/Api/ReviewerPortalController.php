@@ -60,7 +60,7 @@ class ReviewerPortalController extends Controller
         $assignment = $this->ownedAssignment($request, $id);
 
         $validated = $request->validate([
-            'recommendation' => ['required', Rule::in(['accept', 'minor', 'major', 'reject'])],
+            'recommendation' => ['required', Rule::in(['accept', 'minor-revisions', 'major-revisions', 'reject'])],
             'quality_score' => 'nullable|integer|min:1|max:5',
             'novelty_score' => 'nullable|integer|min:1|max:5',
             'relevance_score' => 'nullable|integer|min:1|max:5',
