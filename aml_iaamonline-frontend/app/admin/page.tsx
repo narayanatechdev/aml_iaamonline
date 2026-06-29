@@ -25,6 +25,9 @@ interface ArticleStats {
   total_authors?: number;
   total_users?: number;
   total_manuscripts?: number;
+  total_with_doi?: number;
+  doi_synced?: number;
+  doi_pending?: number;
   by_year: Record<string, number>;
   by_subject: Record<string, number>;
   by_type: Record<string, number>;
@@ -32,6 +35,7 @@ interface ArticleStats {
 
 interface Article {
   id: number;
+  legacy_id?: string | null;
   title: string;
   volume: number | null;
   issue: number | null;
@@ -40,6 +44,10 @@ interface Article {
   total_views: number;
   total_downloads: number;
   authors_count?: number;
+}
+
+function getArticleUrl(article: Article) {
+  return `/article/${article.legacy_id ?? article.id}`;
 }
 
 // Animated counter hook
@@ -328,6 +336,74 @@ export default function AdminDashboardPage() {
         </div>
       ) : null}
 
+      {/* DOI Sync Status Widget */}
+      {stats && stats.total_with_doi && stats.doi_synced != null && (
+        ((doi: number) => (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0f2d6b] to-[#2563eb] flex items-center justify-center">
+                <RefreshCw className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">DOI Sync Status</h3>
+                <p className="text-xs text-gray-500">CrossRef metadata synchronization</p>
+              </div>
+            </div>
+            <Link
+              href="/admin/articles"
+              className="text-xs text-[#0f2d6b] hover:text-[#c9a227] font-medium flex items-center gap-1 transition-colors"
+            >
+              View all <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-[#0f2d6b]">
+                {stats.total_with_doi.toLocaleString()}
+              </div>
+              <div className="text-xs text-gray-500 mt-0.5">Articles with DOI</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {stats.doi_synced.toLocaleString()}
+              </div>
+              <div className="text-xs text-gray-500 mt-0.5">Synced</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-500">
+                {(stats.total_with_doi - stats.doi_synced).toLocaleString()}
+              </div>
+              <div className="text-xs text-gray-500 mt-0.5">Pending</div>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-4">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <span>Sync Progress</span>
+              <span>{stats.doi_synced.toLocaleString()} / {stats.total_with_doi.toLocaleString()}</span>
+            </div>
+            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-700"
+                style={{ width: `${Math.round((stats.doi_synced / stats.total_with_doi) * 100)}%` }}
+              />
+            </div>
+            <div className="text-right text-xs text-gray-400 mt-1">
+              {Math.round((stats.doi_synced / stats.total_with_doi) * 100)}% complete
+            </div>
+          </div>
+        </motion.div>
+        ))(stats.total_with_doi)
+      )}
+
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
         {/* Publications by Year — area chart, 3/5 width */}
@@ -605,7 +681,7 @@ export default function AdminDashboardPage() {
                     </td>
                     <td className="px-6 py-3.5 text-right">
                       <Link
-                        href={`/articles/${article.id}`}
+                        href={getArticleUrl(article)}
                         className="text-xs text-[#0f2d6b]/50 hover:text-[#0f2d6b] transition-colors"
                       >
                         <ArrowUpRight className="w-3.5 h-3.5 inline" />

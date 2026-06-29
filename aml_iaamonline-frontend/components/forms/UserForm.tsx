@@ -50,6 +50,10 @@ export function UserForm({
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  const initialRolesKey = Array.isArray(initialData?.roles)
+    ? initialData.roles.join('|')
+    : '';
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -59,7 +63,7 @@ export function UserForm({
         roles: Array.isArray(initialData.roles) ? initialData.roles : [],
       });
     }
-  }, [initialData]);
+  }, [initialData?.id, initialData?.name, initialData?.email, initialData?.status, initialRolesKey]);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

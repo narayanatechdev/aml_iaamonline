@@ -279,14 +279,28 @@ class AdminUserController extends Controller
         ]);
 
         $oldRoles = $user->getRoleNames();
+        $selectedRoles = $validated['roles'];
+        $selectedRoleIds = Role::whereIn('name', $selectedRoles)->pluck('id')->all();
 
-        $user->roles()->detach();
+        $user->roles()->updateExistingPivot(
+            $user->roles()->pluck('roles.id')->all(),
+            [
+                'is_active' => false,
+                'revoked_at' => now(),
+                'revoked_by' => auth()->user()?->email,
+            ]
+        );
 
-        foreach ($validated['roles'] as $roleName) {
-            $role = Role::where('name', $roleName)->first();
-            if ($role) {
-                $user->assignRole($role);
-            }
+        foreach ($selectedRoleIds as $roleId) {
+            $user->roles()->syncWithoutDetaching([
+                $roleId => [
+                    'is_active' => true,
+                    'assigned_at' => now(),
+                    'assigned_by' => auth()->user()?->email,
+                    'revoked_at' => null,
+                    'revoked_by' => null,
+                ],
+            ]);
         }
 
         $this->logAction('notification_sent', "Updated roles for user: {$user->email}", [

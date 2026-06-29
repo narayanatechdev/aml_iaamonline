@@ -349,6 +349,29 @@ class AdminAnalyticsController extends Controller
     }
 
     /**
+     * Return author distribution by country.
+     */
+    public function countryStats(): JsonResponse
+    {
+        $this->authorizeAdmin();
+
+        $stats = \App\Models\Affiliation::select('country', \Illuminate\Support\Facades\DB::raw('sum(author_count) as total_authors'))
+            ->whereNotNull('country')
+            ->groupBy('country')
+            ->orderBy('total_authors', 'desc')
+            ->get()
+            ->map(fn ($item) => [
+                'country' => $item->country,
+                'author_count' => (int) $item->total_authors,
+            ]);
+
+        return response()->json([
+            'data' => $stats,
+            'message' => 'Success',
+        ]);
+    }
+
+    /**
      * Authorize that the current user has admin role.
      */
     private function authorizeAdmin(): void

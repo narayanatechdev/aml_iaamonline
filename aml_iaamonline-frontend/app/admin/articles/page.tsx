@@ -9,24 +9,32 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminBreadcrumb } from '@/components/admin';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE, authFetch } from '@/lib/adminAuth';
 
 interface Article {
   id: number;
+  legacy_id?: string | null;
   title: string;
   doi?: string | null;
-  volume?: number | null;
-  issue?: number | null;
+  doi_link?: string | null;
+  doi_synced_at?: string | null;
+  volume?: number | string | null;
+  issue?: number | string | null;
   year?: number | null;
+  publish_year?: number | null;
   subject?: string | null;
   article_type?: string | null;
-  total_views: number;
-  total_downloads: number;
+  document_type?: string | null;
+  total_views?: number | null;
+  views_count?: number | null;
+  total_downloads?: number | null;
+  pdf_downloads?: number | null;
   abstract?: string | null;
   authors_count?: number;
-  page_start?: string | null;
-  page_end?: string | null;
+  page_start?: number | string | null;
+  pages_from?: number | string | null;
+  page_end?: number | string | null;
+  pages_to?: number | string | null;
 }
 
 interface PaginationMeta {
@@ -51,6 +59,34 @@ type SortDir = 'asc' | 'desc';
 const ARTICLE_TYPE_OPTIONS = ['All Types', 'Research Article', 'Review', 'Letter', 'Editorial', 'Communication'];
 const YEAR_OPTIONS = ['All Years', ...Array.from({ length: 17 }, (_, i) => String(2026 - i))];
 
+function getArticleYear(article: Article) {
+  return article.year ?? article.publish_year ?? null;
+}
+
+function getArticleType(article: Article) {
+  return article.article_type ?? article.document_type ?? 'Article';
+}
+
+function getArticleViews(article: Article) {
+  return article.total_views ?? article.views_count ?? 0;
+}
+
+function getArticleDownloads(article: Article) {
+  return article.total_downloads ?? article.pdf_downloads ?? 0;
+}
+
+function getPageStart(article: Article) {
+  return article.page_start ?? article.pages_from ?? null;
+}
+
+function getPageEnd(article: Article) {
+  return article.page_end ?? article.pages_to ?? null;
+}
+
+function getArticleUrl(article: Article) {
+  return `/article/${article.legacy_id ?? article.id}`;
+}
+
 function TypeBadge({ type }: { type: string | null | undefined }) {
   const t = type || 'Article';
   const colors: Record<string, string> = {
@@ -69,6 +105,39 @@ function TypeBadge({ type }: { type: string | null | undefined }) {
 }
 
 function ExpandedRow({ article }: { article: Article }) {
+  const pageStart = getPageStart(article);
+  const pageEnd = getPageEnd(article);
+  const year = getArticleYear(article);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<'synced' | 'already_current' | 'not_found' | null>(null);
+  const [syncedAt, setSyncedAt] = useState<string | null>(article.doi_synced_at || null);
+
+  const handleSync = async () => {
+    if (!article.doi) return;
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await authFetch(`${API_BASE}/editor/articles/${article.id}/doi-update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ doi: article.doi }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setSyncResult(data.status);
+        setSyncedAt(data.doi_synced_at || null);
+      } else {
+        setSyncResult('not_found');
+      }
+    } catch {
+      setSyncResult('not_found');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const syncLabel = syncResult === 'synced' ? 'Synced' : syncResult === 'already_current' ? 'Already up-to-date' : syncResult === 'not_found' ? 'Not registered' : null;
+
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
@@ -92,12 +161,53 @@ function ExpandedRow({ article }: { article: Article }) {
         <div>
           <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Details</h4>
           <div className="space-y-2">
-            {article.doi && (
-              <div>
-                <span className="text-xs text-gray-400">DOI</span>
-                <p className="text-xs font-mono text-[#0f2d6b] break-all">{article.doi}</p>
+            <div>
+              <span className="text-xs text-gray-400">DOI</span>
+              <div className="flex items-center flex-wrap gap-2 mt-0.5">
+                <p className="text-xs font-mono text-[#0f2d6b] break-all">
+                  {article.doi || 'Not set'}
+                </p>
+                {article.doi && (
+                  <button
+                    onClick={handleSync}
+                    disabled={syncing}
+                    className={`flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded transition-colors ${
+                      syncResult === 'already_current'
+                        ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                        : syncResult === 'synced'
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+                        : syncResult === 'not_found'
+                        ? 'bg-red-100 text-red-700 hover:bg-red-100'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {syncing ? (
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                    ) : syncResult ? (
+                      syncLabel
+                    ) : (
+                      <>
+                        <RefreshCw className="w-3 h-3" /> Sync
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
-            )}
+              {syncedAt && (
+                <p className="text-[10px] text-gray-400 mt-0.5">
+                  Last synced: {new Date(syncedAt).toLocaleString()}
+                </p>
+              )}
+              {syncResult === 'already_current' && (
+                <p className="text-[10px] text-green-600 mt-0.5 font-medium">✓ Metadata is current — no changes needed.</p>
+              )}
+              {syncResult === 'synced' && (
+                <p className="text-[10px] text-blue-600 mt-0.5 font-medium">✓ Metadata updated from CrossRef.</p>
+              )}
+              {syncResult === 'not_found' && (
+                <p className="text-[10px] text-red-600 mt-0.5 font-medium">✗ DOI not registered with CrossRef yet.</p>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-2">
               {article.volume != null && (
                 <div>
@@ -111,34 +221,34 @@ function ExpandedRow({ article }: { article: Article }) {
                   <p className="text-sm font-medium text-gray-700">{article.issue}</p>
                 </div>
               )}
-              {article.page_start && (
+              {pageStart && (
                 <div>
                   <span className="text-xs text-gray-400">Pages</span>
                   <p className="text-sm font-medium text-gray-700">
-                    {article.page_start}{article.page_end ? `–${article.page_end}` : ''}
+                    {pageStart}{pageEnd ? `–${pageEnd}` : ''}
                   </p>
                 </div>
               )}
-              {article.year && (
+              {year && (
                 <div>
                   <span className="text-xs text-gray-400">Year</span>
-                  <p className="text-sm font-medium text-gray-700">{article.year}</p>
+                  <p className="text-sm font-medium text-gray-700">{year}</p>
                 </div>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100">
               <div>
                 <span className="text-xs text-gray-400">Views</span>
-                <p className="text-sm font-bold text-gray-900">{(article.total_views || 0).toLocaleString()}</p>
+                <p className="text-sm font-bold text-gray-900">{getArticleViews(article).toLocaleString()}</p>
               </div>
               <div>
                 <span className="text-xs text-gray-400">Downloads</span>
-                <p className="text-sm font-bold text-gray-900">{(article.total_downloads || 0).toLocaleString()}</p>
+                <p className="text-sm font-bold text-gray-900">{getArticleDownloads(article).toLocaleString()}</p>
               </div>
             </div>
           </div>
           <Link
-            href={`/articles/${article.id}`}
+            href={getArticleUrl(article)}
             className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#0f2d6b] hover:text-[#c9a227] transition-colors"
           >
             View full article <ArrowUpRight className="w-3.5 h-3.5" />
@@ -177,7 +287,6 @@ export default function ArticlesPage() {
         page: String(page),
         sort: sortKey,
         dir: sortDir,
-        from_submission: '1',
       });
       if (debouncedQuery) params.set('q', debouncedQuery);
       if (yearFilter !== 'All Years') params.set('year', yearFilter);
@@ -357,7 +466,7 @@ export default function ArticlesPage() {
       >
         {/* Table header */}
         <div className="hidden md:grid grid-cols-12 gap-2 px-6 py-3 border-b border-gray-100 bg-gray-50/80">
-          <div className="col-span-5">
+          <div className="col-span-4">
             <SortHeader label="Title" field="title" />
           </div>
           <div className="col-span-2">
@@ -371,6 +480,9 @@ export default function ArticlesPage() {
           </div>
           <div className="col-span-1 text-right">
             <SortHeader label="DL" field="total_downloads" />
+          </div>
+          <div className="col-span-1 text-center">
+            <span className="text-xs font-semibold text-gray-500">Synced</span>
           </div>
           <div className="col-span-2">
             <span className="text-xs font-semibold text-gray-500">Type</span>
@@ -418,10 +530,10 @@ export default function ArticlesPage() {
                       {article.title}
                     </p>
                     <div className="flex flex-wrap items-center gap-2 mt-2">
-                      {article.year && <span className="text-xs text-gray-500">{article.year}</span>}
-                      <TypeBadge type={article.article_type} />
+                      {getArticleYear(article) && <span className="text-xs text-gray-500">{getArticleYear(article)}</span>}
+                      <TypeBadge type={getArticleType(article)} />
                       <span className="text-xs text-gray-400">
-                        <Eye className="w-3 h-3 inline mr-0.5" />{(article.total_views || 0).toLocaleString()}
+                        <Eye className="w-3 h-3 inline mr-0.5" />{getArticleViews(article).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -433,7 +545,7 @@ export default function ArticlesPage() {
 
               {/* Desktop layout */}
               <div className="hidden md:grid grid-cols-12 gap-2 px-6 py-3.5 items-center">
-                <div className="col-span-5 flex items-start gap-2">
+                <div className="col-span-4 flex items-start gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-[#0f2d6b] transition-colors leading-snug">
                       {article.title}
@@ -454,16 +566,32 @@ export default function ArticlesPage() {
                   </span>
                 </div>
                 <div className="col-span-1">
-                  <span className="text-sm text-gray-700 font-medium">{article.year ?? '—'}</span>
+                  <span className="text-sm text-gray-700 font-medium">{getArticleYear(article) ?? '—'}</span>
                 </div>
                 <div className="col-span-1 text-right">
-                  <span className="text-sm text-gray-700">{(article.total_views || 0).toLocaleString()}</span>
+                  <span className="text-sm text-gray-700">{getArticleViews(article).toLocaleString()}</span>
                 </div>
                 <div className="col-span-1 text-right">
-                  <span className="text-sm text-gray-700">{(article.total_downloads || 0).toLocaleString()}</span>
+                  <span className="text-sm text-gray-700">{getArticleDownloads(article).toLocaleString()}</span>
+                </div>
+                <div className="col-span-1 text-center">
+                  {article.doi ? (
+                    article.doi_synced_at ? (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-full">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                        Yes
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full">
+                        Pending
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-xs text-gray-300">—</span>
+                  )}
                 </div>
                 <div className="col-span-2">
-                  <TypeBadge type={article.article_type} />
+                  <TypeBadge type={getArticleType(article)} />
                 </div>
               </div>
             </motion.div>

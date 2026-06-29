@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
+use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ManagingEditorController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OaiController;
@@ -54,6 +55,7 @@ Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('author
 // Reference data + open scholarly endpoints (public)
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
 Route::get('/oai', [OaiController::class, 'handle'])->name('oai');
+Route::get('/articles/{id}/jats', [OaiController::class, 'jats'])->where('id', '[0-9]+')->name('articles.jats');
 Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
 Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
 
@@ -96,7 +98,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/editor/production/{id}/start', [EditorController::class, 'sendToProduction'])->name('editor.production.start');
     Route::patch('/editor/production/{id}', [EditorController::class, 'updateProduction'])->name('editor.production.update');
     Route::post('/editor/publish/{id}', [EditorController::class, 'publish'])->name('editor.publish');
-
+    Route::patch('/editor/articles/{id}/integration', [IntegrationController::class, 'update'])->name('editor.articles.integration');
+    Route::post('/editor/articles/{id}/doi-update', [IntegrationController::class, 'updateDoi'])->name('editor.articles.doi-update');
+    Route::get('/editor/articles/{id}/doi-status', [IntegrationController::class, 'doiStatus'])->name('editor.articles.doi-status');
     Route::get('/editor/manuscripts', [EditorController::class, 'index'])->name('editor.manuscripts');
     Route::get('/editor/manuscript/{id}', [EditorController::class, 'show'])->name('editor.show');
     Route::post('/editor/invite-reviewer', [EditorController::class, 'inviteReviewer'])->name('editor.invite-reviewer');
@@ -137,6 +141,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/analytics/acceptance-rate', [AdminAnalyticsController::class, 'acceptanceRate'])->name('admin.analytics.acceptance');
         Route::get('/analytics/review-turnaround', [AdminAnalyticsController::class, 'reviewTurnaround'])->name('admin.analytics.turnaround');
         Route::get('/analytics/editor-performance', [AdminAnalyticsController::class, 'editorPerformance'])->name('admin.analytics.editors');
+        Route::get('/analytics/countries', [AdminAnalyticsController::class, 'countryStats'])->name('admin.analytics.countries');
         Route::get('/analytics/audit-logs', [AdminAnalyticsController::class, 'auditLogs'])->name('admin.analytics.audit-logs');
     });
 

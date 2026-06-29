@@ -28,6 +28,7 @@ interface ArticleStats {
 
 interface Article {
   id: number;
+  legacy_id?: string | null;
   title: string;
   year: number | null;
   total_views: number;
@@ -35,6 +36,10 @@ interface Article {
   total_citations?: number;
   article_type: string | null;
   subject?: string;
+}
+
+function getArticleUrl(article: Article) {
+  return `/article/${article.legacy_id ?? article.id}`;
 }
 
 const SUBJECT_COLORS = [
@@ -492,7 +497,7 @@ export default function AnalyticsPage() {
                         {article.year && <span className="text-xs text-gray-400">{article.year}</span>}
                       </div>
                     </div>
-                    <Link href={`/articles/${article.id}`} className="flex-shrink-0 text-gray-300 hover:text-[#0f2d6b] transition-colors">
+                    <Link href={getArticleUrl(article)} className="flex-shrink-0 text-gray-300 hover:text-[#0f2d6b] transition-colors">
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>

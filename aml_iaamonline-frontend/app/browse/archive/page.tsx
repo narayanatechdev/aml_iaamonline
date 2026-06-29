@@ -60,7 +60,15 @@ function ArticleCard({ article }: ArticleCardProps) {
 
       {/* DOI */}
       <div className="text-sm text-[#5a6a8a] font-mono mb-4">
-        DOI: {article.doi}
+        DOI:{' '}
+        <a
+          href={`https://doi.org/${article.doi}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#0f2d6b] hover:underline"
+        >
+          {article.doi}
+        </a>
       </div>
 
       {/* Graphical Abstract Thumbnail */}

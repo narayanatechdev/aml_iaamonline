@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\EditorialDecisionMail;
+use App\Mail\ReviewAssignmentMail;
+use App\Mail\RevisionRequestedMail;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Models\Notification;
+use App\Models\Review;
 use App\Models\ReviewAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class EditorController extends Controller
 {
@@ -23,6 +28,13 @@ class EditorController extends Controller
 
         if ($status) {
             $query->where('status', $status);
+        }
+
+        // Per-manuscript scoping: a plain editor only sees manuscripts assigned
+        // to them. Admin / managing-editor / EiC see the whole pipeline.
+        $user = $request->user();
+        if ($user && ! $user->hasAnyRole(['admin', 'managing-editor', 'editor-in-chief'])) {
+            $query->where('assigned_editor_id', $user->id);
         }
 
         $manuscripts = $query->orderBy('created_at', 'desc')->get();
@@ -197,6 +209,14 @@ class EditorController extends Controller
         Notification::add($validated['reviewer_email'], 'review_invitation', 'New review invitation',
             'You have been invited to review a manuscript. Due '.$validated['due_date'].'.', '/reviewer');
 
+        try {
+            Mail::to($validated['reviewer_email'])->send(new ReviewAssignmentMail(
+                $request->user()->name, $manuscript->title, [$validated['reviewer_email']], $validated['due_date']
+            ));
+        } catch (\Throwable $e) {
+            // Email failure must not block the invitation
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Reviewer invited successfully.',
@@ -213,9 +233,26 @@ class EditorController extends Controller
             'manuscript_id' => 'required|exists:manuscripts,id',
             'decision' => 'required|in:accept,minor-revisions,major-revisions,reject',
             'notes' => 'nullable|string',
+            'force' => 'sometimes|boolean',
         ]);
 
         $manuscript = Manuscript::findOrFail($validated['manuscript_id']);
+
+        // Guard: at least two completed reviews before a decision (EiC/admin may
+        // override with force=true).
+        $completedReviews = Review::where('manuscript_id', $manuscript->id)->where('is_submitted', true)->count();
+        $canOverride = $request->user()->hasAnyRole(['admin', 'editor-in-chief', 'managing-editor']);
+        if ($completedReviews < 2 && ! ($request->boolean('force') && $canOverride)) {
+            return response()->json([
+                'success' => false,
+                'message' => "At least two completed reviews are required before a decision ({$completedReviews} so far).",
+                'completed_reviews' => $completedReviews,
+                'can_override' => $canOverride,
+            ], 422);
+        }
+
+        $editorName = $request->user()->name;
+        $dueDate = now()->addDays(30)->toDateString();
 
         $manuscript->update([
             'status' => $validated['decision'] === 'accept' ? 'accepted' : ($validated['decision'] === 'reject' ? 'rejected' : 'revision_required'),
@@ -236,6 +273,21 @@ class EditorController extends Controller
 
         Notification::add($manuscript->author_email, 'decision', 'Editorial decision: '.$validated['decision'],
             'A decision has been recorded for "'.$manuscript->title.'".', '/dashboard');
+
+        // Email the author (logged when MAIL_MAILER=log; real once SMTP is set)
+        try {
+            if (in_array($validated['decision'], ['minor-revisions', 'major-revisions'], true)) {
+                Mail::to($manuscript->author_email)->send(new RevisionRequestedMail(
+                    $manuscript->title, $manuscript->submission_id, $editorName, $dueDate, $validated['notes'] ?? null
+                ));
+            } else {
+                Mail::to($manuscript->author_email)->send(new EditorialDecisionMail(
+                    $manuscript->title, $validated['decision'], $editorName
+                ));
+            }
+        } catch (\Throwable $e) {
+            // Email failure must not block the decision
+        }
 
         return response()->json([
             'success' => true,

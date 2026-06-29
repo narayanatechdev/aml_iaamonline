@@ -31,6 +31,7 @@ class SubmissionController extends Controller
             'category' => ['required', Rule::in(['nanotechnology', 'materials-science', 'polymers', 'composites', 'functional-materials', 'sustainable', 'other'])],
             'pdf' => 'required|file|mimes:pdf|max:52428800',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'graphical_abstract' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
             // Optional metadata
             'funding_information' => 'nullable|string|max:2000',
             'acknowledgements' => 'nullable|string|max:2000',
@@ -38,7 +39,12 @@ class SubmissionController extends Controller
             'data_availability' => 'nullable|string|max:2000',
             'cover_letter' => 'nullable|string|max:5000',
             'co_authors' => 'nullable|json',
-            'sdgs' => 'nullable|json',
+            'sdgs' => ['nullable', 'json', function ($attribute, $value, $fail) {
+                $sdgs = json_decode($value, true);
+                if (is_array($sdgs) && count($sdgs) > 5) {
+                    $fail('You can select a maximum of 5 SDGs.');
+                }
+            }],
             'trl' => 'nullable|integer|min:1|max:9',
             'division' => 'nullable|string|max:255',
         ]);
@@ -124,6 +130,26 @@ class SubmissionController extends Controller
             ]);
         }
 
+        // Graphical abstract
+        if ($request->hasFile('graphical_abstract')) {
+            $ga = $request->file('graphical_abstract');
+            $gaName = $submissionId.'_ga.'.$ga->getClientOriginalExtension();
+            $gaPath = $ga->storeAs('graphical-abstracts', $gaName, 'public');
+
+            $manuscript->update([
+                'graphical_abstract_path' => $gaPath,
+            ]);
+
+            ManuscriptFile::create([
+                'manuscript_id' => $manuscript->id,
+                'file_name' => $ga->getClientOriginalName(),
+                'file_path' => $gaPath,
+                'file_type' => $ga->getClientOriginalExtension(),
+                'file_type_category' => 'graphical_abstract',
+                'uploaded_at' => now(),
+            ]);
+        }
+
         // Similarity check (scaffold — returns null/pending until a provider is configured)
         if ($manuscript->file_path) {
             $manuscript->update(['similarity_score' => SimilarityCheckService::check($manuscript->file_path)]);
@@ -163,16 +189,20 @@ class SubmissionController extends Controller
     {
         $validated = $request->validate([
             'submission_id' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'nullable|email',
         ]);
 
-        $manuscript = Manuscript::where('submission_id', $validated['submission_id'])
-            ->where('author_email', $validated['email'])
-            ->firstOrFail();
+        $query = Manuscript::where('submission_id', $validated['submission_id']);
+
+        if ($request->filled('email')) {
+            $query->where('author_email', $validated['email']);
+        }
+
+        $manuscript = $query->firstOrFail();
 
         AuditLog::create([
             'action' => 'manuscript_viewed',
-            'actor_email' => $validated['email'],
+            'actor_email' => $request->input('email', 'anonymous'),
             'actor_type' => 'author',
             'manuscript_id' => $manuscript->id,
             'description' => 'Submission status checked',

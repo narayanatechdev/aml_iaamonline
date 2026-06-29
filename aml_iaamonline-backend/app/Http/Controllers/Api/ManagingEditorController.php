@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -181,9 +182,13 @@ class ManagingEditorController extends Controller
 
         $manuscript->update([
             'status' => 'under_review',
+            'assigned_editor_id' => $editor->id,
             'editor_notes' => $validated['notes'] ?? $manuscript->editor_notes,
             'editor_review_completed_at' => now(),
         ]);
+
+        Notification::add($editor->email, 'editor_assigned', 'Manuscript assigned to you',
+            'You are now the handling editor for "'.$manuscript->title.'".', '/editor');
 
         $this->logAction('decision_made', "Editor {$editor->email} assigned to manuscript: {$manuscript->submission_id}", [
             'manuscript_id' => $manuscript->id,

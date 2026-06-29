@@ -70,6 +70,7 @@ const QUESTIONS: Question[] = [
   { id: 'cover_letter', type: 'longtext', question: 'Cover letter to the editor', description: 'Optional — a short note to the Editor-in-Chief.', placeholder: 'Dear Editor…' },
   { id: 'pdf', type: 'file', question: 'Upload your manuscript', description: 'PDF only · max 50 MB.' },
   { id: 'image', type: 'image', question: 'Add a cover image', description: 'Optional — a graphical abstract or author photo (JPG/PNG, max 5 MB).' },
+  { id: 'graphical_abstract', type: 'image', question: 'Add a Graphical Abstract', description: 'Optional — visually summarize your research (JPG/PNG, max 5 MB).' },
   { id: 'consent', type: 'consent', question: 'A few confirmations before you submit' },
   { id: 'review', type: 'review', question: 'Review your submission' },
 ];
@@ -118,7 +119,9 @@ export function TypeformSubmission() {
   const [tagInput, setTagInput] = useState('');
   const [pdf, setPdf] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
+  const [graphicalAbstract, setGraphicalAbstract] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [gaPreview, setGaPreview] = useState<string | null>(null);
   const [coAuthors, setCoAuthors] = useState<CoAuthor[]>([]);
   const [selectedSDGs, setSelectedSDGs] = useState<number[]>([]);
   const [consents, setConsents] = useState<boolean[]>([false, false, false]);
@@ -234,6 +237,7 @@ export function TypeformSubmission() {
       if (form.trl) fd.append('trl', form.trl);
       fd.append('pdf', pdf);
       if (image) fd.append('image', image);
+      if (graphicalAbstract) fd.append('graphical_abstract', graphicalAbstract);
       // Optional metadata
       if (form.funding_information) fd.append('funding_information', form.funding_information);
       if (form.acknowledgements) fd.append('acknowledgements', form.acknowledgements);
@@ -524,6 +528,36 @@ export function TypeformSubmission() {
                   </div>
                 )}
 
+                {/* Graphical Abstract (optional) */}
+                {current.type === 'image' && current.id === 'graphical_abstract' && (
+                  <div>
+                    <label className="flex flex-col items-center justify-center w-full h-52 border-2 border-dashed border-[#0f2d6b]/30 rounded-2xl bg-[#f4f7fc] cursor-pointer hover:border-[#0f2d6b]/60 hover:bg-[#e8eff9] transition-all overflow-hidden">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] || null;
+                          setGraphicalAbstract(f);
+                          setGaPreview(f ? URL.createObjectURL(f) : null);
+                          setError(null);
+                        }}
+                      />
+                      {gaPreview ? (
+                        <img src={gaPreview} alt="ga-preview" className="w-full h-full object-contain" />
+                      ) : (
+                        <div className="text-center"><ImageIcon className="w-10 h-10 text-[#5a6a8a] mx-auto mb-2" /><p className="text-[#5a6a8a]">Click to upload a graphical abstract</p><p className="text-[#9aabcc] text-xs mt-1">JPG or PNG · Max 5 MB · optional</p></div>
+                      )}
+                    </label>
+                    {graphicalAbstract && (
+                      <div className="flex items-center justify-between mt-2 text-xs">
+                        <span className="text-[#0f2d6b] font-medium">{graphicalAbstract.name}</span>
+                        <button onClick={() => { setGraphicalAbstract(null); setGaPreview(null); }} className="text-red-600 hover:underline">Remove</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* CONSENT */}
                 {current.type === 'consent' && (
                   <div className="space-y-3">
@@ -542,6 +576,7 @@ export function TypeformSubmission() {
                     {[
                       ['Title', form.title], ['Type', form.type], ['Research area', RESEARCH_AREAS.find((r) => r.value === form.category)?.label || form.category],
                       ['Author', form.authorName], ['Email', form.authorEmail], ['Affiliation', form.affiliation], ['Country', form.country], ['File', pdf?.name || '—'], ['Cover image', image?.name || 'None'],
+                      ['Graphical Abstract', graphicalAbstract?.name || 'None'],
                       ['Co-authors', coAuthors.filter((c) => c.name.trim()).length ? coAuthors.filter((c) => c.name.trim()).map((c) => c.name).join(', ') : 'None'],
                       ['SDGs', selectedSDGs.length ? selectedSDGs.map((n) => `#${n}`).join(', ') : 'None'],
                     ].map(([k, v]) => (

@@ -86,11 +86,27 @@ class User extends Authenticatable
 
     public function assignRole(Role $role): void
     {
-        if (! $this->hasRole($role)) {
-            $this->roles()->attach($role->id, [
-                'assigned_at' => now(),
-            ]);
+        $existingRole = $this->roles()
+            ->where('roles.id', $role->id)
+            ->first();
+
+        if ($existingRole) {
+            if (! $existingRole->pivot->is_active) {
+                $this->roles()->updateExistingPivot($role->id, [
+                    'is_active' => true,
+                    'assigned_at' => now(),
+                    'revoked_at' => null,
+                    'revoked_by' => null,
+                ]);
+            }
+
+            return;
         }
+
+        $this->roles()->attach($role->id, [
+            'assigned_at' => now(),
+            'is_active' => true,
+        ]);
     }
 
     public function removeRole(Role $role): void

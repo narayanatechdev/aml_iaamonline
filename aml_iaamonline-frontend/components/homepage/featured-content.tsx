@@ -69,7 +69,15 @@ export function FeaturedContent() {
               </div>
               
               <div className="flex items-center justify-between text-[10px] border-t pt-4 border-gray-50">
-                <span className="text-[#5a6a8a] font-mono leading-none">{article.doi}</span>
+                <a
+                  href={`https://doi.org/${article.doi}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0f2d6b] font-mono leading-none hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {article.doi}
+                </a>
                 <div className="flex items-center gap-1 font-bold text-[#0f2d6b]">
                   <span>{article.views.toLocaleString()}</span>
                   <span className="text-[#5a6a8a] font-medium opacity-60">views</span>

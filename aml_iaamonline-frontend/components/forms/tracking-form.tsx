@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,14 +16,20 @@ interface SubmissionStatus {
   progress: number;
 }
 
-export function TrackingForm() {
-  const [submissionId, setSubmissionId] = useState('');
-  const [email, setEmail] = useState('');
+export function TrackingForm({ initialSubmissionId, initialEmail }: { initialSubmissionId?: string, initialEmail?: string }) {
+  const [submissionId, setSubmissionId] = useState(initialSubmissionId || '');
+  const [email, setEmail] = useState(initialEmail || '');
   const [submission, setSubmission] = useState<SubmissionStatus | null>(null);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState('');
-
   const [isLoading, setIsLoading] = useState(false);
+
+  // Auto-search if we have initial credentials
+  useEffect(() => {
+    if (initialSubmissionId && initialEmail) {
+      handleSearch(null, initialSubmissionId, initialEmail);
+    }
+  }, [initialSubmissionId, initialEmail]);
 
   const getProgressFromStatus = (status: string) => {
     switch (status) {
@@ -47,13 +53,16 @@ export function TrackingForm() {
     }
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e: React.FormEvent | null, subId?: string, em?: string) => {
+    if (e) e.preventDefault();
+    const finalSubId = subId || submissionId;
+    const finalEmail = em || email; // Removed fallback default_email to rely on server flexibility
+    
     setError('');
     setIsLoading(true);
 
-    if (!submissionId || !email) {
-      setError('Please enter both Submission ID and email address');
+    if (!finalSubId) {
+      setError('Please enter Submission ID');
       setIsLoading(false);
       return;
     }
@@ -66,8 +75,8 @@ export function TrackingForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          submission_id: submissionId,
-          email: email,
+          submission_id: finalSubId,
+          ...(finalEmail && { email: finalEmail })
         }),
       });
 
@@ -120,7 +129,6 @@ export function TrackingForm() {
     <div className="max-w-2xl mx-auto">
       <Card className="mb-8 rounded-xl border-gray-200 shadow-sm">
         <CardContent className="pt-6">
-          <p className="text-sm text-gray-500 mb-4">Enter your Submission ID and email to check the status.</p>
           <form onSubmit={handleSearch} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-1">
@@ -131,19 +139,6 @@ export function TrackingForm() {
                 placeholder="e.g., SUB-1234567890"
                 value={submissionId}
                 onChange={(e) => setSubmissionId(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Email Address
-              </label>
-              <Input
-                type="email"
-                placeholder="your.email@institution.edu"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>

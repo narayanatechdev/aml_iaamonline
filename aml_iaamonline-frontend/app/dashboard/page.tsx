@@ -13,6 +13,7 @@ interface Manuscript {
   category: string | null;
   status: string;
   submitted_at: string | null;
+  author_email?: string | null;
 }
 
 interface Stats {
@@ -166,8 +167,8 @@ export default function AuthorDashboardPage() {
                             Submit revision
                           </Link>
                         ) : (
-                          <Link href={`/dashboard/track?id=${m.submission_id}`} className="inline-flex items-center gap-1 text-xs font-medium text-[#0f2d6b]/60 group-hover:text-[#0f2d6b] transition-colors">
-                            View <ArrowRight className="w-3.5 h-3.5" />
+                          <Link href={`/dashboard/track?id=${m.submission_id}&email=${m.author_email}`} className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0f2d6b] text-white hover:bg-[#0d2560] transition-colors">
+                            View Tracking
                           </Link>
                         )}
                       </td>

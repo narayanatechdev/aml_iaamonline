@@ -31,7 +31,15 @@ function ArticleCard({ article }: ArticleCardProps) {
             <p className="text-[#5a6a8a] text-xs mb-2">{article.authors.join(', ')}</p>
             <p className="text-[#3a4a6a] text-xs leading-relaxed line-clamp-2 mb-3">{article.abstract}</p>
             <div className="flex items-center gap-4 text-xs text-[#5a6a8a]">
-              <span className="font-mono text-[10px] text-[#0f2d6b]">DOI: {article.doi}</span>
+              <a
+                href={`https://doi.org/${article.doi}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[10px] text-[#0f2d6b] hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                DOI: {article.doi}
+              </a>
               <span className="flex items-center gap-1">
                 <Eye className="w-3 h-3" />
                 {article.views.toLocaleString()}

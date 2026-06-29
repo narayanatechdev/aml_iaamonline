@@ -46,4 +46,31 @@ class OaiController extends Controller
 
         return response($xml, 200, ['Content-Type' => 'application/xml']);
     }
+
+    /**
+     * Minimal JATS-XML export for a single published article (for indexers).
+     */
+    public function jats(int $id): Response
+    {
+        $a = Article::published()->where('id', $id)->orWhere('legacy_id', $id)->firstOrFail();
+        $esc = fn ($v) => htmlspecialchars((string) $v, ENT_XML1);
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'
+            .'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN" "JATS-journalpublishing1.dtd">'
+            .'<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article">'
+            .'<front><journal-meta><journal-id journal-id-type="publisher">amlett</journal-id>'
+            .'<journal-title-group><journal-title>Advanced Materials Letters</journal-title></journal-title-group>'
+            .'<publisher><publisher-name>International Association of Advanced Materials</publisher-name></publisher></journal-meta>'
+            .'<article-meta>'
+            .'<article-id pub-id-type="doi">'.$esc($a->doi).'</article-id>'
+            .'<title-group><article-title>'.$esc($a->title).'</article-title></title-group>'
+            .'<pub-date><year>'.$esc($a->publish_year).'</year></pub-date>'
+            .'<volume>'.$esc($a->volume).'</volume><issue>'.$esc($a->issue).'</issue>'
+            .'<fpage>'.$esc($a->pages_from).'</fpage><lpage>'.$esc($a->pages_to).'</lpage>'
+            .'<abstract><p>'.$esc($a->abstract).'</p></abstract>'
+            .'<kwd-group>'.implode('', array_map(fn ($k) => '<kwd>'.$esc(trim($k)).'</kwd>', array_filter(explode(';', (string) $a->keywords)))).'</kwd-group>'
+            .'</article-meta></front></article>';
+
+        return response($xml, 200, ['Content-Type' => 'application/xml']);
+    }
 }

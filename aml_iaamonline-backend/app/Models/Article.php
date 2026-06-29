@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'legacy_id', 'manuscript_id', 'title', 'document_type', 'subject',
-    'abstract', 'keywords', 'doi', 'volume', 'issue', 'pages_from',
+    'abstract', 'keywords', 'doi', 'doi_link', 'google_scholar_id', 'volume', 'issue', 'pages_from',
     'pages_to', 'language', 'status', 'pdf_url', 'original_pdf_url',
     'graphical_abstract_url', 'article_link', 'file_name',
     'views_count', 'pdf_downloads', 'cited_count',
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'accept_date', 'publish_date', 'publish_year', 'publish_month',
     'acknowledgements', 'funding_information', 'conflict_of_interest',
     'author_contributions', 'data_availability',
+    'doi_synced_at',
 ])]
 class Article extends Model
 {
@@ -31,6 +32,7 @@ class Article extends Model
             'accept_date' => 'date',
             'publish_date' => 'date',
             'author_contributions' => 'json',
+            'doi_synced_at' => 'datetime',
         ];
     }
 

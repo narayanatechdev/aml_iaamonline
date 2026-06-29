@@ -56,7 +56,16 @@ export function VolumeRecentContent() {
 
               {/* DOI */}
               <div className="text-sm text-[#5a6a8a] font-mono mb-4">
-                DOI: {article.doi || '10.5185/amlett.2025.011771'}
+                DOI:{' '}
+                <a
+                  href={`https://doi.org/${article.doi || '10.5185/amlett.2025.011771'}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0f2d6b] hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {article.doi || '10.5185/amlett.2025.011771'}
+                </a>
               </div>
 
               {/* Graphical Abstract Thumbnail */}

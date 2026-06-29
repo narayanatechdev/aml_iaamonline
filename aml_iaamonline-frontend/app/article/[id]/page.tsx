@@ -354,13 +354,25 @@ export default function ArticlePage() {
                 { label: "Volume", value: `Vol. ${article.volume}, No. ${article.issue}` },
                 { label: "Pages", value: article.pages },
                 { label: "Published", value: article.published },
-                { label: "DOI", value: article.doi },
               ].map((m) => (
                 <div key={m.label}>
                   <p className="text-[#5a6a8a] text-xs mb-0.5">{m.label}</p>
                   <p className="text-[#0f1a2e] text-sm font-mono" style={{ fontWeight: 600 }}>{m.value}</p>
                 </div>
               ))}
+              <div>
+                <p className="text-[#5a6a8a] text-xs mb-0.5">DOI</p>
+                <a
+                  href={`https://doi.org/${article.doi}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0f2d6b] text-sm font-mono hover:underline inline-flex items-center gap-1"
+                  style={{ fontWeight: 600 }}
+                >
+                  {article.doi}
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
 
             {/* Actions */}
@@ -441,7 +453,15 @@ export default function ArticlePage() {
             <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>How to Cite</h2>
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
-                {authorNames} ({article.year}). {article.title}. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}. https://doi.org/{article.doi}
+                {authorNames} ({article.year}). {article.title}. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
+                <a
+                  href={`https://doi.org/${article.doi}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0f2d6b] hover:underline"
+                >
+                  https://doi.org/{article.doi}
+                </a>
               </p>
             </div>
             <div className="flex gap-2 mt-3">

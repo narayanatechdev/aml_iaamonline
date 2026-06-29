@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Loader2, Trash2, Calendar, Globe, User,
@@ -84,6 +84,18 @@ export default function EditUserPage() {
   const showToast = (type: ToastType, message: string) =>
     setToast({ type, message, isVisible: true });
 
+  const userFormInitialData = useMemo(() => {
+    if (!user) return undefined;
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      status: user.status ?? 'active',
+      roles: Array.isArray(user.roles) ? user.roles : [],
+    };
+  }, [user]);
+
   // ── Fetch user + roles ─────────────────────────────────────
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -132,17 +144,32 @@ export default function EditUserPage() {
   }) => {
     setIsSubmitting(true);
     try {
-      const res = await authFetch(`${API_BASE}/admin/users/${userId}`, {
+      const userRes = await authFetch(`${API_BASE}/admin/users/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+        }),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
+      if (!userRes.ok) {
+        const err = await userRes.json().catch(() => ({}));
         throw new Error(err.message || 'Failed to update user');
       }
-      const updated = await res.json();
-      setUser(prev => ({ ...prev!, ...(updated.data || updated) }));
+
+      const rolesRes = await authFetch(`${API_BASE}/admin/users/${userId}/roles`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roles: data.roles }),
+      });
+      if (!rolesRes.ok) {
+        const err = await rolesRes.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to update user roles');
+      }
+
+      await userRes.json();
+      await rolesRes.json();
+      await fetchData();
       showToast('success', 'User updated successfully!');
     } catch (err) {
       showToast('error', err instanceof Error ? err.message : 'Failed to update user');
@@ -249,13 +276,7 @@ export default function EditUserPage() {
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-base font-semibold text-gray-900 mb-4">Account Details</h2>
             <UserForm
-              initialData={{
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                status: user.status ?? 'active',
-                roles: Array.isArray(user.roles) ? user.roles : [],
-              }}
+              initialData={userFormInitialData}
               roles={roles}
               onSubmit={handleSubmit}
               isLoading={isSubmitting}

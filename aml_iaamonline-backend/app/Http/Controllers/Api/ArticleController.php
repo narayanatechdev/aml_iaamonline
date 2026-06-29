@@ -41,19 +41,55 @@ class ArticleController extends Controller
             $query->where('document_type', $type);
         }
 
-        // Admin scope: only articles that came through this submission system
-        // (linked to a manuscript), excluding the imported legacy archive.
         if ($request->boolean('from_submission')) {
             $query->whereNotNull('manuscript_id');
         }
 
-        $sortBy = $request->input('sort', 'publish_date');
-        $sortDir = $request->input('dir', 'desc');
-        $query->orderBy($sortBy, $sortDir);
+        $sortColumns = [
+            'title' => 'title',
+            'year' => 'publish_year',
+            'publish_year' => 'publish_year',
+            'total_views' => 'views_count',
+            'views_count' => 'views_count',
+            'total_downloads' => 'pdf_downloads',
+            'pdf_downloads' => 'pdf_downloads',
+            'total_citations' => 'cited_count',
+            'cited_count' => 'cited_count',
+            'article_type' => 'document_type',
+            'document_type' => 'document_type',
+            'publish_date' => 'publish_date',
+            'volume' => 'volume',
+            'issue' => 'issue',
+            'created_at' => 'created_at',
+        ];
 
-        $perPage = min((int) $request->input('per_page', 20), 100);
+        $requestedSort = (string) $request->input('sort', 'publish_date');
+        $sortBy = $sortColumns[$requestedSort] ?? 'publish_date';
+        $sortDir = strtolower((string) $request->input('dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $query->orderBy($sortBy, $sortDir)->orderBy('id', 'desc');
 
-        return response()->json($query->paginate($perPage));
+        $perPage = min(max((int) $request->input('per_page', 20), 1), 100);
+        $articles = $query->paginate($perPage);
+        $articles->getCollection()->transform(fn (Article $article) => $this->articleIndexResource($article));
+
+        return response()->json($articles);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function articleIndexResource(Article $article): array
+    {
+        return array_merge($article->toArray(), [
+            'year' => $article->publish_year,
+            'article_type' => $article->document_type,
+            'total_views' => $article->views_count,
+            'total_downloads' => $article->pdf_downloads,
+            'total_citations' => $article->cited_count,
+            'page_start' => $article->pages_from,
+            'page_end' => $article->pages_to,
+            'pages' => $article->pages,
+        ]);
     }
 
     public function show(string $id)
@@ -89,6 +125,16 @@ class ArticleController extends Controller
         $totalDownloads = Article::published()->sum('pdf_downloads');
         $totalCitations = Article::published()->sum('cited_count');
 
+        $totalWithDoi = Article::published()
+            ->whereNotNull('doi')
+            ->where('doi', '!=', '')
+            ->count();
+        $doiSynced = Article::published()
+            ->whereNotNull('doi')
+            ->where('doi', '!=', '')
+            ->whereNotNull('doi_synced_at')
+            ->count();
+
         $byYear = Article::published()
             ->selectRaw('publish_year, count(*) as count')
             ->groupBy('publish_year')
@@ -118,6 +164,10 @@ class ArticleController extends Controller
             'by_year' => $byYear,
             'by_subject' => $bySubject,
             'by_type' => $byType,
+            // DOI sync stats
+            'total_with_doi' => $totalWithDoi,
+            'doi_synced' => $doiSynced,
+            'doi_pending' => $totalWithDoi - $doiSynced,
         ]);
     }
 
