@@ -27,7 +27,7 @@ interface AuthorAffiliation {
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
   if (typeof author === 'object' && author !== null) {
-    return `${author.firstName || ''} ${author.lastName || ''}`.trim();
+    return (author.name || author.first_name || '').trim();
   }
   return '';
 }
@@ -51,7 +51,7 @@ export default function ArticlePage() {
     const fetchAuthors = async () => {
       try {
         setIsLoadingAuthors(true);
-        const response = await fetch(`http://localhost:8000/api/articles/${id}/authors`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}/authors`);
         if (response.ok) {
           const data = await response.json();
           setAuthorsWithAffiliations(data.authors || []);
@@ -89,7 +89,7 @@ export default function ArticlePage() {
     );
 
     // Observe all sections
-    const sections = ['header', 'abstract', 'graphical-abstract', 'keywords', 'citation', 'related'];
+    const sections = ['header', 'graphical-abstract', 'keywords', 'citation', 'related'];
     sections.forEach((sectionId) => {
       const element = document.getElementById(sectionId);
       if (element) {
@@ -118,7 +118,7 @@ export default function ArticlePage() {
             {/* Download PDF Button */}
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <a
-                href={article.pdf_url || `#`}
+                href={article.pdf_url || '#'}
                 className="flex items-center gap-2 px-4 py-3 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors font-semibold w-full justify-center"
                 {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
               >
@@ -131,13 +131,9 @@ export default function ArticlePage() {
             <div className="bg-white rounded-lg border border-gray-200 p-4">
             <h3 className="text-black text-base font-semibold mb-4">Article Sections</h3>
             <nav className="space-y-2">
-              <a 
-                href="#header" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'header'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
+              <a
+                href="#header"
+                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'header' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('header')?.scrollIntoView({ behavior: 'smooth' });
@@ -145,41 +141,19 @@ export default function ArticlePage() {
               >
                 Article Info
               </a>
-              <a 
-                href="#abstract" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'abstract'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('abstract')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Abstract
-              </a>
-              <a 
-                href="#graphical-abstract" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'graphical-abstract'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
+              <a
+                href="#graphical-abstract"
+                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'graphical-abstract' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('graphical-abstract')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                Graphical Abstract
+                Abstract & Graphical Abstract
               </a>
-              <a 
-                href="#keywords" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'keywords'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
+              <a
+                href="#keywords"
+                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'keywords' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('keywords')?.scrollIntoView({ behavior: 'smooth' });
@@ -187,13 +161,9 @@ export default function ArticlePage() {
               >
                 Keywords
               </a>
-              <a 
-                href="#citation" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'citation'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
+              <a
+                href="#citation"
+                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'citation' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('citation')?.scrollIntoView({ behavior: 'smooth' });
@@ -201,13 +171,9 @@ export default function ArticlePage() {
               >
                 How to Cite
               </a>
-              <a 
-                href="#related" 
-                className={`block text-sm transition-colors py-1 smooth-scroll ${
-                  activeSection === 'related'
-                    ? 'text-[#0f2d6b] bg-[#f0f4fb] px-3 py-2 rounded-lg font-semibold'
-                    : 'text-gray-600 hover:text-black px-1'
-                }`}
+              <a
+                href="#related"
+                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'related' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('related')?.scrollIntoView({ behavior: 'smooth' });
@@ -351,7 +317,7 @@ export default function ArticlePage() {
             {/* Metadata */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 mb-5 border-y border-gray-200">
               {[
-                { label: "Volume", value: `Vol. ${article.volume}, No. ${article.issue}` },
+                { label: "Volume", value: article.volume },
                 { label: "Pages", value: article.pages },
                 { label: "Published", value: article.published },
               ].map((m) => (
@@ -412,24 +378,28 @@ export default function ArticlePage() {
             </div>
           </div>
 
-          {/* Graphical Abstract */}
-          {article.graphical_abstract_url && (
-            <div id="graphical-abstract" className="py-6 mb-8 scroll-mt-36">
-              <h2 className="text-black text-xl mb-4" style={{ fontWeight: 700 }}>Graphical Abstract</h2>
-              <div className="flex justify-center">
-                <img
-                  src={article.graphical_abstract_url}
-                  alt={`Graphical abstract for ${article.title}`}
-                  className="max-w-full h-auto object-contain max-h-48 rounded-lg shadow-sm border border-border"
-                />
+          {/* Graphical Abstract and Abstract Side-by-Side */}
+          <div id="graphical-abstract" className="py-6 mb-8 scroll-mt-36">
+            <h2 className="text-black text-xl mb-4" style={{ fontWeight: 700 }}>Graphical Abstract & Abstract</h2>
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              {/* Graphical Abstract Image (Left) */}
+              {article.graphical_abstract_url && (
+                <div className="flex-shrink-0 w-full md:w-1/3">
+                  <img
+                    src={article.graphical_abstract_url}
+                    alt={`Graphical abstract for ${article.title}`}
+                    className="w-full h-auto object-contain rounded-lg shadow-sm border border-border"
+                  />
+                </div>
+              )}
+
+              {/* Abstract Content (Right) */}
+              <div className="flex-grow">
+                <p className="text-[#3a4a6a] text-base leading-relaxed">
+                  {article.abstract}
+                </p>
               </div>
             </div>
-          )}
-
-          {/* Abstract */}
-          <div id="abstract" className="py-6 mb-8 scroll-mt-36">
-            <h2 className="text-black text-xl mb-3" style={{ fontWeight: 700 }}>Abstract</h2>
-            <p className="text-[#3a4a6a] text-base leading-relaxed">{article.abstract}</p>
           </div>
 
           {/* Keywords */}
@@ -439,7 +409,7 @@ export default function ArticlePage() {
               {article.keywords.map((kw) => (
                 <Link
                   key={kw}
-                  href={`/browse/current?q=${encodeURIComponent(kw)}`}
+                  href={`/search?keyword=${encodeURIComponent(kw)}`}
                   className="px-3 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-sm rounded-full border border-[#0f2d6b]/15 hover:bg-[#0f2d6b] hover:text-white transition-colors cursor-pointer"
                 >
                   {kw}
