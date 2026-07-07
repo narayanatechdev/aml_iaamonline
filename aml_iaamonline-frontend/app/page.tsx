@@ -1,6 +1,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { FeaturedArticle } from '@/components/layout/featured-hero';
 import { FeaturedArticles } from '@/components/homepage/featured-articles';
+import { OnTheCover } from '@/components/homepage/on-the-cover';
 import { ChallengeDivisions } from '@/components/homepage/challenge-divisions';
 import { Announcements } from '@/components/homepage/announcements';
 import { IAAMFellowship } from '@/components/homepage/iaam-fellowship';
@@ -15,6 +16,7 @@ export default function Home() {
     <MainLayout>
       <FeaturedArticle />
       <FeaturedArticles />
+      <OnTheCover />
       <ChallengeDivisions />
       <Announcements />
       <IAAMFellowship />

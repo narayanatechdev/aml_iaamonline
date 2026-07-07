@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Upload, CheckCircle, FileText, AlertCircle } from "lucide-react";
+import { Upload, CheckCircle, FileText, AlertCircle, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { MetadataForm } from "./metadata-form";
 import { SDGSelector } from "./sdg-selector";
 import { getUser, API_BASE } from "@/lib/userAuth";
+import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from "@/lib/cover-image-validation";
 
 // Research areas accepted by the backend (category enum)
 const RESEARCH_AREAS: { value: string; label: string }[] = [
@@ -53,6 +54,12 @@ export function SubmissionWizard() {
   const [submissionId, setSubmissionId] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [coverImageName, setCoverImageName] = useState<string | null>(null);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
+  const [graphicalAbstractName, setGraphicalAbstractName] = useState<string | null>(null);
+  const [graphicalAbstractFile, setGraphicalAbstractFile] = useState<File | null>(null);
+  const [graphicalAbstractPreview, setGraphicalAbstractPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -116,6 +123,7 @@ export function SubmissionWizard() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.authorEmail)) e.authorEmail = "Enter a valid email address.";
     if (!form.affiliation.trim()) e.affiliation = "Affiliation is required.";
     if (!form.country) e.country = "Select a country.";
+    if (!form.coverLetter.trim()) e.coverLetter = "Cover letter to the editor is required.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -123,12 +131,77 @@ export function SubmissionWizard() {
   const fieldError = (name: string) =>
     errors[name] ? <p className="text-red-600 text-xs mt-1">{errors[name]}</p> : null;
 
+  const handleCoverImageChange = async (file: File | null) => {
+    if (!file) {
+      setCoverImageFile(null);
+      setCoverImageName(null);
+      setCoverImagePreview(null);
+      setSubmitError("Please attach the required 16:9 cover image.");
+
+      return;
+    }
+
+    const validationError = await validateCoverImageFile(file);
+
+    if (validationError) {
+      setCoverImageFile(null);
+      setCoverImageName(null);
+      setCoverImagePreview(null);
+      setSubmitError(validationError);
+
+      return;
+    }
+
+    setCoverImageFile(file);
+    setCoverImageName(file.name);
+    setCoverImagePreview(URL.createObjectURL(file));
+    setSubmitError(null);
+  };
+
+
+  const handleGraphicalAbstractChange = async (file: File | null) => {
+    if (!file) {
+      setGraphicalAbstractFile(null);
+      setGraphicalAbstractName(null);
+      setGraphicalAbstractPreview(null);
+      setSubmitError("Please attach the required Graphical Abstract.");
+
+      return;
+    }
+
+    const validationError = await validateGraphicalAbstractFile(file);
+
+    if (validationError) {
+      setGraphicalAbstractFile(null);
+      setGraphicalAbstractName(null);
+      setGraphicalAbstractPreview(null);
+      setSubmitError(validationError);
+
+      return;
+    }
+
+    setGraphicalAbstractFile(file);
+    setGraphicalAbstractName(file.name);
+    setGraphicalAbstractPreview(URL.createObjectURL(file));
+    setSubmitError(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
 
     if (!pdfFile) {
       setSubmitError("Please attach your manuscript PDF before submitting.");
+      return;
+    }
+
+    if (!coverImageFile) {
+      setSubmitError("Please attach the required 16:9 cover image before submitting.");
+      return;
+    }
+
+    if (!graphicalAbstractFile) {
+      setSubmitError("Please attach the required Graphical Abstract before submitting.");
       return;
     }
 
@@ -142,7 +215,10 @@ export function SubmissionWizard() {
       fd.append("abstract", form.abstract);
       fd.append("keywords", form.keywords);
       fd.append("category", form.category || "other");
+      fd.append("cover_letter", form.coverLetter);
       fd.append("pdf", pdfFile);
+      fd.append("image", coverImageFile);
+      fd.append("graphical_abstract", graphicalAbstractFile);
 
       const res = await fetch(`${API_BASE}/submit`, {
         method: "POST",
@@ -409,16 +485,17 @@ export function SubmissionWizard() {
 
             <div>
               <label className="block text-[#0f1a2e] text-sm mb-1.5" style={{ fontWeight: 600 }}>
-                Cover Letter
+                Cover Letter <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="coverLetter"
                 value={form.coverLetter}
                 onChange={handleChange}
-                placeholder="Optional: Provide a cover letter to the Editor-in-Chief..."
+                placeholder="Provide a cover letter to the Editor-in-Chief..."
                 rows={5}
                 className="w-full px-4 py-2.5 rounded-lg border border-border bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b] resize-none"
               />
+              {fieldError("coverLetter")}
             </div>
 
             <div className="flex justify-between">
@@ -576,6 +653,62 @@ export function SubmissionWizard() {
               </label>
             </div>
 
+            {/* Upload required cover image */}
+            <div>
+              <label className="block text-[#0f1a2e] text-sm mb-1.5" style={{ fontWeight: 600 }}>
+                Upload Cover Image <span className="text-red-500">*</span>
+              </label>
+              <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-[#0f2d6b]/30 rounded-xl bg-[#f4f7fc] cursor-pointer hover:border-[#0f2d6b]/60 hover:bg-[#e8eff9] transition-all overflow-hidden">
+                <input
+                  type="file"
+                  accept={COVER_IMAGE_ACCEPT}
+                  className="hidden"
+                  onChange={(e) => {
+                    void handleCoverImageChange(e.target.files?.[0] || null);
+                  }}
+                />
+                {coverImagePreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={coverImagePreview} alt="cover image preview" className="w-full h-full object-contain" />
+                ) : (
+                  <div className="text-center">
+                    <ImageIcon className="w-8 h-8 text-[#5a6a8a] mx-auto mb-2" />
+                    <p className="text-[#5a6a8a] text-sm">Click to upload cover image</p>
+                    <p className="text-[#9aabcc] text-xs mt-1">{COVER_IMAGE_HELP_TEXT}</p>
+                  </div>
+                )}
+              </label>
+              {coverImageName && <p className="text-[#0f2d6b] text-xs mt-2 font-medium">{coverImageName}</p>}
+            </div>
+
+            {/* Upload required graphical abstract */}
+            <div>
+              <label className="block text-[#0f1a2e] text-sm mb-1.5" style={{ fontWeight: 600 }}>
+                Upload Graphical Abstract <span className="text-red-500">*</span>
+              </label>
+              <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-[#0f2d6b]/30 rounded-xl bg-[#f4f7fc] cursor-pointer hover:border-[#0f2d6b]/60 hover:bg-[#e8eff9] transition-all overflow-hidden">
+                <input
+                  type="file"
+                  accept={GRAPHICAL_ABSTRACT_ACCEPT}
+                  className="hidden"
+                  onChange={(e) => {
+                    void handleGraphicalAbstractChange(e.target.files?.[0] || null);
+                  }}
+                />
+                {graphicalAbstractPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={graphicalAbstractPreview} alt="graphical abstract preview" className="w-full h-full object-contain" />
+                ) : (
+                  <div className="text-center">
+                    <ImageIcon className="w-8 h-8 text-[#5a6a8a] mx-auto mb-2" />
+                    <p className="text-[#5a6a8a] text-sm">Click to upload Graphical Abstract</p>
+                    <p className="text-[#9aabcc] text-xs mt-1">{GRAPHICAL_ABSTRACT_HELP_TEXT}</p>
+                  </div>
+                )}
+              </label>
+              {graphicalAbstractName && <p className="text-[#0f2d6b] text-xs mt-2 font-medium">{graphicalAbstractName}</p>}
+            </div>
+
             {/* Ethics declaration */}
             <div className="space-y-3">
               <label className="flex items-start gap-3 cursor-pointer">
@@ -617,7 +750,7 @@ export function SubmissionWizard() {
               </button>
               <button
                 type="submit"
-                disabled={!fileName || submitting}
+                disabled={!fileName || !coverImageName || !graphicalAbstractName || submitting}
                 className="px-8 py-2.5 bg-[#c9a227] text-white rounded-lg text-sm hover:bg-[#b8911f] transition-colors shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ fontWeight: 700 }}
               >
