@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
+use App\Http\Controllers\Api\HomeSectionController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ManagingEditorController;
 use App\Http\Controllers\Api\NotificationController;
@@ -51,6 +52,9 @@ Route::get('/articles/{id}/citation', [ArticleController::class, 'citation'])->n
 // Author Routes (public)
 Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');
 Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('authors.show');
+
+// Homepage content (public — powers the dynamic homepage)
+Route::get('/home/sections', [HomeSectionController::class, 'index'])->name('home.sections');
 
 // Reference data + open scholarly endpoints (public)
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
@@ -120,6 +124,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}/roles', [AdminUserController::class, 'updateRoles'])->name('admin.users.roles');
         Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
         Route::get('/users/{id}/articles', [AdminUserController::class, 'articles'])->name('admin.users.articles');
+
+        // Homepage content management (admin + publisher via homepage:* permissions)
+        Route::get('/home/sections', [HomeSectionController::class, 'adminIndex'])->name('admin.home.sections.index');
+        Route::post('/home/sections', [HomeSectionController::class, 'store'])->name('admin.home.sections.store');
+        Route::post('/home/sections/reorder', [HomeSectionController::class, 'reorder'])->name('admin.home.sections.reorder');
+        Route::post('/home/sections/{id}/duplicate', [HomeSectionController::class, 'duplicate'])->name('admin.home.sections.duplicate');
+        Route::patch('/home/sections/{id}', [HomeSectionController::class, 'update'])->name('admin.home.sections.update');
+        Route::delete('/home/sections/{id}', [HomeSectionController::class, 'destroy'])->name('admin.home.sections.destroy');
 
         // Role management
         Route::get('/roles', [AdminRoleController::class, 'index'])->name('admin.roles.index');

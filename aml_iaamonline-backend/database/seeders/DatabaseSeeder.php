@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
         // Setup Roles and Permissions first
         $this->call(RolePermissionSeeder::class);
 
+        // Seed the default homepage layout
+        $this->call(HomeSectionSeeder::class);
+
         $adminRole = Role::where('name', 'admin')->first();
         $editorRole = Role::where('name', 'editor')->first();
 

@@ -17,12 +17,14 @@ class RolePermissionSeeder extends Seeder
         $authorRole = $this->createRole('author', 'Author', 'author', 'Users who submit manuscripts');
         $reviewerRole = $this->createRole('reviewer', 'Reviewer', 'reviewer', 'Experts who review manuscripts');
         $editorRole = $this->createRole('editor', 'Editor', 'editor', 'Journal editors managing the review process');
+        $publisherRole = $this->createRole('publisher', 'Publisher', 'publisher', 'Manages public-facing website content such as the homepage');
         $adminRole = $this->createRole('admin', 'Administrator', 'admin', 'System administrators');
 
         // Assign permissions to roles
         $this->assignAuthorPermissions($authorRole);
         $this->assignReviewerPermissions($reviewerRole);
         $this->assignEditorPermissions($editorRole);
+        $this->assignPublisherPermissions($publisherRole);
         $this->assignAdminPermissions($adminRole);
     }
 
@@ -79,6 +81,10 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'report:view', 'display_name' => 'View Reports', 'resource' => 'report', 'action' => 'view', 'category' => 'reports'],
             ['name' => 'report:generate', 'display_name' => 'Generate Reports', 'resource' => 'report', 'action' => 'generate', 'category' => 'reports'],
             ['name' => 'report:export', 'display_name' => 'Export Reports', 'resource' => 'report', 'action' => 'export', 'category' => 'reports'],
+
+            // Homepage / content management permissions
+            ['name' => 'homepage:view', 'display_name' => 'View Homepage Content', 'resource' => 'homepage', 'action' => 'view', 'category' => 'content'],
+            ['name' => 'homepage:manage', 'display_name' => 'Manage Homepage Content', 'resource' => 'homepage', 'action' => 'manage', 'category' => 'content'],
         ];
 
         foreach ($permissions as $permission) {
@@ -127,6 +133,16 @@ class RolePermissionSeeder extends Seeder
             'decision:make',
             'report:view',
             'report:generate',
+        ];
+
+        $this->attachPermissions($role, $permissions);
+    }
+
+    private function assignPublisherPermissions(Role $role): void
+    {
+        $permissions = [
+            'homepage:view',
+            'homepage:manage',
         ];
 
         $this->attachPermissions($role, $permissions);
