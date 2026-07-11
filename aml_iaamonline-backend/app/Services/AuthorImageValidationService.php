@@ -124,7 +124,7 @@ class AuthorImageValidationService
 
         if ($width !== self::REQUIRED_WIDTH || $height !== self::REQUIRED_HEIGHT) {
             throw ValidationException::withMessages([
-                'author_image' => 'Image dimensions must be exactly {self::REQUIRED_WIDTH}x{self::REQUIRED_HEIGHT} pixels.',
+                'author_image' => 'Image dimensions must be exactly '.self::REQUIRED_WIDTH.'x'.self::REQUIRED_HEIGHT.' pixels.',
             ]);
         }
     }

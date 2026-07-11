@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  Layout,
 } from 'lucide-react';
 import { useAdminLayout } from './AdminLayout';
 
@@ -25,6 +26,8 @@ interface NavItem {
   icon: React.ReactNode;
   path?: string;
   adminOnly?: boolean;
+  /** Visible to publishers as well as admins (for content management). */
+  publisherOrAdmin?: boolean;
   children?: { label: string; path: string }[];
 }
 
@@ -60,6 +63,14 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Manuscripts',
     icon: <FileText className="w-5 h-5" />,
     path: '/admin/manuscripts',
+  },
+  {
+    label: 'Content',
+    icon: <Layout className="w-5 h-5" />,
+    publisherOrAdmin: true,
+    children: [
+      { label: 'Homepage', path: '/admin/content/homepage' },
+    ],
   },
   {
     label: 'Settings',
@@ -99,9 +110,12 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
   // Derive admin status from the logged-in user (stored at login). Read after
   // mount to avoid SSR/hydration mismatch, since it comes from localStorage.
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isPublisher, setIsPublisher] = useState(false);
 
   useEffect(() => {
-    setIsAdmin(getUser()?.roles?.includes('admin') ?? false);
+    const roles = getUser()?.roles ?? [];
+    setIsAdmin(roles.includes('admin'));
+    setIsPublisher(roles.includes('publisher'));
   }, []);
 
   const toggleMenu = (label: string) => {
@@ -123,9 +137,11 @@ export function AdminSidebar({ currentPage }: AdminSidebarProps) {
     return children.some((child) => pathname.startsWith(child.path));
   };
 
-  const filteredNavItems = NAV_ITEMS.filter(
-    (item) => !item.adminOnly || isAdmin
-  );
+  const filteredNavItems = NAV_ITEMS.filter((item) => {
+    if (item.publisherOrAdmin) return isAdmin || isPublisher;
+    if (item.adminOnly) return isAdmin;
+    return true;
+  });
 
   return (
     <>

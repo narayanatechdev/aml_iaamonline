@@ -31,7 +31,8 @@ const ANNOUNCEMENTS: Announcement[] = [
   },
 ];
 
-export function Announcements() {
+export function Announcements({ content }: { content?: { heading?: string } } = {}) {
+  const heading = content?.heading || 'Announcements';
   return (
     <section className="bg-white py-12 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4">
@@ -41,7 +42,7 @@ export function Announcements() {
             className="text-4xl font-bold text-black"
             style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif" }}
           >
-            Announcements
+            {heading}
           </h2>
         </div>
 
