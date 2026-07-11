@@ -137,6 +137,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Article editing (admin/editor via article:* permissions)
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
+        Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
 
         // Role management
         Route::get('/roles', [AdminRoleController::class, 'index'])->name('admin.roles.index');

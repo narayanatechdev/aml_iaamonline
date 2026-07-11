@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, Check, AlertCircle } from 'lucide-react';
-import { authFetch, API_BASE } from '@/lib/adminAuth';
+import { ArrowLeft, Loader2, Check, AlertCircle, Upload } from 'lucide-react';
+import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
 
 const API_URL = API_BASE;
 
@@ -143,6 +143,38 @@ export default function ArticleEditPage() {
     setSaved(false);
   };
 
+  const [uploading, setUploading] = useState(false);
+
+  const uploadGraphicalAbstract = async (file: File) => {
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const token = getToken();
+      // Do NOT set Content-Type — the browser adds the multipart boundary.
+      const res = await fetch(`${API_URL}/admin/articles/${id}/graphical-abstract`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: fd,
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message || `Upload failed (${res.status})`);
+      }
+      const json = await res.json();
+      const url = json.data?.graphical_abstract_url;
+      if (url) setField('graphical_abstract_url', url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const save = async () => {
     setSaving(true);
     setError(null);
@@ -232,17 +264,39 @@ export default function ArticleEditPage() {
                       />
                     )}
                     {IMAGE_KEYS.has(f.key) && (
-                      form[f.key] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={form[f.key]}
-                          alt={f.label}
-                          className="mt-2 max-h-48 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
-                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                        />
-                      ) : (
-                        <p className="mt-2 text-xs text-gray-400">No image set.</p>
-                      )
+                      <>
+                        {form[f.key] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={form[f.key]}
+                            alt={f.label}
+                            className="mt-2 max-h-48 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        ) : (
+                          <p className="mt-2 text-xs text-gray-400">No image set.</p>
+                        )}
+                        {f.key === 'graphical_abstract_url' && (
+                          <label className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0f2d6b] border border-[#0f2d6b]/30 rounded-lg cursor-pointer hover:bg-[#f0f4fb]">
+                            {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                            {uploading ? 'Uploading…' : 'Upload image'}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="hidden"
+                              disabled={uploading}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) uploadGraphicalAbstract(file);
+                                e.target.value = '';
+                              }}
+                            />
+                          </label>
+                        )}
+                        {f.key === 'graphical_abstract_url' && (
+                          <p className="mt-1 text-xs text-gray-400">JPG, PNG or WebP · max 5 MB · 1200×900 recommended. Upload sets the URL automatically.</p>
+                        )}
+                      </>
                     )}
                     {f.key === 'pdf_url' && form[f.key] && (
                       <a href={form[f.key]} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs text-[#0f2d6b] hover:underline">

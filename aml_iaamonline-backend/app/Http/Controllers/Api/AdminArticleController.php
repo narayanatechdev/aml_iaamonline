@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminArticleController extends Controller
 {
@@ -79,6 +80,34 @@ class AdminArticleController extends Controller
         $article->load('authors');
 
         return response()->json(['data' => $article, 'message' => 'Article updated.']);
+    }
+
+    /**
+     * Upload a graphical-abstract image, store it, and set it on the article.
+     */
+    public function uploadGraphicalAbstract(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeEdit();
+
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
+
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->first();
+
+        if (! $article) {
+            return response()->json(['error' => 'Article not found'], 404);
+        }
+
+        $path = $request->file('image')->store('article-graphical-abstracts', 'public');
+        $url = Storage::disk('public')->url($path);
+
+        $article->update(['graphical_abstract_url' => $url]);
+
+        return response()->json([
+            'data' => ['graphical_abstract_url' => $url],
+            'message' => 'Graphical abstract uploaded.',
+        ]);
     }
 
     private function authorizeView(): void
