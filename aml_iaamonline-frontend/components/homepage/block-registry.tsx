@@ -57,7 +57,7 @@ export const BLOCK_COMPONENTS: Record<string, BlockComponent> = {
 
 /** Catalogue shown in the "Add block" picker of the admin builder. */
 export const BLOCK_CATALOGUE: BlockTypeMeta[] = [
-  { type: 'featured_hero', label: 'Featured Article (Hero)', description: 'Large hero for the latest article.', editable: false },
+  { type: 'featured_hero', label: 'Featured Article (Hero)', description: 'Large hero — latest article automatically, or pick your own.', editable: true },
   { type: 'featured_articles', label: 'Featured Articles', description: 'Carousel of featured/recent articles.', editable: true },
   { type: 'on_the_cover', label: 'On the Cover', description: 'Current issue cover spotlight carousel.', editable: false },
   { type: 'challenge_divisions', label: 'Challenge Divisions', description: 'Grid of research challenge divisions.', editable: false },

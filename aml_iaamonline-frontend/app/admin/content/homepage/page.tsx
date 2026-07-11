@@ -332,7 +332,34 @@ function AddBlockModal({ onClose, onPick }: { onClose: () => void; onPick: (t: s
 }
 
 /** Content fields per editable block type. */
-const CONTENT_FIELDS: Record<string, { key: string; label: string; type: 'text' | 'textarea' }[]> = {
+type FieldDef = {
+  key: string;
+  label: string;
+  type: 'text' | 'textarea' | 'select';
+  options?: { value: string; label: string }[];
+  help?: string;
+};
+
+const CONTENT_FIELDS: Record<string, FieldDef[]> = {
+  featured_hero: [
+    {
+      key: 'mode',
+      label: 'Content source',
+      type: 'select',
+      options: [
+        { value: 'auto', label: 'Automatic — latest published article' },
+        { value: 'manual', label: 'Manual — use the fields below' },
+      ],
+      help: 'Choose "Manual" to feature a specific article or a custom promo. Fields below are only used in Manual mode.',
+    },
+    { key: 'title', label: 'Title', type: 'text' },
+    { key: 'authors', label: 'Authors line', type: 'text' },
+    { key: 'description', label: 'Description', type: 'textarea' },
+    { key: 'imageUrl', label: 'Image URL (1200×800 recommended)', type: 'text' },
+    { key: 'articleUrl', label: '"Read article" link', type: 'text' },
+    { key: 'pdfUrl', label: '"Download PDF" link', type: 'text' },
+    { key: 'dateLabel', label: 'Date / label', type: 'text' },
+  ],
   featured_articles: [{ key: 'heading', label: 'Section heading', type: 'text' }],
   announcements: [{ key: 'heading', label: 'Section heading', type: 'text' }],
   rich_text: [
@@ -392,7 +419,17 @@ function EditBlockModal({
           {fields.map((f) => (
             <div key={f.key}>
               <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-              {f.type === 'textarea' ? (
+              {f.type === 'select' ? (
+                <select
+                  value={(content[f.key] as string) ?? f.options?.[0]?.value ?? ''}
+                  onChange={(e) => setContent((c) => ({ ...c, [f.key]: e.target.value }))}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+                >
+                  {f.options?.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              ) : f.type === 'textarea' ? (
                 <textarea
                   rows={4}
                   value={(content[f.key] as string) ?? ''}
@@ -406,6 +443,7 @@ function EditBlockModal({
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
                 />
               )}
+              {f.help && <p className="mt-1 text-xs text-gray-400">{f.help}</p>}
             </div>
           ))}
         </div>
