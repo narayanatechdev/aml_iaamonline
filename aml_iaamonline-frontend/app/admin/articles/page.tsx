@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown,
   Eye, Download, BookOpen, X, ArrowUpRight, FileText,
-  ChevronDown, ChevronUp, RefreshCw,
+  ChevronDown, ChevronUp, RefreshCw, Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminBreadcrumb } from '@/components/admin';
@@ -247,12 +247,20 @@ function ExpandedRow({ article }: { article: Article }) {
               </div>
             </div>
           </div>
-          <Link
-            href={getArticleUrl(article)}
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#0f2d6b] hover:text-[#c9a227] transition-colors"
-          >
-            View full article <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="mt-4 flex items-center gap-4">
+            <Link
+              href={getArticleUrl(article)}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0f2d6b] hover:text-[#c9a227] transition-colors"
+            >
+              View full article <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+            <Link
+              href={`/admin/articles/${article.legacy_id ?? article.id}/edit`}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0f2d6b] hover:text-[#c9a227] transition-colors"
+            >
+              Edit <Pencil className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>

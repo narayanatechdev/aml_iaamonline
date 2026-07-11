@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminAnalyticsController;
+use App\Http\Controllers\Api\AdminArticleController;
 use App\Http\Controllers\Api\AdminManuscriptController;
 use App\Http\Controllers\Api\AdminRoleController;
 use App\Http\Controllers\Api\AdminUserController;
@@ -132,6 +133,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/home/sections/{id}/duplicate', [HomeSectionController::class, 'duplicate'])->name('admin.home.sections.duplicate');
         Route::patch('/home/sections/{id}', [HomeSectionController::class, 'update'])->name('admin.home.sections.update');
         Route::delete('/home/sections/{id}', [HomeSectionController::class, 'destroy'])->name('admin.home.sections.destroy');
+
+        // Article editing (admin/editor via article:* permissions)
+        Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
+        Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
 
         // Role management
         Route::get('/roles', [AdminRoleController::class, 'index'])->name('admin.roles.index');

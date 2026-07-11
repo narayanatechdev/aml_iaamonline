@@ -85,6 +85,10 @@ class RolePermissionSeeder extends Seeder
             // Homepage / content management permissions
             ['name' => 'homepage:view', 'display_name' => 'View Homepage Content', 'resource' => 'homepage', 'action' => 'view', 'category' => 'content'],
             ['name' => 'homepage:manage', 'display_name' => 'Manage Homepage Content', 'resource' => 'homepage', 'action' => 'manage', 'category' => 'content'],
+
+            // Published article editing permissions
+            ['name' => 'article:view', 'display_name' => 'View Article Records', 'resource' => 'article', 'action' => 'view', 'category' => 'content'],
+            ['name' => 'article:edit', 'display_name' => 'Edit Article Records', 'resource' => 'article', 'action' => 'edit', 'category' => 'content'],
         ];
 
         foreach ($permissions as $permission) {
@@ -133,6 +137,8 @@ class RolePermissionSeeder extends Seeder
             'decision:make',
             'report:view',
             'report:generate',
+            'article:view',
+            'article:edit',
         ];
 
         $this->attachPermissions($role, $permissions);
