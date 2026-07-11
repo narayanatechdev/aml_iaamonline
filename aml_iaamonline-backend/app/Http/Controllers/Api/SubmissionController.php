@@ -30,14 +30,34 @@ class SubmissionController extends Controller
             'keywords' => 'required|string',
             'category' => ['required', Rule::in(['nanotechnology', 'materials-science', 'polymers', 'composites', 'functional-materials', 'sustainable', 'other'])],
             'pdf' => 'required|file|mimes:pdf|max:52428800',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
-            'graphical_abstract' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpeg,jpg,png',
+                'max:10240',
+                function ($attribute, $value, $fail) {
+                    $imageSize = getimagesize($value->getRealPath());
+
+                    if (! $imageSize) {
+                        $fail('Cover image must be a readable JPG or PNG image.');
+
+                        return;
+                    }
+
+                    [$width, $height] = $imageSize;
+
+                    if ($height === 0 || abs(($width / $height) - (16 / 9)) > 0.01) {
+                        $fail('Cover image must use a 16:9 ratio.');
+                    }
+                },
+            ],
+            'graphical_abstract' => 'required|image|mimes:jpeg,jpg,png|max:5120',
             // Optional metadata
             'funding_information' => 'nullable|string|max:2000',
             'acknowledgements' => 'nullable|string|max:2000',
             'conflict_of_interest' => 'nullable|string|max:2000',
             'data_availability' => 'nullable|string|max:2000',
-            'cover_letter' => 'nullable|string|max:5000',
+            'cover_letter' => 'required|string|max:5000',
             'co_authors' => 'nullable|json',
             'sdgs' => ['nullable', 'json', function ($attribute, $value, $fail) {
                 $sdgs = json_decode($value, true);
@@ -106,7 +126,7 @@ class SubmissionController extends Controller
             ]);
         }
 
-        // Optional graphical abstract / cover image
+        // Required 16:9 cover image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = $submissionId.'_image.'.$image->getClientOriginalExtension();
@@ -145,7 +165,9 @@ class SubmissionController extends Controller
                 'file_name' => $ga->getClientOriginalName(),
                 'file_path' => $gaPath,
                 'file_type' => $ga->getClientOriginalExtension(),
-                'file_type_category' => 'graphical_abstract',
+                'file_size' => $ga->getSize(),
+                'mime_type' => $ga->getMimeType(),
+                'file_type_category' => 'supplementary',
                 'uploaded_at' => now(),
             ]);
         }
@@ -198,7 +220,14 @@ class SubmissionController extends Controller
             $query->where('author_email', $validated['email']);
         }
 
-        $manuscript = $query->firstOrFail();
+        $manuscript = $query->first();
+
+        if (! $manuscript) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Submission not found. Please verify your Submission ID and email address.',
+            ], 404);
+        }
 
         AuditLog::create([
             'action' => 'manuscript_viewed',

@@ -16,6 +16,7 @@ class HomeSectionSeeder extends Seeder
         $blocks = [
             ['block_type' => 'featured_hero', 'name' => 'Featured Article (Hero)', 'content' => []],
             ['block_type' => 'featured_articles', 'name' => 'Featured Articles', 'content' => ['heading' => 'Featured Articles']],
+            ['block_type' => 'on_the_cover', 'name' => 'On the Cover', 'content' => []],
             ['block_type' => 'challenge_divisions', 'name' => 'Challenge Divisions', 'content' => []],
             ['block_type' => 'announcements', 'name' => 'Announcements', 'content' => ['heading' => 'Announcements']],
             ['block_type' => 'iaam_fellowship', 'name' => 'IAAM Fellowship', 'content' => []],

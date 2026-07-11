@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 
 import { FeaturedArticle } from '@/components/layout/featured-hero';
 import { FeaturedArticles } from '@/components/homepage/featured-articles';
+import { OnTheCover } from '@/components/homepage/on-the-cover';
 import { ChallengeDivisions } from '@/components/homepage/challenge-divisions';
 import { Announcements } from '@/components/homepage/announcements';
 import { IAAMFellowship } from '@/components/homepage/iaam-fellowship';
@@ -41,6 +42,7 @@ export type BlockComponent = ComponentType<{ content?: Record<string, unknown> }
 export const BLOCK_COMPONENTS: Record<string, BlockComponent> = {
   featured_hero: FeaturedArticle,
   featured_articles: FeaturedArticles,
+  on_the_cover: OnTheCover,
   challenge_divisions: ChallengeDivisions,
   announcements: Announcements,
   iaam_fellowship: IAAMFellowship,
@@ -57,6 +59,7 @@ export const BLOCK_COMPONENTS: Record<string, BlockComponent> = {
 export const BLOCK_CATALOGUE: BlockTypeMeta[] = [
   { type: 'featured_hero', label: 'Featured Article (Hero)', description: 'Large hero for the latest article.', editable: false },
   { type: 'featured_articles', label: 'Featured Articles', description: 'Carousel of featured/recent articles.', editable: true },
+  { type: 'on_the_cover', label: 'On the Cover', description: 'Current issue cover spotlight carousel.', editable: false },
   { type: 'challenge_divisions', label: 'Challenge Divisions', description: 'Grid of research challenge divisions.', editable: false },
   { type: 'announcements', label: 'Announcements', description: 'Latest journal announcements.', editable: true },
   { type: 'iaam_fellowship', label: 'IAAM Fellowship', description: 'Fellowship promo section.', editable: false },

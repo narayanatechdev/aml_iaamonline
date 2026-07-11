@@ -73,6 +73,7 @@ export function TrackingForm({ initialSubmissionId, initialEmail }: { initialSub
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           submission_id: finalSubId,
@@ -80,9 +81,18 @@ export function TrackingForm({ initialSubmissionId, initialEmail }: { initialSub
         }),
       });
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const result = contentType.includes('application/json') ? await response.json() : null;
 
-      if (result.success && result.data) {
+      if (!response.ok) {
+        setError(
+          result?.message ||
+          'Unable to track this submission right now. Please try again later.'
+        );
+        return;
+      }
+
+      if (result?.success && result.data) {
         const ms = result.data;
         setSubmission({
           submissionId: ms.submission_id,
@@ -95,10 +105,10 @@ export function TrackingForm({ initialSubmissionId, initialEmail }: { initialSub
           progress: getProgressFromStatus(ms.status),
         });
       } else {
-        setError(result.message || 'Submission not found. Please verify your Submission ID and email address.');
+        setError(result?.message || 'Submission not found. Please verify your Submission ID and email address.');
       }
     } catch (err) {
-      setError('An error occurred. Please check your connection and try again.');
+      setError(err instanceof Error ? err.message : 'Unable to reach the tracking service. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
       setSearched(true);

@@ -9,14 +9,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 export const DEFAULT_LAYOUT: HomeSectionBlock[] = [
   { id: -1, block_type: 'featured_hero' },
   { id: -2, block_type: 'featured_articles' },
-  { id: -3, block_type: 'challenge_divisions' },
-  { id: -4, block_type: 'announcements' },
-  { id: -5, block_type: 'iaam_fellowship' },
-  { id: -6, block_type: 'article_categories' },
-  { id: -7, block_type: 'journal_info_header' },
-  { id: -8, block_type: 'hero_section' },
-  { id: -9, block_type: 'content_layout' },
-  { id: -10, block_type: 'cta_section' },
+  { id: -3, block_type: 'on_the_cover' },
+  { id: -4, block_type: 'challenge_divisions' },
+  { id: -5, block_type: 'announcements' },
+  { id: -6, block_type: 'iaam_fellowship' },
+  { id: -7, block_type: 'article_categories' },
+  { id: -8, block_type: 'journal_info_header' },
+  { id: -9, block_type: 'hero_section' },
+  { id: -10, block_type: 'content_layout' },
+  { id: -11, block_type: 'cta_section' },
 ];
 
 /**

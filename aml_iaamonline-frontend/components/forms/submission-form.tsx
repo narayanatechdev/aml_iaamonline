@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from '@/lib/cover-image-validation';
 
 export function SubmissionForm() {
   const [formData, setFormData] = useState({
@@ -14,7 +15,10 @@ export function SubmissionForm() {
     abstract: '',
     keywords: '',
     category: '',
+    coverLetter: '',
     pdf: null as File | null,
+    coverImage: null as File | null,
+    graphicalAbstract: null as File | null,
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -30,6 +34,53 @@ export function SubmissionForm() {
     if (file) {
       setFormData(prev => ({ ...prev, pdf: file }));
     }
+  };
+
+  const handleCoverImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setFormData(prev => ({ ...prev, coverImage: null }));
+      setError('Please attach the required 16:9 cover image.');
+
+      return;
+    }
+
+    const validationError = await validateCoverImageFile(file);
+
+    if (validationError) {
+      setFormData(prev => ({ ...prev, coverImage: null }));
+      setError(validationError);
+
+      return;
+    }
+
+    setFormData(prev => ({ ...prev, coverImage: file }));
+    setError('');
+  };
+
+
+  const handleGraphicalAbstractChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setFormData(prev => ({ ...prev, graphicalAbstract: null }));
+      setError('Please attach the required Graphical Abstract.');
+
+      return;
+    }
+
+    const validationError = await validateGraphicalAbstractFile(file);
+
+    if (validationError) {
+      setFormData(prev => ({ ...prev, graphicalAbstract: null }));
+      setError(validationError);
+
+      return;
+    }
+
+    setFormData(prev => ({ ...prev, graphicalAbstract: file }));
+    setError('');
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +101,15 @@ export function SubmissionForm() {
       formDataToSend.append('abstract', formData.abstract);
       formDataToSend.append('keywords', formData.keywords);
       formDataToSend.append('category', formData.category);
+      formDataToSend.append('cover_letter', formData.coverLetter);
       if (formData.pdf) {
         formDataToSend.append('pdf', formData.pdf);
+      }
+      if (formData.coverImage) {
+        formDataToSend.append('image', formData.coverImage);
+      }
+      if (formData.graphicalAbstract) {
+        formDataToSend.append('graphical_abstract', formData.graphicalAbstract);
       }
 
       const response = await fetch(`${apiUrl}/submit`, {
@@ -235,6 +293,29 @@ export function SubmissionForm() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Cover Letter to the Editor</CardTitle>
+          <CardDescription>Required note to the Editor-in-Chief</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              Cover Letter
+            </label>
+            <textarea
+              name="coverLetter"
+              value={formData.coverLetter}
+              onChange={handleChange}
+              placeholder="Dear Editor, please consider this manuscript for publication..."
+              rows={5}
+              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              required
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Manuscript File</CardTitle>
           <CardDescription>Upload your manuscript PDF</CardDescription>
         </CardHeader>
@@ -260,6 +341,60 @@ export function SubmissionForm() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Cover Image</CardTitle>
+          <CardDescription>Upload the required 16:9 cover image</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="border-2 border-dashed border-input rounded-lg p-8 text-center hover:border-primary transition-colors">
+            <input
+              type="file"
+              accept={COVER_IMAGE_ACCEPT}
+              onChange={handleCoverImageChange}
+              className="hidden"
+              id="cover-image-upload"
+              required
+            />
+            <label htmlFor="cover-image-upload" className="cursor-pointer">
+              <div className="text-primary font-medium mb-1">
+                {formData.coverImage ? formData.coverImage.name : 'Click to upload the required cover image'}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {COVER_IMAGE_HELP_TEXT}
+              </p>
+            </label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Graphical Abstract</CardTitle>
+          <CardDescription>Upload the required Graphical Abstract</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="border-2 border-dashed border-input rounded-lg p-8 text-center hover:border-primary transition-colors">
+            <input
+              type="file"
+              accept={GRAPHICAL_ABSTRACT_ACCEPT}
+              onChange={handleGraphicalAbstractChange}
+              className="hidden"
+              id="graphical-abstract-upload"
+              required
+            />
+            <label htmlFor="graphical-abstract-upload" className="cursor-pointer">
+              <div className="text-primary font-medium mb-1">
+                {formData.graphicalAbstract ? formData.graphicalAbstract.name : 'Click to upload the required Graphical Abstract'}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {GRAPHICAL_ABSTRACT_HELP_TEXT}
+              </p>
+            </label>
+          </div>
+        </CardContent>
+      </Card>
+
       {error && (
         <div className="max-w-2xl mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
           {error}
@@ -270,7 +405,7 @@ export function SubmissionForm() {
         <Button variant="outline" type="button" onClick={() => window.location.href = '/'} disabled={isLoading}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!formData.pdf || isLoading}>
+        <Button type="submit" disabled={!formData.pdf || !formData.coverImage || !formData.graphicalAbstract || !formData.coverLetter.trim() || isLoading}>
           {isLoading ? 'Submitting...' : 'Submit Manuscript'}
         </Button>
       </div>

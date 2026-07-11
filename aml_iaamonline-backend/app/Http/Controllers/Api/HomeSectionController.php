@@ -17,6 +17,7 @@ class HomeSectionController extends Controller
     private const BLOCK_TYPES = [
         'featured_hero',
         'featured_articles',
+        'on_the_cover',
         'challenge_divisions',
         'announcements',
         'iaam_fellowship',

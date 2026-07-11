@@ -7,6 +7,7 @@ import {
   ArrowRight, ArrowLeft, Check, Loader2, Upload, FileText, CheckCircle2, Search, Image as ImageIcon,
 } from 'lucide-react';
 import { getUser, API_BASE } from '@/lib/userAuth';
+import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from '@/lib/cover-image-validation';
 
 /* ----------------------------- config ----------------------------- */
 const MANUSCRIPT_TYPES = ['Research Article', 'Review Article', 'Letter / Short Communication', 'Perspective', 'Case Study'];
@@ -67,10 +68,10 @@ const QUESTIONS: Question[] = [
     ],
   },
   { id: 'sdgs', type: 'sdg', question: 'Sustainable Development Goals', description: 'Optional — select up to 5 UN SDGs your research contributes to.' },
-  { id: 'cover_letter', type: 'longtext', question: 'Cover letter to the editor', description: 'Optional — a short note to the Editor-in-Chief.', placeholder: 'Dear Editor…' },
+  { id: 'cover_letter', type: 'longtext', question: 'Cover letter to the editor', description: 'Required — include a short note to the Editor-in-Chief.', placeholder: 'Dear Editor…', validate: (v) => (v.trim() ? null : 'Please enter a cover letter to the editor.') },
   { id: 'pdf', type: 'file', question: 'Upload your manuscript', description: 'PDF only · max 50 MB.' },
-  { id: 'image', type: 'image', question: 'Add a cover image', description: 'Optional — a graphical abstract or author photo (JPG/PNG, max 5 MB).' },
-  { id: 'graphical_abstract', type: 'image', question: 'Add a Graphical Abstract', description: 'Optional — visually summarize your research (JPG/PNG, max 5 MB).' },
+  { id: 'image', type: 'image', question: 'Add a cover image', description: 'Required — upload a 16:9 JPG/PNG cover image under 10 MB.' },
+  { id: 'graphical_abstract', type: 'image', question: 'Add a Graphical Abstract', description: 'Required — visually summarize your research (JPG/PNG, max 5 MB).' },
   { id: 'consent', type: 'consent', question: 'A few confirmations before you submit' },
   { id: 'review', type: 'review', question: 'Review your submission' },
 ];
@@ -190,9 +191,11 @@ export function TypeformSubmission() {
       if (msg) { setError(msg); return; }
     }
     if (q?.type === 'file' && !pdf) { setError('Please attach your manuscript PDF.'); return; }
+    if (q?.id === 'image' && !image) { setError('Please attach the required 16:9 cover image.'); return; }
+    if (q?.id === 'graphical_abstract' && !graphicalAbstract) { setError('Please attach the required Graphical Abstract.'); return; }
     if (q?.type === 'consent' && !consents.every(Boolean)) { setError('Please confirm all three statements.'); return; }
     if (index < total - 1) setPage([index + 1, 1]);
-  }, [index, form, pdf, consents, total]);
+  }, [index, form, pdf, image, graphicalAbstract, consents, total]);
 
   const goBack = () => { if (index > -1) setPage([index - 1, -1]); };
 
@@ -200,6 +203,55 @@ export function TypeformSubmission() {
     setForm((f) => ({ ...f, [qid]: value }));
     setError(null);
     setTimeout(() => setPage(([i]) => [Math.min(i + 1, total - 1), 1]), 180); // auto-advance
+  };
+
+  const handleCoverImageChange = async (file: File | null) => {
+    if (!file) {
+      setImage(null);
+      setImagePreview(null);
+      setError('Please attach the required 16:9 cover image.');
+
+      return;
+    }
+
+    const validationError = await validateCoverImageFile(file);
+
+    if (validationError) {
+      setImage(null);
+      setImagePreview(null);
+      setError(validationError);
+
+      return;
+    }
+
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setError(null);
+  };
+
+
+  const handleGraphicalAbstractChange = async (file: File | null) => {
+    if (!file) {
+      setGraphicalAbstract(null);
+      setGaPreview(null);
+      setError('Please attach the required Graphical Abstract.');
+
+      return;
+    }
+
+    const validationError = await validateGraphicalAbstractFile(file);
+
+    if (validationError) {
+      setGraphicalAbstract(null);
+      setGaPreview(null);
+      setError(validationError);
+
+      return;
+    }
+
+    setGraphicalAbstract(file);
+    setGaPreview(URL.createObjectURL(file));
+    setError(null);
   };
 
   /* keyboard support */
@@ -223,6 +275,9 @@ export function TypeformSubmission() {
   const submit = async () => {
     setError(null);
     if (!pdf) { setError('Please attach your manuscript PDF.'); return; }
+    if (!image) { setError('Please attach the required 16:9 cover image.'); return; }
+    if (!graphicalAbstract) { setError('Please attach the required Graphical Abstract.'); return; }
+    if (!form.cover_letter.trim()) { setError('Please enter a cover letter to the editor.'); return; }
     setSubmitting(true);
     try {
       const fd = new FormData();
@@ -236,14 +291,14 @@ export function TypeformSubmission() {
       if (form.division) fd.append('division', form.division);
       if (form.trl) fd.append('trl', form.trl);
       fd.append('pdf', pdf);
-      if (image) fd.append('image', image);
-      if (graphicalAbstract) fd.append('graphical_abstract', graphicalAbstract);
+      fd.append('image', image);
+      fd.append('graphical_abstract', graphicalAbstract);
       // Optional metadata
       if (form.funding_information) fd.append('funding_information', form.funding_information);
       if (form.acknowledgements) fd.append('acknowledgements', form.acknowledgements);
       if (form.conflict_of_interest) fd.append('conflict_of_interest', form.conflict_of_interest);
       if (form.data_availability) fd.append('data_availability', form.data_availability);
-      if (form.cover_letter) fd.append('cover_letter', form.cover_letter);
+      fd.append('cover_letter', form.cover_letter);
       const validCoAuthors = coAuthors.filter((c) => c.name.trim());
       if (validCoAuthors.length) fd.append('co_authors', JSON.stringify(validCoAuthors));
       if (selectedSDGs.length) fd.append('sdgs', JSON.stringify(selectedSDGs));
@@ -497,62 +552,56 @@ export function TypeformSubmission() {
                   </label>
                 )}
 
-                {/* IMAGE (optional) */}
-                {current.type === 'image' && (
+                {/* Required cover image */}
+                {current.type === 'image' && current.id === 'image' && (
                   <div>
                     <label className="flex flex-col items-center justify-center w-full h-52 border-2 border-dashed border-[#0f2d6b]/30 rounded-2xl bg-[#f4f7fc] cursor-pointer hover:border-[#0f2d6b]/60 hover:bg-[#e8eff9] transition-all overflow-hidden">
                       <input
                         type="file"
-                        accept="image/jpeg,image/png"
+                        accept={COVER_IMAGE_ACCEPT}
                         className="hidden"
                         onChange={(e) => {
-                          const f = e.target.files?.[0] || null;
-                          setImage(f);
-                          setImagePreview(f ? URL.createObjectURL(f) : null);
-                          setError(null);
+                          void handleCoverImageChange(e.target.files?.[0] || null);
                         }}
                       />
                       {imagePreview ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={imagePreview} alt="preview" className="w-full h-full object-contain" />
                       ) : (
-                        <div className="text-center"><ImageIcon className="w-10 h-10 text-[#5a6a8a] mx-auto mb-2" /><p className="text-[#5a6a8a]">Click to upload an image</p><p className="text-[#9aabcc] text-xs mt-1">JPG or PNG · Max 5 MB · optional</p></div>
+                        <div className="text-center"><ImageIcon className="w-10 h-10 text-[#5a6a8a] mx-auto mb-2" /><p className="text-[#5a6a8a]">Click to upload an image</p><p className="text-[#9aabcc] text-xs mt-1">{COVER_IMAGE_HELP_TEXT}</p></div>
                       )}
                     </label>
                     {image && (
                       <div className="flex items-center justify-between mt-2 text-xs">
                         <span className="text-[#0f2d6b] font-medium">{image.name}</span>
-                        <button onClick={() => { setImage(null); setImagePreview(null); }} className="text-red-600 hover:underline">Remove</button>
+                        <button onClick={() => { setImage(null); setImagePreview(null); setError('Please attach the required 16:9 cover image.'); }} className="text-red-600 hover:underline">Remove</button>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Graphical Abstract (optional) */}
+                {/* Required Graphical Abstract */}
                 {current.type === 'image' && current.id === 'graphical_abstract' && (
                   <div>
                     <label className="flex flex-col items-center justify-center w-full h-52 border-2 border-dashed border-[#0f2d6b]/30 rounded-2xl bg-[#f4f7fc] cursor-pointer hover:border-[#0f2d6b]/60 hover:bg-[#e8eff9] transition-all overflow-hidden">
                       <input
                         type="file"
-                        accept="image/jpeg,image/png"
+                        accept={GRAPHICAL_ABSTRACT_ACCEPT}
                         className="hidden"
                         onChange={(e) => {
-                          const f = e.target.files?.[0] || null;
-                          setGraphicalAbstract(f);
-                          setGaPreview(f ? URL.createObjectURL(f) : null);
-                          setError(null);
+                          void handleGraphicalAbstractChange(e.target.files?.[0] || null);
                         }}
                       />
                       {gaPreview ? (
                         <img src={gaPreview} alt="ga-preview" className="w-full h-full object-contain" />
                       ) : (
-                        <div className="text-center"><ImageIcon className="w-10 h-10 text-[#5a6a8a] mx-auto mb-2" /><p className="text-[#5a6a8a]">Click to upload a graphical abstract</p><p className="text-[#9aabcc] text-xs mt-1">JPG or PNG · Max 5 MB · optional</p></div>
+                        <div className="text-center"><ImageIcon className="w-10 h-10 text-[#5a6a8a] mx-auto mb-2" /><p className="text-[#5a6a8a]">Click to upload the required Graphical Abstract</p><p className="text-[#9aabcc] text-xs mt-1">{GRAPHICAL_ABSTRACT_HELP_TEXT}</p></div>
                       )}
                     </label>
                     {graphicalAbstract && (
                       <div className="flex items-center justify-between mt-2 text-xs">
                         <span className="text-[#0f2d6b] font-medium">{graphicalAbstract.name}</span>
-                        <button onClick={() => { setGraphicalAbstract(null); setGaPreview(null); }} className="text-red-600 hover:underline">Remove</button>
+                        <button onClick={() => { setGraphicalAbstract(null); setGaPreview(null); setError('Please attach the required Graphical Abstract.'); }} className="text-red-600 hover:underline">Remove</button>
                       </div>
                     )}
                   </div>
@@ -575,8 +624,8 @@ export function TypeformSubmission() {
                   <div className="space-y-3">
                     {[
                       ['Title', form.title], ['Type', form.type], ['Research area', RESEARCH_AREAS.find((r) => r.value === form.category)?.label || form.category],
-                      ['Author', form.authorName], ['Email', form.authorEmail], ['Affiliation', form.affiliation], ['Country', form.country], ['File', pdf?.name || '—'], ['Cover image', image?.name || 'None'],
-                      ['Graphical Abstract', graphicalAbstract?.name || 'None'],
+                      ['Author', form.authorName], ['Email', form.authorEmail], ['Affiliation', form.affiliation], ['Country', form.country], ['File', pdf?.name || '—'], ['Cover image', image?.name || 'Required'],
+                      ['Graphical Abstract', graphicalAbstract?.name || 'Required'],
                       ['Co-authors', coAuthors.filter((c) => c.name.trim()).length ? coAuthors.filter((c) => c.name.trim()).map((c) => c.name).join(', ') : 'None'],
                       ['SDGs', selectedSDGs.length ? selectedSDGs.map((n) => `#${n}`).join(', ') : 'None'],
                     ].map(([k, v]) => (
