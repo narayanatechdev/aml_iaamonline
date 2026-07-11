@@ -207,6 +207,10 @@ export function getRecentArticles(limit: number = 10): FeaturedArticle[] {
     .slice(0, limit);
 }
 
+export function getArticleById(id: string): FeaturedArticle | undefined {
+  return FEATURED_ARTICLES.find((a) => String(a.id) === String(id));
+}
+
 export function getMostCitedArticles(limit: number = 10): FeaturedArticle[] {
   return FEATURED_ARTICLES
     .sort((a, b) => b.cited - a.cited)

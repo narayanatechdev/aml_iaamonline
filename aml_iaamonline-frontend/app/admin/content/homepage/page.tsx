@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { authFetch, API_BASE } from '@/lib/adminAuth';
 import { BLOCK_CATALOGUE, getBlockMeta } from '@/components/homepage/block-registry';
+import { FEATURED_ARTICLES } from '@/lib/realData';
 
 interface Section {
   id: number;
@@ -344,21 +345,14 @@ const CONTENT_FIELDS: Record<string, FieldDef[]> = {
   featured_hero: [
     {
       key: 'mode',
-      label: 'Content source',
+      label: 'Which article to feature',
       type: 'select',
       options: [
         { value: 'auto', label: 'Automatic — latest published article' },
-        { value: 'manual', label: 'Manual — use the fields below' },
+        { value: 'article', label: 'Pick a specific article' },
       ],
-      help: 'Choose "Manual" to feature a specific article or a custom promo. Fields below are only used in Manual mode.',
+      help: 'Choose "Pick a specific article" to search and select the article shown in the hero.',
     },
-    { key: 'title', label: 'Title', type: 'text' },
-    { key: 'authors', label: 'Authors line', type: 'text' },
-    { key: 'description', label: 'Description', type: 'textarea' },
-    { key: 'imageUrl', label: 'Image URL (1200×800 recommended)', type: 'text' },
-    { key: 'articleUrl', label: '"Read article" link', type: 'text' },
-    { key: 'pdfUrl', label: '"Download PDF" link', type: 'text' },
-    { key: 'dateLabel', label: 'Date / label', type: 'text' },
   ],
   featured_articles: [{ key: 'heading', label: 'Section heading', type: 'text' }],
   announcements: [{ key: 'heading', label: 'Section heading', type: 'text' }],
@@ -446,6 +440,13 @@ function EditBlockModal({
               {f.help && <p className="mt-1 text-xs text-gray-400">{f.help}</p>}
             </div>
           ))}
+
+          {section.block_type === 'featured_hero' && content.mode === 'article' && (
+            <ArticlePicker
+              value={content.articleId as string | undefined}
+              onChange={(id) => setContent((c) => ({ ...c, articleId: id }))}
+            />
+          )}
         </div>
         <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
@@ -461,6 +462,76 @@ function EditBlockModal({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Searchable picker over the article catalogue; stores the selected article id. */
+function ArticlePicker({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange: (id: string) => void;
+}) {
+  const [query, setQuery] = useState('');
+
+  const selected = value ? FEATURED_ARTICLES.find((a) => String(a.id) === String(value)) : undefined;
+
+  const q = query.trim().toLowerCase();
+  const results = q
+    ? FEATURED_ARTICLES.filter(
+        (a) =>
+          a.title?.toLowerCase().includes(q) ||
+          String(a.id) === q ||
+          String(a.year).includes(q)
+      ).slice(0, 25)
+    : [];
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Article</label>
+
+      {selected && (
+        <div className="mb-2 p-2 rounded-lg bg-[#f0f4fb] border border-[#0f2d6b]/20">
+          <div className="text-sm font-semibold text-[#0f2d6b] line-clamp-2">{selected.title}</div>
+          <div className="text-xs text-gray-500">
+            Vol {selected.volume}, Issue {selected.issue} · {selected.year} · id {selected.id}
+          </div>
+        </div>
+      )}
+
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search by title, year, or id…"
+        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+      />
+
+      {q && (
+        <ul className="mt-1 max-h-56 overflow-y-auto border border-gray-200 rounded-lg divide-y divide-gray-100">
+          {results.length === 0 && (
+            <li className="p-3 text-sm text-gray-400">No matching articles.</li>
+          )}
+          {results.map((a) => (
+            <li key={a.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  onChange(String(a.id));
+                  setQuery('');
+                }}
+                className="w-full text-left p-2 hover:bg-gray-50"
+              >
+                <div className="text-sm text-gray-900 line-clamp-2">{a.title}</div>
+                <div className="text-xs text-gray-400">
+                  Vol {a.volume}, Issue {a.issue} · {a.year}
+                </div>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

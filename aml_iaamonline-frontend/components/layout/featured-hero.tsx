@@ -1,6 +1,6 @@
 'use client';
 
-import { getRecentArticles } from '@/lib/realData';
+import { getRecentArticles, getArticleById } from '@/lib/realData';
 
 function formatAuthor(author: any): string {
   if (typeof author === 'string') return author;
@@ -12,51 +12,41 @@ function formatAuthor(author: any): string {
 }
 
 interface HeroContent {
-  /** 'auto' = show the latest published article (default); 'manual' = use the fields below. */
-  mode?: 'auto' | 'manual';
-  title?: string;
-  authors?: string;
-  description?: string;
-  imageUrl?: string;
-  articleUrl?: string;
-  pdfUrl?: string;
-  dateLabel?: string;
+  /** 'auto' = latest published article (default); 'article' = the picked articleId. */
+  mode?: 'auto' | 'article';
+  articleId?: string;
 }
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1578926078328-123456789012?w=800&h=500&fit=crop';
 
 export function FeaturedArticle({ content = {} }: { content?: HeroContent } = {}) {
-  const manual = content.mode === 'manual';
+  // Pick the article to feature: a specific one if chosen, else the latest.
+  const picked = content.mode === 'article' && content.articleId
+    ? getArticleById(content.articleId)
+    : undefined;
+  const latest = getRecentArticles(1)[0];
+  const article = picked ?? latest;
 
-  // Auto mode pulls the latest published article; manual mode uses editor content.
-  const recentArticles = getRecentArticles(1);
-  const latest = recentArticles[0];
+  if (!article) return null;
 
-  if (!manual && !latest) return null;
-  if (manual && !content.title && !content.imageUrl) return null;
+  const authorList = (article.authors as any[])
+    .slice(0, 3)
+    .map(formatAuthor)
+    .filter(Boolean)
+    .join(', ');
 
-  const autoAuthors = latest
-    ? (latest.authors as any[]).slice(0, 3).map(formatAuthor).filter(Boolean).join(', ')
+  const abstractExcerpt = article.abstract
+    ? article.abstract.substring(0, 180) + (article.abstract.length > 180 ? '...' : '')
     : '';
 
-  const autoAbstract = latest?.abstract
-    ? latest.abstract.substring(0, 180) + (latest.abstract.length > 180 ? '...' : '')
-    : '';
+  const title = article.title || '';
+  const description = `${authorList} report${(article.authors as any[]).length > 1 ? '' : 's'} the findings of this research. ${abstractExcerpt}`;
+  const readUrl = article.pdf_url || '#';
+  const pdfUrl = article.pdf_url || '#';
+  const dateLabel = article.published || '';
 
-  // Editor overrides win; otherwise fall back to the latest article.
-  const title = content.title || latest?.title || '';
-  const authorList = content.authors || autoAuthors;
-  const description =
-    content.description ||
-    (latest
-      ? `${autoAuthors} report${(latest.authors as any[]).length > 1 ? '' : 's'} the findings of this research. ${autoAbstract}`
-      : '');
-  const readUrl = content.articleUrl || content.pdfUrl || latest?.pdf_url || '#';
-  const pdfUrl = content.pdfUrl || content.articleUrl || latest?.pdf_url || '#';
-  const dateLabel = content.dateLabel || latest?.published || '';
-
-  const imageUrl = content.imageUrl || latest?.graphical_abstract_url || FALLBACK_IMAGE;
+  const imageUrl = article.graphical_abstract_url || FALLBACK_IMAGE;
 
   return (
     <section className="bg-white border-b border-gray-200 pt-8 pb-8">
