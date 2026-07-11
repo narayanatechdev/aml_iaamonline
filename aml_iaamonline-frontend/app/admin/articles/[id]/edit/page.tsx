@@ -144,6 +144,7 @@ export default function ArticleEditPage() {
   };
 
   const [uploading, setUploading] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<Set<string>>(new Set());
 
   const uploadGraphicalAbstract = async (file: File) => {
     setUploading(true);
@@ -266,13 +267,20 @@ export default function ArticleEditPage() {
                     {IMAGE_KEYS.has(f.key) && (
                       <>
                         {form[f.key] ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={form[f.key]}
-                            alt={f.label}
-                            className="mt-2 max-h-48 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
-                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                          />
+                          failedSrc.has(form[f.key]) ? (
+                            <p className="mt-2 text-xs text-amber-600">
+                              Couldn&apos;t load this image URL. Check that it&apos;s public and correct.
+                            </p>
+                          ) : (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              key={form[f.key]}
+                              src={form[f.key]}
+                              alt={f.label}
+                              className="mt-2 max-h-48 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
+                              onError={() => setFailedSrc((s) => new Set(s).add(form[f.key]))}
+                            />
+                          )
                         ) : (
                           <p className="mt-2 text-xs text-gray-400">No image set.</p>
                         )}
