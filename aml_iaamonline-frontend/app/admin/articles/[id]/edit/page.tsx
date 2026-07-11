@@ -88,6 +88,8 @@ const SECTIONS: { title: string; fields: { key: string; label: string; type: 'te
 
 const ALL_KEYS = SECTIONS.flatMap((s) => s.fields.map((f) => f.key));
 const DATE_KEYS = new Set(['publish_date', 'receive_date', 'revise_date', 'accept_date']);
+/** URL fields that should show a live image preview under the input. */
+const IMAGE_KEYS = new Set(['graphical_abstract_url']);
 
 export default function ArticleEditPage() {
   const params = useParams();
@@ -228,6 +230,24 @@ export default function ArticleEditPage() {
                         onChange={(e) => setField(f.key, e.target.value)}
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
                       />
+                    )}
+                    {IMAGE_KEYS.has(f.key) && (
+                      form[f.key] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={form[f.key]}
+                          alt={f.label}
+                          className="mt-2 max-h-48 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <p className="mt-2 text-xs text-gray-400">No image set.</p>
+                      )
+                    )}
+                    {f.key === 'pdf_url' && form[f.key] && (
+                      <a href={form[f.key]} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs text-[#0f2d6b] hover:underline">
+                        Open current PDF ↗
+                      </a>
                     )}
                   </div>
                 ))}
