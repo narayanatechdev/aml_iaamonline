@@ -14,8 +14,9 @@ import {
   Check,
   Loader2,
   ExternalLink,
+  Upload,
 } from 'lucide-react';
-import { authFetch, API_BASE } from '@/lib/adminAuth';
+import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
 import { BLOCK_CATALOGUE, getBlockMeta } from '@/components/homepage/block-registry';
 import { FEATURED_ARTICLES } from '@/lib/realData';
 
@@ -336,12 +337,20 @@ function AddBlockModal({ onClose, onPick }: { onClose: () => void; onPick: (t: s
 type FieldDef = {
   key: string;
   label: string;
-  type: 'text' | 'textarea' | 'select';
+  type: 'text' | 'textarea' | 'select' | 'image';
   options?: { value: string; label: string }[];
   help?: string;
 };
 
 const CONTENT_FIELDS: Record<string, FieldDef[]> = {
+  on_the_cover: [
+    { key: 'imageUrl', label: 'Cover image', type: 'image', help: 'Portrait 3:4 (e.g. 600×800). JPG, PNG or WebP, max 5 MB.' },
+    { key: 'title', label: 'Title', type: 'text' },
+    { key: 'description', label: 'Description', type: 'textarea' },
+    { key: 'volume', label: 'Volume', type: 'text' },
+    { key: 'issue', label: 'Issue', type: 'text' },
+    { key: 'year', label: 'Year', type: 'text' },
+  ],
   featured_hero: [
     {
       key: 'mode',
@@ -413,7 +422,12 @@ function EditBlockModal({
           {fields.map((f) => (
             <div key={f.key}>
               <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-              {f.type === 'select' ? (
+              {f.type === 'image' ? (
+                <ImageField
+                  value={(content[f.key] as string) ?? ''}
+                  onChange={(url) => setContent((c) => ({ ...c, [f.key]: url }))}
+                />
+              ) : f.type === 'select' ? (
                 <select
                   value={(content[f.key] as string) ?? f.options?.[0]?.value ?? ''}
                   onChange={(e) => setContent((c) => ({ ...c, [f.key]: e.target.value }))}
@@ -532,6 +546,86 @@ function ArticlePicker({
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+/** Image URL field with live preview and direct upload. */
+function ImageField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    setErr(null);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const token = getToken();
+      const res = await fetch(`${API_URL}/admin/home/upload-image`, {
+        method: 'POST',
+        headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: fd,
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message || `Upload failed (${res.status})`);
+      }
+      const json = await res.json();
+      const url = json.data?.url;
+      if (url) onChange(url);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Image URL, or upload below"
+        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+      />
+      {value && (
+        failed === value ? (
+          <p className="mt-2 text-xs text-amber-600">Couldn&apos;t load this image URL.</p>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={value}
+            src={value}
+            alt="Preview"
+            className="mt-2 max-h-40 w-auto rounded-lg border border-gray-200 object-contain bg-gray-50"
+            onError={() => setFailed(value)}
+          />
+        )
+      )}
+      <label className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0f2d6b] border border-[#0f2d6b]/30 rounded-lg cursor-pointer hover:bg-[#f0f4fb]">
+        {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+        {uploading ? 'Uploading…' : 'Upload image'}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          disabled={uploading}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) upload(file);
+            e.target.value = '';
+          }}
+        />
+      </label>
+      {err && <p className="mt-1 text-xs text-red-600">{err}</p>}
     </div>
   );
 }

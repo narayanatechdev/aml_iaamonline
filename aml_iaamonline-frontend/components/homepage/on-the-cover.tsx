@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-const coverPage = {
+const DEFAULT_COVER = {
   title: 'Microwave-Assisted Synthesis of Platinum-Nickel Nanoalloys',
   description:
     'This cover visualizes the microwave-assisted synthesis of platinum-nickel nanoalloys on nitrogen-doped graphene and their practical applications such as water electrolysis and fuel cell. This research concentrates on the fast and facile synthetic procedure using microwave heating with reducing the amount of platinum and enhancing the catalytic performance by the control of lattice strain and nitrogen doping.',
@@ -11,7 +11,26 @@ const coverPage = {
   imageUrl: 'https://aml.iaamonline.org/data/aml/coversheet/cover_en.jpg',
 };
 
-export function OnTheCover() {
+interface CoverContent {
+  title?: string;
+  description?: string;
+  volume?: string;
+  issue?: string;
+  year?: string;
+  imageUrl?: string;
+}
+
+export function OnTheCover({ content = {} }: { content?: CoverContent } = {}) {
+  // Editor values (from the homepage CMS) override the defaults.
+  const coverPage = {
+    title: content.title || DEFAULT_COVER.title,
+    description: content.description || DEFAULT_COVER.description,
+    volume: content.volume || DEFAULT_COVER.volume,
+    issue: content.issue || DEFAULT_COVER.issue,
+    year: content.year || DEFAULT_COVER.year,
+    imageUrl: content.imageUrl || DEFAULT_COVER.imageUrl,
+  };
+
   return (
     <section className="bg-white py-12 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4">

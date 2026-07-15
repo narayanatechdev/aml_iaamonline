@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Homepage content management (admin + publisher via homepage:* permissions)
         Route::get('/home/sections', [HomeSectionController::class, 'adminIndex'])->name('admin.home.sections.index');
+        Route::post('/home/upload-image', [HomeSectionController::class, 'uploadImage'])->name('admin.home.upload-image');
         Route::post('/home/sections', [HomeSectionController::class, 'store'])->name('admin.home.sections.store');
         Route::post('/home/sections/reorder', [HomeSectionController::class, 'reorder'])->name('admin.home.sections.reorder');
         Route::post('/home/sections/{id}/duplicate', [HomeSectionController::class, 'duplicate'])->name('admin.home.sections.duplicate');

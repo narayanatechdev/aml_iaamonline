@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HomeSection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HomeSectionController extends Controller
 {
@@ -158,6 +159,24 @@ class HomeSectionController extends Controller
         ]);
 
         return response()->json(['data' => $this->present($copy)], 201);
+    }
+
+    /**
+     * Upload an image for use in a homepage block (cover image, banner, etc.)
+     * and return its public URL.
+     */
+    public function uploadImage(Request $request): JsonResponse
+    {
+        $this->authorizeManage();
+
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
+
+        $path = $request->file('image')->store('homepage-images', 'public');
+        $url = Storage::disk('public')->url($path);
+
+        return response()->json(['data' => ['url' => $url], 'message' => 'Image uploaded.']);
     }
 
     /**
