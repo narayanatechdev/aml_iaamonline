@@ -269,7 +269,11 @@ export default function ArticleEditPage() {
                         {form[f.key] ? (
                           failedSrc.has(form[f.key]) ? (
                             <p className="mt-2 text-xs text-amber-600">
-                              Couldn&apos;t load this image URL. Check that it&apos;s public and correct.
+                              Couldn&apos;t load this image.{' '}
+                              <a href={form[f.key]} target="_blank" rel="noopener noreferrer" className="underline break-all">
+                                Open the URL
+                              </a>{' '}
+                              — if it 404s, run <code>php artisan storage:link</code> on the server and check <code>APP_URL</code>.
                             </p>
                           ) : (
                             // eslint-disable-next-line @next/next/no-img-element
