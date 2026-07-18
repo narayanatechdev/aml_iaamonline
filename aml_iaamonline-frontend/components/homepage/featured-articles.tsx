@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { getRecentArticles } from '@/lib/realData';
+import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import { FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function formatAuthor(author: any): string {
@@ -14,7 +15,8 @@ function formatAuthor(author: any): string {
 }
 
 export function FeaturedArticles({ content }: { content?: { heading?: string } } = {}) {
-  const articles = getRecentArticles(10);
+  const media = useArticleMedia();
+  const articles = withLiveMedia(getRecentArticles(10), media);
   const heading = content?.heading || 'Featured Articles';
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 

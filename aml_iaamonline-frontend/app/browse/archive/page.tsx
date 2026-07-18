@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { FEATURED_ARTICLES, ARCHIVE_VOLUMES } from '@/lib/realData';
+import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import type { FeaturedArticle } from '@/lib/realData';
 
 function getAuthorName(author: any): string {
@@ -23,6 +24,22 @@ interface ArticleCardProps {
 function ArticleCard({ article }: ArticleCardProps) {
   return (
     <article className="border-b border-gray-200 py-6">
+      <div className="flex flex-col sm:flex-row gap-5">
+      {/* Graphical Abstract Thumbnail (left) */}
+      {article.graphical_abstract_url && (
+        <div className="sm:w-48 md:w-56 flex-shrink-0">
+          <div className="bg-gray-100 border border-gray-200 rounded overflow-hidden flex items-center justify-center">
+            <img
+              src={article.graphical_abstract_url}
+              alt={`Graphical abstract for ${article.title}`}
+              className="w-full h-auto object-contain max-h-48"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Content (right) */}
+      <div className="flex-1 min-w-0">
       {/* Open Access Badge */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="inline-flex items-center gap-1 text-[#8c7220] text-xs">
@@ -71,19 +88,6 @@ function ArticleCard({ article }: ArticleCardProps) {
         </a>
       </div>
 
-      {/* Graphical Abstract Thumbnail */}
-      {article.graphical_abstract_url && (
-        <div className="mb-3">
-          <div className="w-full h-auto bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden rounded">
-            <img 
-              src={article.graphical_abstract_url}
-              alt={`Graphical abstract for ${article.title}`}
-              className="w-full h-auto object-contain max-h-48"
-            />
-          </div>
-        </div>
-      )}
-
       {/* Abstract Snippet */}
       <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-4">
         {article.abstract || 'Abstract not available.'}
@@ -125,6 +129,8 @@ function ArticleCard({ article }: ArticleCardProps) {
           Full Text
         </Link>
       </div>
+      </div>
+      </div>
     </article>
   );
 }
@@ -152,9 +158,10 @@ export default function ArchivePage() {
     ? selectedVolumeIssue.split('-') 
     : [null, null];
     
-  const selectedArticles = selectedVolumeIssue 
-    ? getArticlesForVolumeIssue(selectedVolume!, selectedIssue!) 
-    : [];
+  const media = useArticleMedia();
+  const selectedArticles = withLiveMedia(selectedVolumeIssue
+    ? getArticlesForVolumeIssue(selectedVolume!, selectedIssue!)
+    : [], media);
 
   return (
     <MainLayout>

@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
+use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,7 @@ Route::get('/articles', [ArticleController::class, 'index'])->name('articles.ind
 Route::get('/articles/search', [ArticleController::class, 'search'])->name('articles.search');
 Route::get('/articles/stats', [ArticleController::class, 'stats'])->name('articles.stats');
 Route::get('/articles/citation-formats', [ArticleController::class, 'citationFormats'])->name('articles.citation-formats');
+Route::get('/articles/media-map', [ArticleController::class, 'mediaMap'])->name('articles.media-map');
 Route::get('/articles/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+')->name('articles.show');
 Route::get('/articles/{id}/authors', [ArticleController::class, 'getAuthorsWithAffiliations'])->name('article.authors');
 Route::get('/articles/{id}/affiliations', [ArticleController::class, 'getAffiliations'])->name('article.affiliations');
@@ -56,6 +58,9 @@ Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('author
 
 // Homepage content (public — powers the dynamic homepage)
 Route::get('/home/sections', [HomeSectionController::class, 'index'])->name('home.sections');
+
+// Subjects / research areas (public — powers submission forms and browse pages)
+Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
 
 // Reference data + open scholarly endpoints (public)
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
@@ -139,6 +144,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
         Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
+
+        // Subject management (Settings → Subjects, via settings:* permissions)
+        Route::get('/subjects', [SubjectController::class, 'adminIndex'])->name('admin.subjects.index');
+        Route::post('/subjects', [SubjectController::class, 'store'])->name('admin.subjects.store');
+        Route::patch('/subjects/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
+        Route::delete('/subjects/{id}', [SubjectController::class, 'destroy'])->name('admin.subjects.destroy');
 
         // Role management
         Route::get('/roles', [AdminRoleController::class, 'index'])->name('admin.roles.index');

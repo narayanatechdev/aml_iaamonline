@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-const DEFAULT_COVER = {
+export const ON_THE_COVER_DEFAULTS = {
   title: 'Microwave-Assisted Synthesis of Platinum-Nickel Nanoalloys',
   description:
     'This cover visualizes the microwave-assisted synthesis of platinum-nickel nanoalloys on nitrogen-doped graphene and their practical applications such as water electrolysis and fuel cell. This research concentrates on the fast and facile synthetic procedure using microwave heating with reducing the amount of platinum and enhancing the catalytic performance by the control of lattice strain and nitrogen doping.',
@@ -11,7 +11,7 @@ const DEFAULT_COVER = {
   imageUrl: 'https://aml.iaamonline.org/data/aml/coversheet/cover_en.jpg',
 };
 
-interface CoverContent {
+export interface OnTheCoverContent {
   title?: string;
   description?: string;
   volume?: string;
@@ -20,15 +20,19 @@ interface CoverContent {
   imageUrl?: string;
 }
 
-export function OnTheCover({ content = {} }: { content?: CoverContent } = {}) {
-  // Editor values (from the homepage CMS) override the defaults.
+/** Use the CMS value when it is a non-empty string; otherwise fall back. */
+function pick(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() !== '' ? value : fallback;
+}
+
+export function OnTheCover({ content = {} }: { content?: OnTheCoverContent } = {}) {
   const coverPage = {
-    title: content.title || DEFAULT_COVER.title,
-    description: content.description || DEFAULT_COVER.description,
-    volume: content.volume || DEFAULT_COVER.volume,
-    issue: content.issue || DEFAULT_COVER.issue,
-    year: content.year || DEFAULT_COVER.year,
-    imageUrl: content.imageUrl || DEFAULT_COVER.imageUrl,
+    title: pick(content.title, ON_THE_COVER_DEFAULTS.title),
+    description: pick(content.description, ON_THE_COVER_DEFAULTS.description),
+    volume: pick(content.volume, ON_THE_COVER_DEFAULTS.volume),
+    issue: pick(content.issue, ON_THE_COVER_DEFAULTS.issue),
+    year: pick(content.year, ON_THE_COVER_DEFAULTS.year),
+    imageUrl: pick(content.imageUrl, ON_THE_COVER_DEFAULTS.imageUrl),
   };
 
   return (

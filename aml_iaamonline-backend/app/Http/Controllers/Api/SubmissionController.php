@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Models\ManuscriptFile;
 use App\Models\Notification;
+use App\Models\Subject;
 use App\Models\SustainableDevelopmentGoal;
 use App\Services\AuthorImageValidationService;
 use App\Services\SimilarityCheckService;
@@ -28,7 +29,7 @@ class SubmissionController extends Controller
             'author_affiliation' => 'required|string',
             'abstract' => 'required|string|min:50|max:5000',
             'keywords' => 'required|string',
-            'category' => ['required', Rule::in(['nanotechnology', 'materials-science', 'polymers', 'composites', 'functional-materials', 'sustainable', 'other'])],
+            'category' => ['required', Rule::in($this->allowedCategories())],
             'pdf' => 'required|file|mimes:pdf|max:52428800',
             'image' => [
                 'required',
@@ -310,5 +311,23 @@ class SubmissionController extends Controller
                 'error' => $e->getMessage(),
             ], 400);
         }
+    }
+
+    /**
+     * Research-area slugs accepted for submission: active admin-managed
+     * subjects, plus the legacy hardcoded areas so older clients keep working.
+     *
+     * @return list<string>
+     */
+    private function allowedCategories(): array
+    {
+        $legacy = ['nanotechnology', 'materials-science', 'polymers', 'composites', 'functional-materials', 'sustainable', 'other'];
+
+        return Subject::where('is_active', true)
+            ->pluck('slug')
+            ->merge($legacy)
+            ->unique()
+            ->values()
+            ->all();
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Manuscript;
 use App\Models\User;
 use App\Services\CitationFormatterService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ArticleController extends Controller
 {
@@ -90,6 +91,27 @@ class ArticleController extends Controller
             'page_end' => $article->pages_to,
             'pages' => $article->pages,
         ]);
+    }
+
+    /**
+     * Lightweight map of live media URLs for all published articles, keyed by
+     * legacy id, so frontend pages can overlay admin edits onto their static
+     * article snapshot without a rebuild.
+     */
+    public function mediaMap()
+    {
+        $media = Cache::remember('articles:media-map', 60, function () {
+            return Article::published()
+                ->whereNotNull('legacy_id')
+                ->get(['legacy_id', 'graphical_abstract_url', 'pdf_url'])
+                ->mapWithKeys(fn (Article $article) => [$article->legacy_id => [
+                    'graphical_abstract_url' => $article->graphical_abstract_url,
+                    'pdf_url' => $article->pdf_url,
+                ]])
+                ->all();
+        });
+
+        return response()->json(['media' => $media]);
     }
 
     public function show(string $id)

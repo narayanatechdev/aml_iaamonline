@@ -1,6 +1,7 @@
 'use client';
 
 import { getRecentArticles, getArticleById } from '@/lib/realData';
+import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 
 function formatAuthor(author: any): string {
   if (typeof author === 'string') return author;
@@ -22,11 +23,13 @@ const FALLBACK_IMAGE =
 
 export function FeaturedArticle({ content = {} }: { content?: HeroContent } = {}) {
   // Pick the article to feature: a specific one if chosen, else the latest.
+  const media = useArticleMedia();
   const picked = content.mode === 'article' && content.articleId
     ? getArticleById(content.articleId)
     : undefined;
   const latest = getRecentArticles(1)[0];
-  const article = picked ?? latest;
+  const base = picked ?? latest;
+  const article = base ? withLiveMedia([base], media)[0] : undefined;
 
   if (!article) return null;
 
@@ -52,20 +55,20 @@ export function FeaturedArticle({ content = {} }: { content?: HeroContent } = {}
     <section className="bg-white border-b border-gray-200 pt-8 pb-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-0 min-h-[380px]">
-          {/* Left Panel - Dark Background with Text (40%) */}
+          {/* Left Panel - Light Grey Background with Text (40%) */}
           <div
             className="flex flex-col justify-between p-8 md:p-10 md:col-span-2"
             style={{
-              backgroundColor: '#2d3a47',
+              backgroundColor: '#eceef0',
               fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
             }}
           >
             <div>
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-4" style={{ lineHeight: '1.15', textDecoration: 'underline', textDecorationThickness: '3px', textUnderlineOffset: '0.1em' }}>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4" style={{ lineHeight: '1.15' }}>
                 {title}
               </h2>
 
-              <p className="text-base text-white mb-6" style={{ lineHeight: '1.5' }}>
+              <p className="text-base text-gray-700 mb-6" style={{ lineHeight: '1.5' }}>
                 {description}
               </p>
             </div>
@@ -81,20 +84,20 @@ export function FeaturedArticle({ content = {} }: { content?: HeroContent } = {}
                 </a>
                 <a
                   href={pdfUrl}
-                  className="px-4 py-2 border border-white text-white text-sm font-semibold rounded hover:bg-white hover:text-gray-800 transition-colors"
+                  className="px-4 py-2 border border-gray-700 text-gray-800 text-sm font-semibold rounded hover:bg-gray-800 hover:text-white transition-colors"
                   style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
                 >
                   Download PDF
                 </a>
                 <button
-                  className="px-4 py-2 border border-white text-white text-sm font-semibold rounded hover:bg-white hover:text-gray-800 transition-colors"
+                  className="px-4 py-2 border border-gray-700 text-gray-800 text-sm font-semibold rounded hover:bg-gray-800 hover:text-white transition-colors"
                   style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
                 >
                   Cite
                 </button>
               </div>
 
-              <div className="text-white">
+              <div className="text-gray-800">
                 <div className="text-sm font-semibold mb-1">{authorList}</div>
                 <div className="text-xs font-medium">
                   <span className="font-bold">Article</span>{dateLabel ? ` | ${dateLabel}` : ''}

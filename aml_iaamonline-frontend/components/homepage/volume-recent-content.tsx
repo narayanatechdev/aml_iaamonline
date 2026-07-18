@@ -3,6 +3,7 @@
 import { ExternalLink, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { getRecentArticles, JOURNAL_INFO, ARCHIVE_VOLUMES } from '@/lib/realData';
+import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
@@ -13,7 +14,8 @@ function getAuthorName(author: any): string {
 }
 
 export function VolumeRecentContent() {
-  const recentArticles = getRecentArticles(8);
+  const media = useArticleMedia();
+  const recentArticles = withLiveMedia(getRecentArticles(8), media);
 
   return (
     <div className="space-y-6">

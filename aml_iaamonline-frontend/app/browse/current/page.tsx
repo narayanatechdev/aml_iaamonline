@@ -8,6 +8,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { FEATURED_ARTICLES, SUBJECTS, JOURNAL_INFO, searchArticles } from '@/lib/realData';
 import type { FeaturedArticle } from '@/lib/realData';
+import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
@@ -28,6 +29,22 @@ interface ArticleCardProps {
 function ArticleCard({ article }: ArticleCardProps) {
   return (
     <article className="border-b border-gray-200 py-6 fade-in-up">
+      <div className="flex flex-col sm:flex-row gap-5">
+      {/* Graphical Abstract Thumbnail (left) */}
+      {article.graphical_abstract_url && (
+        <div className="sm:w-48 md:w-56 flex-shrink-0">
+          <div className="bg-gray-100 border border-gray-200 rounded overflow-hidden flex items-center justify-center">
+            <img
+              src={article.graphical_abstract_url}
+              alt={`Graphical abstract for ${article.title}`}
+              className="w-full h-auto object-contain max-h-48"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Content (right) */}
+      <div className="flex-1 min-w-0">
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="inline-flex items-center gap-1 text-[#8c7220] text-xs">
           <span className="w-1.5 h-1.5 bg-[#c9a227] rounded-full"></span>
@@ -76,19 +93,6 @@ function ArticleCard({ article }: ArticleCardProps) {
         </a>
       </div>
 
-      {/* Graphical Abstract Thumbnail */}
-      {article.graphical_abstract_url && (
-        <div className="mb-4">
-          <div className="w-full h-auto bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden rounded">
-            <img 
-              src={article.graphical_abstract_url}
-              alt={`Graphical abstract for ${article.title}`}
-              className="w-full h-auto object-contain max-h-48"
-            />
-          </div>
-        </div>
-      )}
-
       {/* Abstract Snippet */}
       <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-4">
         {article.abstract || 'Abstract not available.'}
@@ -130,6 +134,8 @@ function ArticleCard({ article }: ArticleCardProps) {
           Full Text
         </Link>
       </div>
+      </div>
+      </div>
     </article>
   );
 }
@@ -156,13 +162,14 @@ function CurrentIssueContent() {
     );
   }, [searchQuery, isSearchMode]);
 
+  const media = useArticleMedia();
   const filteredArticles = useMemo(() => {
-    return baseArticles.filter(article => {
+    return withLiveMedia(baseArticles.filter(article => {
       if (selectedTypes.length > 0 && !selectedTypes.includes(article.type)) return false;
       if (selectedSubjects.length > 0 && !selectedSubjects.includes(article.subject)) return false;
       return true;
-    });
-  }, [baseArticles, selectedTypes, selectedSubjects]);
+    }), media);
+  }, [baseArticles, selectedTypes, selectedSubjects, media]);
 
   const toggleType = (type: string) => {
     setSelectedTypes(prev =>

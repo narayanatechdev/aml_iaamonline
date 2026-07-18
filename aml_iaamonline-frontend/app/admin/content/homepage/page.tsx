@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
 import { BLOCK_CATALOGUE, getBlockMeta } from '@/components/homepage/block-registry';
+import { ON_THE_COVER_DEFAULTS } from '@/components/homepage/on-the-cover';
 import { FEATURED_ARTICLES } from '@/lib/realData';
 
 interface Section {
@@ -378,6 +379,14 @@ const CONTENT_FIELDS: Record<string, FieldDef[]> = {
   ],
 };
 
+/**
+ * What each block renders when a content field is empty. Used to prefill the
+ * edit form so admins see (and can tweak) the live values instead of blanks.
+ */
+const CONTENT_DEFAULTS: Record<string, Record<string, unknown>> = {
+  on_the_cover: ON_THE_COVER_DEFAULTS,
+};
+
 function EditBlockModal({
   section,
   onClose,
@@ -388,7 +397,14 @@ function EditBlockModal({
   onSave: (s: Section) => void;
 }) {
   const [name, setName] = useState(section.name ?? '');
-  const [content, setContent] = useState<Record<string, unknown>>(section.content ?? {});
+  const [content, setContent] = useState<Record<string, unknown>>(() => {
+    // Saved values win; defaults fill the gaps so the form mirrors the live site.
+    const merged: Record<string, unknown> = { ...(CONTENT_DEFAULTS[section.block_type] ?? {}) };
+    for (const [k, v] of Object.entries(section.content ?? {})) {
+      if (!(typeof v === 'string' && v.trim() === '')) merged[k] = v;
+    }
+    return merged;
+  });
   const [saving, setSaving] = useState(false);
   const fields = CONTENT_FIELDS[section.block_type] ?? [];
 

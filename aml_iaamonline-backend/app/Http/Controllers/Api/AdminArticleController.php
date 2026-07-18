@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class AdminArticleController extends Controller
@@ -77,6 +78,7 @@ class AdminArticleController extends Controller
         ]);
 
         $article->fill($validated)->save();
+        Cache::forget('articles:media-map');
         $article->load('authors');
 
         return response()->json(['data' => $article, 'message' => 'Article updated.']);
@@ -103,6 +105,7 @@ class AdminArticleController extends Controller
         $url = Storage::disk('public')->url($path);
 
         $article->update(['graphical_abstract_url' => $url]);
+        Cache::forget('articles:media-map');
 
         return response()->json([
             'data' => ['graphical_abstract_url' => $url],
