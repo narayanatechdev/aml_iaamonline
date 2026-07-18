@@ -19,6 +19,7 @@ import {
 import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
 import { BLOCK_CATALOGUE, getBlockMeta } from '@/components/homepage/block-registry';
 import { ON_THE_COVER_DEFAULTS } from '@/components/homepage/on-the-cover';
+import { CHALLENGE_DIVISIONS_DEFAULTS, type DivisionData } from '@/components/homepage/challenge-divisions-data';
 import { FEATURED_ARTICLES } from '@/lib/realData';
 
 interface Section {
@@ -365,6 +366,12 @@ const CONTENT_FIELDS: Record<string, FieldDef[]> = {
     },
   ],
   featured_articles: [{ key: 'heading', label: 'Section heading', type: 'text' }],
+  challenge_divisions: [
+    { key: 'heading', label: 'Section heading', type: 'text' },
+    { key: 'intro', label: 'Intro paragraph', type: 'textarea' },
+    { key: 'linkLabel', label: 'Link label', type: 'text', help: 'Shown top-right of the section. Leave blank to hide the link.' },
+    { key: 'linkHref', label: 'Link URL', type: 'text' },
+  ],
   announcements: [{ key: 'heading', label: 'Section heading', type: 'text' }],
   rich_text: [
     { key: 'heading', label: 'Heading', type: 'text' },
@@ -385,6 +392,7 @@ const CONTENT_FIELDS: Record<string, FieldDef[]> = {
  */
 const CONTENT_DEFAULTS: Record<string, Record<string, unknown>> = {
   on_the_cover: ON_THE_COVER_DEFAULTS,
+  challenge_divisions: CHALLENGE_DIVISIONS_DEFAULTS,
 };
 
 function EditBlockModal({
@@ -477,6 +485,13 @@ function EditBlockModal({
               onChange={(id) => setContent((c) => ({ ...c, articleId: id }))}
             />
           )}
+
+          {section.block_type === 'challenge_divisions' && (
+            <DivisionsEditor
+              value={(content.divisions as DivisionData[]) ?? []}
+              onChange={(divisions) => setContent((c) => ({ ...c, divisions }))}
+            />
+          )}
         </div>
         <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
@@ -562,6 +577,121 @@ function ArticlePicker({
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+/** Repeating-card editor for the Challenge Divisions block. */
+function DivisionsEditor({
+  value,
+  onChange,
+}: {
+  value: DivisionData[];
+  onChange: (divisions: DivisionData[]) => void;
+}) {
+  const divisions = value;
+
+  const patch = (index: number, changes: Partial<DivisionData>) => {
+    onChange(divisions.map((d, i) => (i === index ? { ...d, ...changes } : d)));
+  };
+
+  const move = (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= divisions.length) return;
+    const next = [...divisions];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
+  };
+
+  const remove = (index: number) => {
+    onChange(divisions.filter((_, i) => i !== index));
+  };
+
+  const add = () => {
+    onChange([...divisions, { name: '', description: '', image: '', articles: '' }]);
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Divisions</label>
+      <p className="text-xs text-gray-400 mb-2">
+        Cards shown in the scroller, in order. A card needs a name to appear on the site.
+      </p>
+      <div className="space-y-3">
+        {divisions.map((d, i) => (
+          <div key={i} className="p-3 border border-gray-200 rounded-lg bg-gray-50/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-gray-500">Division {i + 1}</span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => move(i, -1)}
+                  disabled={i === 0}
+                  className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+                  aria-label="Move up"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => move(i, 1)}
+                  disabled={i === divisions.length - 1}
+                  className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30"
+                  aria-label="Move down"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => remove(i)}
+                  className="p-1 text-gray-400 hover:text-red-600"
+                  aria-label="Remove division"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <input
+                value={d.name}
+                onChange={(e) => patch(i, { name: e.target.value })}
+                placeholder="Division name"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+              />
+              <textarea
+                rows={2}
+                value={d.description}
+                onChange={(e) => patch(i, { description: e.target.value })}
+                placeholder="Short description"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+              />
+              <input
+                value={d.articles}
+                onChange={(e) => patch(i, { articles: e.target.value })}
+                placeholder="Article count (e.g. 412) — optional"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+              />
+              <input
+                value={d.href ?? ''}
+                onChange={(e) => patch(i, { href: e.target.value })}
+                placeholder="Link URL — optional, defaults to the division's own page"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+              />
+              <ImageField
+                value={d.image}
+                onChange={(url) => patch(i, { image: url })}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0f2d6b] border border-[#0f2d6b]/30 rounded-lg hover:bg-[#f0f4fb]"
+      >
+        <Plus className="w-3.5 h-3.5" /> Add division
+      </button>
     </div>
   );
 }

@@ -60,7 +60,7 @@ export const BLOCK_CATALOGUE: BlockTypeMeta[] = [
   { type: 'featured_hero', label: 'Featured Article (Hero)', description: 'Large hero — latest article automatically, or pick your own.', editable: true },
   { type: 'featured_articles', label: 'Featured Articles', description: 'Carousel of featured/recent articles.', editable: true },
   { type: 'on_the_cover', label: 'On the Cover', description: 'Current issue cover spotlight — image, title, description, volume/issue.', editable: true },
-  { type: 'challenge_divisions', label: 'Challenge Divisions', description: 'Grid of research challenge divisions.', editable: false },
+  { type: 'challenge_divisions', label: 'Challenge Divisions', description: 'Scrollable cards for the research challenge divisions — heading, intro and each card are editable.', editable: true },
   { type: 'announcements', label: 'Announcements', description: 'Latest journal announcements.', editable: true },
   { type: 'iaam_fellowship', label: 'IAAM Fellowship', description: 'Fellowship promo section.', editable: false },
   { type: 'article_categories', label: 'Article Categories', description: 'Browse-by-category grid.', editable: false },
