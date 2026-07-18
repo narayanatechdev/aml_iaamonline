@@ -10,6 +10,10 @@
 # Don't ignore .gitignore itself
 !.gitignore
 
+# Root-level documentation
+!SECURITY.md
+!DIVISIONS_AND_ARTICLE_UPLOAD.md
+
 # Laravel specific ignores (backend)
 aml_iaamonline-backend/.env
 aml_iaamonline-backend/.env.*
