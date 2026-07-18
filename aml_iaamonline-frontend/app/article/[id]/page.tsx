@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { FEATURED_ARTICLES } from "@/lib/realData";
+import { FEATURED_ARTICLES, FeaturedArticle } from "@/lib/realData";
 import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 
@@ -40,12 +40,57 @@ export default function ArticlePage() {
   const params = useParams();
   const id = params.id as string;
 
-  const article = FEATURED_ARTICLES.find((a) => a.id === id) || FEATURED_ARTICLES[0];
-  const related = FEATURED_ARTICLES.filter((a) => a.id !== article.id && a.subject === article.subject).slice(0, 3);
+  const staticArticle = FEATURED_ARTICLES.find((a) => a.id === id) || FEATURED_ARTICLES[0];
 
   const [authorsWithAffiliations, setAuthorsWithAffiliations] = useState<AuthorAffiliation[]>([]);
   const [isLoadingAuthors, setIsLoadingAuthors] = useState(true);
   const [activeSection, setActiveSection] = useState<string>('header');
+  const [liveArticle, setLiveArticle] = useState<Partial<FeaturedArticle> | null>(null);
+
+  // Fetch the live article record so admin edits (graphical abstract, PDF, metadata)
+  // show up without a rebuild of the static articles_data.json snapshot.
+  useEffect(() => {
+    if (!id) return;
+    const fetchArticle = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const overlay: Partial<FeaturedArticle> = {
+          title: data.title ?? undefined,
+          type: data.document_type ?? undefined,
+          subject: data.subject ?? undefined,
+          abstract: data.abstract ?? undefined,
+          volume: data.volume ?? undefined,
+          issue: data.issue ?? undefined,
+          doi: data.doi ?? undefined,
+          pages: data.pages_from != null && data.pages_to != null ? `${data.pages_from}-${data.pages_to}` : undefined,
+          published: typeof data.publish_date === 'string' ? data.publish_date.slice(0, 10) : undefined,
+          year: data.publish_year ?? undefined,
+          keywords: typeof data.keywords === 'string'
+            ? data.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+            : Array.isArray(data.keywords) ? data.keywords : undefined,
+          pdf_url: data.pdf_url ?? undefined,
+          original_pdf_url: data.original_pdf_url ?? undefined,
+          graphical_abstract_url: data.graphical_abstract_url ?? undefined,
+          views: data.views_count ?? undefined,
+          cited: data.cited_count ?? undefined,
+        };
+        Object.keys(overlay).forEach((key) => {
+          if (overlay[key as keyof FeaturedArticle] === undefined) {
+            delete overlay[key as keyof FeaturedArticle];
+          }
+        });
+        setLiveArticle(overlay);
+      } catch {
+        // keep the static snapshot on network failure
+      }
+    };
+    fetchArticle();
+  }, [id]);
+
+  const article: FeaturedArticle = { ...staticArticle, ...liveArticle };
+  const related = FEATURED_ARTICLES.filter((a) => a.id !== article.id && a.subject === article.subject).slice(0, 3);
 
   useEffect(() => {
     const fetchAuthors = async () => {
