@@ -42,6 +42,10 @@ class ArticleController extends Controller
             $query->where('document_type', $type);
         }
 
+        if ($division = $request->input('division')) {
+            $query->where('division', $division);
+        }
+
         if ($request->boolean('from_submission')) {
             $query->whereNotNull('manuscript_id');
         }

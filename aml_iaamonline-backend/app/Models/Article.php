@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'legacy_id', 'manuscript_id', 'title', 'document_type', 'subject',
+    'legacy_id', 'manuscript_id', 'title', 'document_type', 'subject', 'division',
     'abstract', 'keywords', 'doi', 'doi_link', 'google_scholar_id', 'volume', 'issue', 'pages_from',
     'pages_to', 'language', 'status', 'pdf_url', 'original_pdf_url',
     'graphical_abstract_url', 'article_link', 'file_name',

@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown,
   Eye, Download, BookOpen, X, ArrowUpRight, FileText,
-  ChevronDown, ChevronUp, RefreshCw, Pencil,
+  ChevronDown, ChevronUp, RefreshCw, Pencil, Plus, Upload, Loader2, Check,
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminBreadcrumb } from '@/components/admin';
-import { API_BASE, authFetch } from '@/lib/adminAuth';
+import { API_BASE, authFetch, getToken } from '@/lib/adminAuth';
+import { resolveChallengeDivisions } from '@/components/homepage/challenge-divisions-data';
 
 interface Article {
   id: number;
@@ -23,6 +24,7 @@ interface Article {
   year?: number | null;
   publish_year?: number | null;
   subject?: string | null;
+  division?: string | null;
   article_type?: string | null;
   document_type?: string | null;
   total_views?: number | null;
@@ -104,10 +106,13 @@ function TypeBadge({ type }: { type: string | null | undefined }) {
   );
 }
 
-function ExpandedRow({ article }: { article: Article }) {
+function ExpandedRow({ article, divisionOptions }: { article: Article; divisionOptions: string[] }) {
   const pageStart = getPageStart(article);
   const pageEnd = getPageEnd(article);
   const year = getArticleYear(article);
+  const [division, setDivision] = useState(article.division ?? '');
+  const [divisionSaving, setDivisionSaving] = useState(false);
+  const [divisionStatus, setDivisionStatus] = useState<'saved' | 'error' | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<'synced' | 'already_current' | 'not_found' | null>(null);
   const [syncedAt, setSyncedAt] = useState<string | null>(article.doi_synced_at || null);
@@ -137,6 +142,30 @@ function ExpandedRow({ article }: { article: Article }) {
   };
 
   const syncLabel = syncResult === 'synced' ? 'Synced' : syncResult === 'already_current' ? 'Already up-to-date' : syncResult === 'not_found' ? 'Not registered' : null;
+
+  const saveDivision = async (value: string) => {
+    setDivision(value);
+    setDivisionSaving(true);
+    setDivisionStatus(null);
+    try {
+      const res = await authFetch(`${API_BASE}/admin/articles/${article.legacy_id ?? article.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ division: value || null }),
+      });
+      if (!res.ok) throw new Error('Save failed');
+      article.division = value || null;
+      setDivisionStatus('saved');
+    } catch {
+      setDivisionStatus('error');
+    } finally {
+      setDivisionSaving(false);
+    }
+  };
+
+  // Keep a stale saved division selectable even if it was removed from the CMS.
+  const selectOptions = division && !divisionOptions.includes(division)
+    ? [division, ...divisionOptions]
+    : divisionOptions;
 
   return (
     <motion.div
@@ -206,6 +235,28 @@ function ExpandedRow({ article }: { article: Article }) {
               )}
               {syncResult === 'not_found' && (
                 <p className="text-[10px] text-red-600 mt-0.5 font-medium">✗ DOI not registered with CrossRef yet.</p>
+              )}
+            </div>
+            <div>
+              <span className="text-xs text-gray-400">Challenge Division</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <select
+                  value={division}
+                  disabled={divisionSaving}
+                  onChange={(e) => saveDivision(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex-1 px-2 py-1.5 text-xs bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b] disabled:opacity-50"
+                >
+                  <option value="">Not mapped</option>
+                  {selectOptions.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                {divisionSaving && <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" />}
+                {divisionStatus === 'saved' && <Check className="w-3.5 h-3.5 text-green-600" />}
+              </div>
+              {divisionStatus === 'error' && (
+                <p className="text-[10px] text-red-600 mt-0.5">Couldn&apos;t save — try again.</p>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -280,6 +331,28 @@ export default function ArticlesPage() {
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [divisionOptions, setDivisionOptions] = useState<string[]>(
+    () => resolveChallengeDivisions().divisions.map((d) => d.name)
+  );
+
+  // Division names come from the homepage CMS challenge_divisions block.
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/home/sections`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const block = (json.data as { block_type: string; content?: Record<string, unknown> }[] | undefined)
+          ?.find((s) => s.block_type === 'challenge_divisions');
+        if (block) {
+          setDivisionOptions(resolveChallengeDivisions(block.content).divisions.map((d) => d.name));
+        }
+      } catch {
+        // keep defaults
+      }
+    })();
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -368,14 +441,23 @@ export default function ArticlesPage() {
             {meta.total > 0 ? `${meta.total.toLocaleString()} articles in the database` : 'Browse journal articles'}
           </p>
         </div>
-        <button
-          onClick={fetchArticles}
-          disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0f2d6b] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm"
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchArticles}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0f2d6b] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Article
+          </button>
+        </div>
       </div>
 
       {/* Search + Filter Bar */}
@@ -606,7 +688,7 @@ export default function ArticlesPage() {
 
             {/* Expanded row */}
             <AnimatePresence>
-              {expandedId === article.id && <ExpandedRow article={article} />}
+              {expandedId === article.id && <ExpandedRow article={article} divisionOptions={divisionOptions} />}
             </AnimatePresence>
           </div>
         ))}
@@ -679,6 +761,205 @@ export default function ArticlesPage() {
           Export CSV
           <ArrowUpRight className="w-3 h-3" />
         </button>
+      </div>
+
+      {showAdd && (
+        <AddArticleModal
+          divisionOptions={divisionOptions}
+          onClose={() => setShowAdd(false)}
+          onCreated={() => {
+            setShowAdd(false);
+            fetchArticles();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+const NEW_ARTICLE_TYPES = ARTICLE_TYPE_OPTIONS.filter((t) => t !== 'All Types');
+
+/** Modal to upload a new article: metadata, division mapping and PDF. */
+function AddArticleModal({
+  divisionOptions,
+  onClose,
+  onCreated,
+}: {
+  divisionOptions: string[];
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [form, setForm] = useState({
+    title: '',
+    document_type: 'Research Article',
+    subject: '',
+    division: '',
+    volume: '',
+    issue: '',
+    publish_year: String(new Date().getFullYear()),
+    doi: '',
+    abstract: '',
+  });
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const set = (key: keyof typeof form) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const inputCls =
+    'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]';
+
+  const submit = async () => {
+    if (!form.title.trim()) {
+      setError('Title is required.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const payload: Record<string, unknown> = {
+        title: form.title.trim(),
+        document_type: form.document_type,
+        status: 'published',
+      };
+      for (const key of ['subject', 'division', 'volume', 'issue', 'doi', 'abstract'] as const) {
+        if (form[key].trim()) payload[key] = form[key].trim();
+      }
+      if (form.publish_year.trim()) payload.publish_year = Number(form.publish_year);
+
+      const res = await authFetch(`${API_BASE}/admin/articles`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message || `Create failed (${res.status})`);
+      }
+      const json = await res.json();
+      const id = json.data?.id;
+
+      if (pdfFile && id) {
+        const fd = new FormData();
+        fd.append('pdf', pdfFile);
+        const token = getToken();
+        const up = await fetch(`${API_BASE}/admin/articles/${id}/pdf`, {
+          method: 'POST',
+          headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: fd,
+        });
+        if (!up.ok) {
+          const body = await up.json().catch(() => null);
+          throw new Error(
+            body?.message || 'Article was created, but the PDF upload failed — edit the article to retry.'
+          );
+        }
+      }
+      onCreated();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Create failed');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div
+        className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Add Article</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
+        </div>
+
+        <div className="p-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+            <textarea rows={2} value={form.title} onChange={set('title')} className={`${inputCls} resize-none`} />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <select value={form.document_type} onChange={set('document_type')} className={inputCls}>
+                {NEW_ARTICLE_TYPES.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Challenge Division</label>
+              <select value={form.division} onChange={set('division')} className={inputCls}>
+                <option value="">Not mapped</option>
+                {divisionOptions.map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+            <input value={form.subject} onChange={set('subject')} className={inputCls} />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Volume</label>
+              <input value={form.volume} onChange={set('volume')} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Issue</label>
+              <input value={form.issue} onChange={set('issue')} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+              <input value={form.publish_year} onChange={set('publish_year')} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">DOI</label>
+              <input value={form.doi} onChange={set('doi')} placeholder="10.xxxx/…" className={inputCls} />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Abstract</label>
+            <textarea rows={4} value={form.abstract} onChange={set('abstract')} className={`${inputCls} resize-none`} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Article PDF</label>
+            <label className="flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#0f2d6b] hover:bg-[#f0f4fb] transition-colors">
+              <Upload className="w-4 h-4 text-[#0f2d6b]" />
+              <span className="text-sm text-gray-600">
+                {pdfFile ? pdfFile.name : 'Choose a PDF (optional, max 30 MB)'}
+              </span>
+              <input
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                onChange={(e) => setPdfFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={saving}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+            {saving ? 'Saving…' : 'Create article'}
+          </button>
+        </div>
       </div>
     </div>
   );

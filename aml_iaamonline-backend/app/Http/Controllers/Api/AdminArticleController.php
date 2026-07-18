@@ -30,6 +30,60 @@ class AdminArticleController extends Controller
     }
 
     /**
+     * Create a new article record (uploaded manually by an admin).
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $this->authorizeEdit();
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:1000'],
+            'document_type' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'subject' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'division' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'abstract' => ['sometimes', 'nullable', 'string'],
+            'keywords' => ['sometimes', 'nullable', 'string'],
+            'doi' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'doi_link' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'volume' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'issue' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'pages_from' => ['sometimes', 'nullable', 'integer', 'min:0'],
+            'pages_to' => ['sometimes', 'nullable', 'integer', 'min:0'],
+            'status' => ['sometimes', 'string', 'in:published,draft,in_production,retracted'],
+            'pdf_url' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'corresponding_author' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'publish_date' => ['sometimes', 'nullable', 'date'],
+            'publish_year' => ['sometimes', 'nullable', 'integer', 'min:1900', 'max:2200'],
+            'publish_month' => ['sometimes', 'nullable', 'string', 'max:20'],
+        ]);
+
+        // doi, volume and issue are NOT NULL in the schema but optional here.
+        $article = Article::create(array_merge($validated, [
+            'status' => $validated['status'] ?? 'published',
+            'legacy_id' => $this->nextLegacyId(),
+            'doi' => $validated['doi'] ?? '',
+            'volume' => $validated['volume'] ?? '',
+            'issue' => $validated['issue'] ?? '',
+        ]));
+        Cache::forget('articles:media-map');
+
+        return response()->json(['data' => $article, 'message' => 'Article created.'], 201);
+    }
+
+    /**
+     * Next numeric legacy id, so admin-created articles fit the existing
+     * public URL scheme (/article/{legacy_id}).
+     */
+    private function nextLegacyId(): string
+    {
+        $max = (int) Article::whereRaw("legacy_id ~ '^[0-9]+$'")
+            ->selectRaw('max(legacy_id::int) as m')
+            ->value('m');
+
+        return (string) ($max + 1);
+    }
+
+    /**
      * Update an article's full record (scalar fields).
      */
     public function update(Request $request, string $id): JsonResponse
@@ -46,6 +100,7 @@ class AdminArticleController extends Controller
             'title' => ['sometimes', 'string', 'max:1000'],
             'document_type' => ['sometimes', 'nullable', 'string', 'max:100'],
             'subject' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'division' => ['sometimes', 'nullable', 'string', 'max:255'],
             'abstract' => ['sometimes', 'nullable', 'string'],
             'keywords' => ['sometimes', 'nullable', 'string'],
             'doi' => ['sometimes', 'nullable', 'string', 'max:255'],
@@ -82,6 +137,38 @@ class AdminArticleController extends Controller
         $article->load('authors');
 
         return response()->json(['data' => $article, 'message' => 'Article updated.']);
+    }
+
+    /**
+     * Upload an article PDF, store it, and set it as the article's pdf_url.
+     */
+    public function uploadPdf(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeEdit();
+
+        $request->validate([
+            'pdf' => ['required', 'file', 'mimes:pdf', 'max:30720'],
+        ]);
+
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->first();
+
+        if (! $article) {
+            return response()->json(['error' => 'Article not found'], 404);
+        }
+
+        $path = $request->file('pdf')->store('article-pdfs', 'public');
+        $url = Storage::disk('public')->url($path);
+
+        $article->update([
+            'pdf_url' => $url,
+            'file_name' => $request->file('pdf')->getClientOriginalName(),
+        ]);
+        Cache::forget('articles:media-map');
+
+        return response()->json([
+            'data' => ['pdf_url' => $url],
+            'message' => 'PDF uploaded.',
+        ]);
     }
 
     /**

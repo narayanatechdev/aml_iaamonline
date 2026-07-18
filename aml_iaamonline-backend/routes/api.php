@@ -141,8 +141,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/home/sections/{id}', [HomeSectionController::class, 'destroy'])->name('admin.home.sections.destroy');
 
         // Article editing (admin/editor via article:* permissions)
+        Route::post('/articles', [AdminArticleController::class, 'store'])->name('admin.articles.store');
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
+        Route::post('/articles/{id}/pdf', [AdminArticleController::class, 'uploadPdf'])->name('admin.articles.pdf');
         Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
 
         // Subject management (Settings → Subjects, via settings:* permissions)
