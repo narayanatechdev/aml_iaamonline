@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminArticleController extends Controller
 {
@@ -57,17 +58,216 @@ class AdminArticleController extends Controller
             'publish_month' => ['sometimes', 'nullable', 'string', 'max:20'],
         ]);
 
-        // doi, volume and issue are NOT NULL in the schema but optional here.
+        // volume and issue are NOT NULL in the schema but optional here.
         $article = Article::create(array_merge($validated, [
             'status' => $validated['status'] ?? 'published',
             'legacy_id' => $this->nextLegacyId(),
-            'doi' => $validated['doi'] ?? '',
             'volume' => $validated['volume'] ?? '',
             'issue' => $validated['issue'] ?? '',
         ]));
         Cache::forget('articles:media-map');
 
         return response()->json(['data' => $article, 'message' => 'Article created.'], 201);
+    }
+
+    /**
+     * Bulk-create articles from an uploaded CSV or XML file.
+     *
+     * CSV: first row is a header; XML: <articles><article><title>… elements.
+     * Recognised fields (case-insensitive): title (required), document_type/type,
+     * subject, division, abstract, keywords, doi, volume, issue, pages_from,
+     * pages_to, publish_year/year, publish_month, publish_date, pdf_url,
+     * corresponding_author. Rows without a division fall back to the request's
+     * default_division, if given. Valid rows are created even when other rows
+     * fail; failures are reported per row.
+     */
+    public function bulkStore(Request $request): JsonResponse
+    {
+        $this->authorizeEdit();
+
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt,xml', 'max:10240'],
+            'default_division' => ['sometimes', 'nullable', 'string', 'max:255'],
+        ]);
+
+        $file = $request->file('file');
+        $defaultDivision = trim((string) $request->input('default_division', ''));
+
+        $rows = strtolower((string) $file->getClientOriginalExtension()) === 'xml'
+            ? $this->rowsFromXml($file->getContent())
+            : $this->rowsFromCsv($file->getRealPath());
+
+        if ($rows === null) {
+            return response()->json(['error' => 'The file could not be parsed.'], 422);
+        }
+
+        if (count($rows) === 0) {
+            return response()->json(['error' => 'No article rows found in the file.'], 422);
+        }
+
+        if (count($rows) > 1000) {
+            return response()->json(['error' => 'Too many rows — the limit is 1000 per upload.'], 422);
+        }
+
+        $nextLegacy = (int) $this->nextLegacyId();
+        $created = 0;
+        $errors = [];
+
+        foreach ($rows as $index => $row) {
+            $rowNumber = $index + 1;
+
+            if (($row['title'] ?? '') === '') {
+                $errors[] = "Row {$rowNumber}: missing title.";
+
+                continue;
+            }
+
+            if (($row['division'] ?? '') === '' && $defaultDivision !== '') {
+                $row['division'] = $defaultDivision;
+            }
+
+            if (isset($row['publish_year']) && ! ctype_digit($row['publish_year'])) {
+                $errors[] = "Row {$rowNumber}: publish_year is not a number.";
+
+                continue;
+            }
+
+            try {
+                Article::create(array_merge($row, [
+                    'status' => 'published',
+                    'legacy_id' => (string) $nextLegacy,
+                    'volume' => $row['volume'] ?? '',
+                    'issue' => $row['issue'] ?? '',
+                ]));
+                $nextLegacy++;
+                $created++;
+            } catch (\Throwable $e) {
+                $errors[] = "Row {$rowNumber}: ".(str_contains($e->getMessage(), 'articles_doi_unique')
+                    ? 'an article with this DOI already exists.'
+                    : Str::limit($e->getMessage(), 200));
+            }
+        }
+
+        if ($created > 0) {
+            Cache::forget('articles:media-map');
+        }
+
+        return response()->json([
+            'data' => [
+                'total_rows' => count($rows),
+                'created' => $created,
+                'failed' => count($errors),
+                'errors' => array_slice($errors, 0, 25),
+            ],
+            'message' => "{$created} article(s) created.",
+        ]);
+    }
+
+    /** Field names accepted from bulk files, with aliases. */
+    private const BULK_FIELDS = [
+        'title' => 'title',
+        'document_type' => 'document_type',
+        'type' => 'document_type',
+        'subject' => 'subject',
+        'division' => 'division',
+        'abstract' => 'abstract',
+        'keywords' => 'keywords',
+        'doi' => 'doi',
+        'volume' => 'volume',
+        'issue' => 'issue',
+        'pages_from' => 'pages_from',
+        'pages_to' => 'pages_to',
+        'publish_year' => 'publish_year',
+        'year' => 'publish_year',
+        'publish_month' => 'publish_month',
+        'publish_date' => 'publish_date',
+        'pdf_url' => 'pdf_url',
+        'corresponding_author' => 'corresponding_author',
+    ];
+
+    /**
+     * @return list<array<string, string>>|null
+     */
+    private function rowsFromCsv(string $path): ?array
+    {
+        $handle = fopen($path, 'r');
+
+        if ($handle === false) {
+            return null;
+        }
+
+        $header = fgetcsv($handle, null, ',', '"', '');
+
+        if ($header === false) {
+            fclose($handle);
+
+            return null;
+        }
+
+        // Map each column index to a known field (BOM-stripped, case-insensitive).
+        $columns = [];
+        foreach ($header as $i => $name) {
+            $key = strtolower(trim(str_replace("\u{FEFF}", '', (string) $name)));
+            if (isset(self::BULK_FIELDS[$key])) {
+                $columns[$i] = self::BULK_FIELDS[$key];
+            }
+        }
+
+        if (! in_array('title', $columns, true)) {
+            fclose($handle);
+
+            return null;
+        }
+
+        $rows = [];
+        while (($line = fgetcsv($handle, null, ',', '"', '')) !== false) {
+            if (count(array_filter($line, fn ($v) => trim((string) $v) !== '')) === 0) {
+                continue;
+            }
+            $row = [];
+            foreach ($columns as $i => $field) {
+                $value = trim((string) ($line[$i] ?? ''));
+                if ($value !== '') {
+                    $row[$field] = $value;
+                }
+            }
+            $rows[] = $row;
+        }
+        fclose($handle);
+
+        return $rows;
+    }
+
+    /**
+     * @return list<array<string, string>>|null
+     */
+    private function rowsFromXml(string $content): ?array
+    {
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content);
+
+        if ($xml === false) {
+            return null;
+        }
+
+        $articles = isset($xml->article) ? $xml->article : $xml->children();
+        $rows = [];
+
+        foreach ($articles as $node) {
+            $row = [];
+            foreach ($node->children() as $child) {
+                $key = strtolower(trim($child->getName()));
+                $value = trim((string) $child);
+                if (isset(self::BULK_FIELDS[$key]) && $value !== '') {
+                    $row[self::BULK_FIELDS[$key]] = $value;
+                }
+            }
+            if ($row !== []) {
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
     }
 
     /**

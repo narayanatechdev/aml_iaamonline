@@ -142,6 +142,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Article editing (admin/editor via article:* permissions)
         Route::post('/articles', [AdminArticleController::class, 'store'])->name('admin.articles.store');
+        Route::post('/articles/bulk', [AdminArticleController::class, 'bulkStore'])->name('admin.articles.bulk');
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
         Route::post('/articles/{id}/pdf', [AdminArticleController::class, 'uploadPdf'])->name('admin.articles.pdf');

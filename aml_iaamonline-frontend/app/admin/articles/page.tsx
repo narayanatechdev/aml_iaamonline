@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown,
@@ -332,6 +333,7 @@ export default function ArticlesPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [divisionOptions, setDivisionOptions] = useState<string[]>(
     () => resolveChallengeDivisions().divisions.map((d) => d.name)
   );
@@ -449,6 +451,13 @@ export default function ArticlesPage() {
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
+          </button>
+          <button
+            onClick={() => setShowBulk(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0f2d6b] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <Upload className="w-4 h-4" />
+            Bulk Upload
           </button>
           <button
             onClick={() => setShowAdd(true)}
@@ -773,6 +782,13 @@ export default function ArticlesPage() {
           }}
         />
       )}
+      {showBulk && (
+        <BulkUploadModal
+          divisionOptions={divisionOptions}
+          onClose={() => setShowBulk(false)}
+          onImported={fetchArticles}
+        />
+      )}
     </div>
   );
 }
@@ -864,8 +880,10 @@ function AddArticleModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+  // Portal to <body>: animated/transformed ancestors in the admin layout
+  // would otherwise turn position:fixed into position:absolute.
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <div
         className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -961,6 +979,158 @@ function AddArticleModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
+  );
+}
+
+interface BulkResult {
+  total_rows: number;
+  created: number;
+  failed: number;
+  errors: string[];
+}
+
+/** Modal to bulk-import articles from a CSV or XML file. */
+function BulkUploadModal({
+  divisionOptions,
+  onClose,
+  onImported,
+}: {
+  divisionOptions: string[];
+  onClose: () => void;
+  onImported: () => void;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [defaultDivision, setDefaultDivision] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<BulkResult | null>(null);
+
+  const submit = async () => {
+    if (!file) {
+      setError('Choose a CSV or XML file first.');
+      return;
+    }
+    setUploading(true);
+    setError(null);
+    setResult(null);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      if (defaultDivision) fd.append('default_division', defaultDivision);
+      const token = getToken();
+      const res = await fetch(`${API_BASE}/admin/articles/bulk`, {
+        method: 'POST',
+        headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: fd,
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(body?.error || body?.message || `Upload failed (${res.status})`);
+      }
+      setResult(body.data);
+      if (body.data?.created > 0) onImported();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div
+        className="bg-white rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Bulk Upload Articles</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
+        </div>
+
+        <div className="p-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">CSV or XML file</label>
+            <label className="flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#0f2d6b] hover:bg-[#f0f4fb] transition-colors">
+              <Upload className="w-4 h-4 text-[#0f2d6b]" />
+              <span className="text-sm text-gray-600">
+                {file ? file.name : 'Choose a .csv or .xml file (max 10 MB, up to 1000 rows)'}
+              </span>
+              <input
+                type="file"
+                accept=".csv,.xml,text/csv,text/xml,application/xml"
+                className="hidden"
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] ?? null);
+                  setResult(null);
+                  setError(null);
+                }}
+              />
+            </label>
+            <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+              CSV needs a header row; XML needs <code>&lt;articles&gt;&lt;article&gt;…</code> elements.
+              Recognised fields: <span className="font-mono">title</span> (required),{' '}
+              <span className="font-mono">type, subject, division, abstract, keywords, doi, volume,
+              issue, pages_from, pages_to, year, publish_date, pdf_url, corresponding_author</span>.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Default Challenge Division
+            </label>
+            <select
+              value={defaultDivision}
+              onChange={(e) => setDefaultDivision(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+            >
+              <option value="">None</option>
+              {divisionOptions.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <p className="mt-1 text-xs text-gray-400">
+              Applied to rows that don&apos;t specify their own division.
+            </p>
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+          )}
+
+          {result && (
+            <div className={`p-3 rounded-lg border text-sm ${
+              result.failed === 0
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-amber-50 border-amber-200 text-amber-800'
+            }`}>
+              <p className="font-semibold">
+                {result.created} of {result.total_rows} article(s) imported
+                {result.failed > 0 && `, ${result.failed} failed`}.
+              </p>
+              {result.errors.length > 0 && (
+                <ul className="mt-2 space-y-0.5 text-xs list-disc list-inside">
+                  {result.errors.map((e, i) => <li key={i}>{e}</li>)}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            {result ? 'Close' : 'Cancel'}
+          </button>
+          <button
+            onClick={submit}
+            disabled={uploading || !file}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
+          >
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {uploading ? 'Importing…' : 'Import'}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
