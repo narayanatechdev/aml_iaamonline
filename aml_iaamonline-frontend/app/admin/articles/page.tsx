@@ -795,6 +795,50 @@ export default function ArticlesPage() {
 
 const NEW_ARTICLE_TYPES = ARTICLE_TYPE_OPTIONS.filter((t) => t !== 'All Types');
 
+/**
+ * Right-side slide-in panel. Rendered via a portal to <body>: animated or
+ * transformed ancestors in the admin layout would otherwise break the
+ * fixed positioning.
+ */
+function SideDrawer({
+  title,
+  onClose,
+  children,
+  footer,
+}: {
+  title: string;
+  onClose: () => void;
+  children: React.ReactNode;
+  footer: React.ReactNode;
+}) {
+  return createPortal(
+    <div className="fixed inset-0 z-[100]" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="absolute inset-0 bg-black/40"
+      />
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl flex flex-col"
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 shrink-0">
+          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <button onClick={onClose}><X className="w-5 h-5 text-gray-400 hover:text-gray-600" /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">{children}</div>
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200 shrink-0 bg-white">
+          {footer}
+        </div>
+      </motion.div>
+    </div>,
+    document.body
+  );
+}
+
 /** Modal to upload a new article: metadata, division mapping and PDF. */
 function AddArticleModal({
   divisionOptions,
@@ -880,20 +924,26 @@ function AddArticleModal({
     }
   };
 
-  // Portal to <body>: animated/transformed ancestors in the admin layout
-  // would otherwise turn position:fixed into position:absolute.
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Add Article</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
-        </div>
-
-        <div className="p-4 space-y-4">
+  return (
+    <SideDrawer
+      title="Add Article"
+      onClose={onClose}
+      footer={
+        <>
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={saving}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+            {saving ? 'Saving…' : 'Create article'}
+          </button>
+        </>
+      }
+    >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
             <textarea rows={2} value={form.title} onChange={set('title')} className={`${inputCls} resize-none`} />
@@ -963,24 +1013,7 @@ function AddArticleModal({
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
           )}
-        </div>
-
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
-            Cancel
-          </button>
-          <button
-            onClick={submit}
-            disabled={saving}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-            {saving ? 'Saving…' : 'Create article'}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body
+    </SideDrawer>
   );
 }
 
@@ -1038,18 +1071,26 @@ function BulkUploadModal({
     }
   };
 
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Bulk Upload Articles</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
-        </div>
-
-        <div className="p-4 space-y-4">
+  return (
+    <SideDrawer
+      title="Bulk Upload Articles"
+      onClose={onClose}
+      footer={
+        <>
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
+            {result ? 'Close' : 'Cancel'}
+          </button>
+          <button
+            onClick={submit}
+            disabled={uploading || !file}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
+          >
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {uploading ? 'Importing…' : 'Import'}
+          </button>
+        </>
+      }
+    >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">CSV or XML file</label>
             <label className="flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#0f2d6b] hover:bg-[#f0f4fb] transition-colors">
@@ -1073,6 +1114,16 @@ function BulkUploadModal({
               Recognised fields: <span className="font-mono">title</span> (required),{' '}
               <span className="font-mono">type, subject, division, abstract, keywords, doi, volume,
               issue, pages_from, pages_to, year, publish_date, pdf_url, corresponding_author</span>.
+            </p>
+            <p className="mt-2 text-xs">
+              <span className="text-gray-500">Download a template: </span>
+              <a href="/samples/articles-sample.csv" download className="font-medium text-[#0f2d6b] hover:underline">
+                sample CSV
+              </a>
+              <span className="text-gray-400"> · </span>
+              <a href="/samples/articles-sample.xml" download className="font-medium text-[#0f2d6b] hover:underline">
+                sample XML
+              </a>
             </p>
           </div>
 
@@ -1114,23 +1165,6 @@ function BulkUploadModal({
               )}
             </div>
           )}
-        </div>
-
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
-            {result ? 'Close' : 'Cancel'}
-          </button>
-          <button
-            onClick={submit}
-            disabled={uploading || !file}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] disabled:opacity-50"
-          >
-            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-            {uploading ? 'Importing…' : 'Import'}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body
+    </SideDrawer>
   );
 }

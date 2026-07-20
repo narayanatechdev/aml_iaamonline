@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample bulk-upload file for AML admin > Articles > Bulk Upload.
+  One <article> element per article. Only <title> is required.
+  Recognised elements: title, type (or document_type), subject, division,
+  abstract, keywords, doi, volume, issue, pages_from, pages_to,
+  year (or publish_year), publish_month, publish_date, pdf_url,
+  corresponding_author.
+-->
+<articles>
+  <article>
+    <title>Humidity-resistant perovskite solar cells via 2D capping layers</title>
+    <type>Research Article</type>
+    <subject>Energy Materials</subject>
+    <division>Sustainable Materials</division>
+    <abstract>We report a scalable 2D capping strategy that improves the operational stability of perovskite solar cells under 85% relative humidity, retaining 94% of initial efficiency after 1000 hours.</abstract>
+    <keywords>perovskite, solar cells, stability, 2D materials</keywords>
+    <doi>10.5185/amlett.2026.9001</doi>
+    <volume>17</volume>
+    <issue>3</issue>
+    <pages_from>101</pages_from>
+    <pages_to>109</pages_to>
+    <year>2026</year>
+    <publish_month>July</publish_month>
+    <publish_date>2026-07-01</publish_date>
+    <pdf_url>https://example.org/pdfs/perovskite-capping.pdf</pdf_url>
+    <corresponding_author>Dr. A. Sharma</corresponding_author>
+  </article>
+  <article>
+    <title>Machine-learning screening of high-entropy alloys for hydrogen storage</title>
+    <type>Review</type>
+    <division>Digital &amp; AI-Designed Materials</division>
+    <doi>10.5185/amlett.2026.9002</doi>
+    <volume>17</volume>
+    <issue>3</issue>
+    <year>2026</year>
+    <corresponding_author>Prof. L. Chen</corresponding_author>
+  </article>
+  <article>
+    <title>Point-of-care biosensor patch for continuous lactate monitoring</title>
+    <type>Letter</type>
+    <division>Materials for Human Health</division>
+    <abstract>A skin-conformal microneedle patch enables continuous lactate monitoring in sweat with clinical-grade accuracy over 48 hours.</abstract>
+    <year>2026</year>
+  </article>
+</articles>
