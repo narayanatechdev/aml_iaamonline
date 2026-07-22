@@ -50,3 +50,4 @@ aml_iaamonline-frontend/dist/
 !aml_iaamonline-backend/.*
 !aml_iaamonline-frontend/.*
 aml_iaamonline-backend/.env.sqlite.bak
+*.xml

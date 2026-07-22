@@ -53,10 +53,11 @@ class AuthorImageValidationService
         $filename = self::generateFilename($authorEmail, $file->getClientOriginalExtension());
         $path = self::STORAGE_PATH.'/'.$filename;
 
+        // Bucket has ACLs disabled; objects are public via bucket policy,
+        // so no visibility flag — passing one makes the put fail silently.
         Storage::disk(self::STORAGE_DISK)->put(
             $path,
-            file_get_contents($file->getRealPath()),
-            'public'
+            file_get_contents($file->getRealPath())
         );
 
         return Storage::disk(self::STORAGE_DISK)->url($path);
