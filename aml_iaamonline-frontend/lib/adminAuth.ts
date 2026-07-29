@@ -1,5 +1,7 @@
 const TOKEN_KEY = 'admin_token';
 const USER_KEY  = 'admin_user';
+// Cookie read by proxy.ts to let admins through the coming-soon gate
+const PREVIEW_COOKIE = 'aml_admin_preview';
 
 export interface AdminUser {
   name: string;
@@ -25,11 +27,14 @@ export function getUser(): AdminUser | null {
 export function saveAuth(token: string, user: AdminUser): void {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  // 30 days; lets the coming-soon gate recognise this browser as an admin
+  document.cookie = `${PREVIEW_COOKIE}=1; path=/; max-age=2592000; samesite=lax`;
 }
 
 export function clearAuth(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  document.cookie = `${PREVIEW_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
 
 export function isAuthenticated(): boolean {
