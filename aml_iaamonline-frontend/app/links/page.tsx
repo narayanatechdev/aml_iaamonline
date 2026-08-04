@@ -69,12 +69,6 @@ export default function Links() {
       category: "Database"
     },
     {
-      name: "Directory of Open Access Journals (DOAJ)",
-      url: "https://doaj.org",
-      description: "Quality-assured directory of open access journals",
-      category: "Database"
-    },
-    {
       name: "PubMed",
       url: "https://pubmed.ncbi.nlm.nih.gov",
       description: "Biomedical literature database",

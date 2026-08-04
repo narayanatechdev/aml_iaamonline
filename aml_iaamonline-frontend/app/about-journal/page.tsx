@@ -31,15 +31,15 @@ export default function AboutJournalPage() {
             </div>
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-700 leading-relaxed mb-4">
-                Advanced Materials Letters (AML) is an international, peer-reviewed, diamond open access journal 
-                that covers all aspects of materials science and engineering. Established to promote cutting-edge 
-                research in advanced materials, AML serves as a premier platform for researchers, scientists, and 
+                Advanced Materials Letters (AML) is an international, peer-reviewed journal
+                that covers all aspects of materials science and engineering. Established to promote cutting-edge
+                research in advanced materials, AML serves as a premier platform for researchers, scientists, and
                 engineers worldwide.
               </p>
               <p className="text-gray-700 leading-relaxed">
-                The journal is committed to publishing high-quality research articles, reviews, and communications 
-                that advance our understanding of materials properties, synthesis, characterization, and applications. 
-                Our diamond open access model ensures that all research is freely available to the global scientific community.
+                The journal is committed to publishing high-quality research articles, reviews, and communications
+                that advance our understanding of materials properties, synthesis, characterization, and applications.
+                Advanced Materials Letters is available through IAAM membership and subscription.
               </p>
             </div>
           </div>
@@ -139,8 +139,8 @@ export default function AboutJournalPage() {
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-[#c9a227] rounded-full mt-2 flex-shrink-0"></div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Diamond Open Access</h4>
-                    <p className="text-sm text-gray-600">Free to publish, free to read for all researchers worldwide</p>
+                    <h4 className="font-semibold text-gray-900">Access &amp; Membership</h4>
+                    <p className="text-sm text-gray-600">Available through IAAM membership and subscription; no author processing charges</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

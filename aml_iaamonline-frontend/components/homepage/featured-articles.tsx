@@ -4,6 +4,8 @@ import { useRef, useState } from 'react';
 import { getRecentArticles } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import { FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RichText } from '@/components/shared/rich-text';
+import { richTextToPlain } from '@/lib/rich-text';
 
 function formatAuthor(author: any): string {
   if (typeof author === 'string') return author;
@@ -77,7 +79,7 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
               <div className="bg-gray-100 aspect-[4/3] overflow-hidden flex-shrink-0">
                 <img
                   src={article.graphical_abstract_url || 'https://images.unsplash.com/photo-1578926078328-123456789012?w=400&h=300&fit=crop'}
-                  alt={article.title}
+                  alt={richTextToPlain(article.title)}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1578926078328-123456789012?w=400&h=300&fit=crop';
@@ -88,7 +90,7 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
               {/* Content */}
               <div className="p-4 flex flex-col">
                 <h3 className="font-bold text-base mb-2 line-clamp-2 min-h-[3rem] text-black" style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif" }}>
-                  {article.title}
+                  <RichText html={article.title} />
                 </h3>
 
                 <p className="text-sm text-gray-600 mb-3 line-clamp-1 min-h-[1.25rem]">

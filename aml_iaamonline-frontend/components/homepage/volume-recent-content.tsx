@@ -4,6 +4,8 @@ import { ExternalLink, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { getRecentArticles, JOURNAL_INFO, ARCHIVE_VOLUMES } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
+import { RichText } from '@/components/shared/rich-text';
+import { richTextToPlain } from '@/lib/rich-text';
 
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
@@ -34,8 +36,8 @@ export function VolumeRecentContent() {
                   <div className="w-full min-h-40 bg-gray-100 rounded-lg border flex items-center justify-center overflow-hidden">
                     {article.graphical_abstract_url ? (
                       <img
-                        src={article.graphical_abstract_url}
-                        alt={`Graphical abstract for ${article.title}`}
+                        src={article.graphical_abstract_url.replace(/ /g, '%20')}
+                        alt={`Graphical abstract for ${richTextToPlain(article.title)}`}
                         className="w-full h-full max-h-48 object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -53,11 +55,11 @@ export function VolumeRecentContent() {
 
                 {/* Article content - right side */}
                 <div className="flex-1 min-w-0">
-                  {/* Open Access Badge */}
+                  {/* Article type badge */}
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
                     <div className="inline-flex w-fit items-center gap-1 px-2 py-1 bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] text-xs rounded-full font-semibold">
                       <span className="w-2 h-2 bg-[#c9a227] rounded-full"></span>
-                      Open Access
+                      {article.type || 'Research Article'}
                     </div>
                     <div className="text-xs text-[#5a6a8a] font-mono">
                       Vol. {article.volume}, Issue {article.issue} • {article.year}
@@ -71,7 +73,7 @@ export function VolumeRecentContent() {
                     className="block hover:text-[#0f2d6b] transition-colors"
                   >
                     <h4 className="text-lg font-semibold text-[#0f1a2e] line-clamp-2 mb-3">
-                      {article.title}
+                      <RichText html={article.title} />
                     </h4>
                   </Link>
 
@@ -97,7 +99,9 @@ export function VolumeRecentContent() {
 
                   {/* Abstract Snippet */}
                   <p className="text-base text-gray-700 line-clamp-3 leading-relaxed mb-5">
-                    {article.abstract || 'Abstract not available.'}
+                    {article.abstract
+                      ? <RichText html={article.abstract} />
+                      : 'Abstract not available.'}
                   </p>
 
                   {/* Action Buttons */}
@@ -196,7 +200,7 @@ export function VolumeRecentContent() {
                           {yearData.year}
                         </div>
                         <div className="text-xs text-[#c9a227] mt-1 font-medium">
-                          Open Access
+                          Archive
                         </div>
                       </div>
                     </div>

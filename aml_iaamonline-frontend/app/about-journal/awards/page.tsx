@@ -35,23 +35,23 @@ export default function AwardsPage() {
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-yellow-50 rounded-lg p-6 text-center">
                 <Medal className="w-12 h-12 text-yellow-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Scopus Indexed</h3>
-                <p className="text-sm text-gray-600 mb-2">2018 - Present</p>
-                <p className="text-xs text-gray-500">Recognized for high editorial standards</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Scopus Coverage</h3>
+                <p className="text-sm text-gray-600 mb-2">2010 – 2016</p>
+                <p className="text-xs text-gray-500">Recognised for high editorial standards during Scopus indexing period</p>
               </div>
-              
+
               <div className="bg-blue-50 rounded-lg p-6 text-center">
                 <Star className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Impact Factor Growth</h3>
-                <p className="text-sm text-gray-600 mb-2">2019 - 2023</p>
-                <p className="text-xs text-gray-500">Consistent increase in citation metrics</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Citation Growth</h3>
+                <p className="text-sm text-gray-600 mb-2">2010 – Present</p>
+                <p className="text-xs text-gray-500">Growing h-index and citation profile across all published volumes</p>
               </div>
-              
+
               <div className="bg-green-50 rounded-lg p-6 text-center">
                 <Award className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Diamond OA Pioneer</h3>
-                <p className="text-sm text-gray-600 mb-2">2010 - Present</p>
-                <p className="text-xs text-gray-500">Leading diamond open access model</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Publishing Since 2010</h3>
+                <p className="text-sm text-gray-600 mb-2">2010 – Present</p>
+                <p className="text-xs text-gray-500">Serving the global materials science community for over 15 years</p>
               </div>
             </div>
           </div>

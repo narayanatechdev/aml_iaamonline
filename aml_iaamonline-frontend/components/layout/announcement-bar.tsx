@@ -10,11 +10,11 @@ export function AnnouncementBar() {
               Relaunched 2026
             </div>
             <div className="text-sm text-gray-700" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
-              <span className="font-semibold">A curated, not-for-profit publishing platform.</span> Advanced Materials Letters is moving from open submission to a selective model — articles invited from IAAM Fellows, awardees and collaborating institutions, with access through the <span className="italic">IAAM Consortium and cooperation partnerships.</span>
+              <span className="font-semibold">A curated, not-for-profit publishing platform.</span> Advanced Materials Letters publishes by invitation — articles from IAAM Fellows, awardees and collaborating institutions — with reading access through <span className="italic">IAAM membership and subscription.</span> Authors are never charged a fee.
             </div>
           </div>
           <a
-            href="#access-model"
+            href="/access-model"
             className="text-sm font-semibold text-amber-900 hover:text-amber-800 whitespace-nowrap"
             style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
           >

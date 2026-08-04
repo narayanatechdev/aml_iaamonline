@@ -88,24 +88,24 @@ export default function NewsArticlePage() {
     },
     {
       id: '4',
-      title: 'Advanced Materials Letters Joins DOAJ Database',
-      excerpt: 'The journal has been officially indexed in the Directory of Open Access Journals.',
+      title: 'Advanced Materials Letters CrossRef DOI Programme',
+      excerpt: 'All articles published in Advanced Materials Letters carry CrossRef Digital Object Identifiers for permanent identification and citation tracking.',
       content: `
-        <p>We are proud to announce that Advanced Materials Letters has been officially indexed in the Directory of Open Access Journals (DOAJ). This milestone further enhances the journal's visibility and accessibility to the global research community.</p>
-        
-        <p>The DOAJ is a comprehensive directory that indexes high-quality, peer-reviewed open access journals. Inclusion in DOAJ indicates that Advanced Materials Letters meets the highest standards for open access publishing, including:</p>
-        
+        <p>Advanced Materials Letters assigns CrossRef Digital Object Identifiers (DOIs) to all published articles. DOIs provide permanent, stable links to articles regardless of changes in URLs, ensuring that citations remain valid and that articles are easily discoverable through CrossRef-affiliated search tools.</p>
+
+        <p>Benefits of CrossRef DOI registration for authors include:</p>
+
         <ul>
-          <li>Transparent peer review processes</li>
-          <li>Clear open access policies</li>
-          <li>High editorial standards</li>
-          <li>Proper archiving and preservation practices</li>
+          <li>Permanent, citable link to your published article</li>
+          <li>Integration with reference management software</li>
+          <li>Citation tracking through Crossref services</li>
+          <li>Discoverability across academic databases and search engines</li>
         </ul>
-        
-        <p>This indexing will make our articles more discoverable through academic search engines and databases, increasing their impact and reach within the scientific community.</p>
+
+        <p>DOIs are assigned automatically upon publication at no cost to authors. For any enquiries about DOIs or article discoverability, please contact aml@iaamonline.org.</p>
       `,
       date: '2026-05-08',
-      category: 'Indexing',
+      category: 'Announcement',
       image: 'https://aml.iaamonline.org/data/aml/news/1649278489_indx_.jpg'
     },
     {

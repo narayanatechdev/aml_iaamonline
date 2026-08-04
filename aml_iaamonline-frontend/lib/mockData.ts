@@ -36,7 +36,7 @@ export const JOURNAL_INFO = {
   currentIssue: '2',
   currentYear: '2025',
   issn: '0976-3961',
-  eISSN: '1998-0140',
+  eISSN: '0976-397X',
 };
 
 export const FEATURED_ARTICLES: FeaturedArticle[] = [

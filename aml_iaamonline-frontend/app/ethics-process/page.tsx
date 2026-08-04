@@ -204,9 +204,9 @@ export default function EthicsProcess() {
                       badge: "Verified"
                     },
                     {
-                      title: "DOAJ Compliance",
-                      desc: "Full compliance with Directory of Open Access Journals quality standards.",
-                      badge: "Certified"
+                      title: "CrossRef Member",
+                      desc: "All articles receive CrossRef DOIs for permanent identification and citation tracking.",
+                      badge: "Active"
                     },
                     {
                       title: "International Standards",

@@ -1,521 +1,214 @@
-'use client';
+import type { Metadata } from 'next';
+import { FEATURED_ARTICLES } from '@/lib/realData';
+import { richTextToPlain } from '@/lib/rich-text';
+import ArticleClient from './article-client';
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { FEATURED_ARTICLES, FeaturedArticle } from "@/lib/realData";
-import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText } from "lucide-react";
-import { MainLayout } from "@/components/layout/main-layout";
+const BASE_URL = 'https://amljournal.iaamonline.org';
 
-interface AuthorAffiliation {
-  id: number;
-  name: string;
-  email: string | null;
-  position: number;
-  is_corresponding: boolean;
-  affiliation: {
-    id: number;
-    name: string;
-    country: string | null;
-    city: string | null;
-    department: string | null;
-    full_address: string | null;
-  } | null;
-  affiliation_text: string | null;
+async function fetchArticleData(id: string): Promise<any> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return null;
+  try {
+    const res = await fetch(`${apiUrl}/articles/${id}`, { next: { revalidate: 300 } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
 
-function getAuthorName(author: any): string {
-  if (typeof author === 'string') return author;
-  if (typeof author === 'object' && author !== null) {
-    return (author.name || author.first_name || '').trim();
+async function fetchAuthorsData(id: string): Promise<any> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return null;
+  try {
+    const res = await fetch(`${apiUrl}/articles/${id}/authors`, { next: { revalidate: 300 } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function authorObjectToName(a: any): string {
+  if (typeof a === 'string') return a;
+  if (typeof a === 'object' && a !== null) {
+    if (a.name) return a.name;
+    const parts = [a.firstName, a.lastName].filter(Boolean);
+    if (parts.length > 0) return parts.join(' ');
+    if (a.first_name) return a.first_name;
   }
   return '';
 }
 
-function getAuthorDisplay(authors: any[]): string {
-  return (authors || []).map(getAuthorName).filter(Boolean).join(', ');
+function resolveAuthorNames(authorsData: any, staticAuthors: any[]): string[] {
+  if (authorsData?.authors && Array.isArray(authorsData.authors)) {
+    const names = (authorsData.authors as any[]).map(authorObjectToName).filter(Boolean);
+    if (names.length > 0) return names;
+  }
+  return (staticAuthors || []).map(authorObjectToName).filter(Boolean);
 }
 
-export default function ArticlePage() {
-  const params = useParams();
-  const id = params.id as string;
-
-  const staticArticle = FEATURED_ARTICLES.find((a) => a.id === id) || FEATURED_ARTICLES[0];
-
-  const [authorsWithAffiliations, setAuthorsWithAffiliations] = useState<AuthorAffiliation[]>([]);
-  const [isLoadingAuthors, setIsLoadingAuthors] = useState(true);
-  const [activeSection, setActiveSection] = useState<string>('header');
-  const [liveArticle, setLiveArticle] = useState<Partial<FeaturedArticle> | null>(null);
-
-  // Fetch the live article record so admin edits (graphical abstract, PDF, metadata)
-  // show up without a rebuild of the static articles_data.json snapshot.
-  useEffect(() => {
-    if (!id) return;
-    const fetchArticle = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        const overlay: Partial<FeaturedArticle> = {
-          title: data.title ?? undefined,
-          type: data.document_type ?? undefined,
-          subject: data.subject ?? undefined,
-          abstract: data.abstract ?? undefined,
-          volume: data.volume ?? undefined,
-          issue: data.issue ?? undefined,
-          doi: data.doi ?? undefined,
-          pages: data.pages_from != null && data.pages_to != null ? `${data.pages_from}-${data.pages_to}` : undefined,
-          published: typeof data.publish_date === 'string' ? data.publish_date.slice(0, 10) : undefined,
-          year: data.publish_year ?? undefined,
-          keywords: typeof data.keywords === 'string'
-            ? data.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-            : Array.isArray(data.keywords) ? data.keywords : undefined,
-          pdf_url: data.pdf_url ?? undefined,
-          original_pdf_url: data.original_pdf_url ?? undefined,
-          graphical_abstract_url: data.graphical_abstract_url ?? undefined,
-          views: data.views_count ?? undefined,
-          cited: data.cited_count ?? undefined,
-        };
-        Object.keys(overlay).forEach((key) => {
-          if (overlay[key as keyof FeaturedArticle] === undefined) {
-            delete overlay[key as keyof FeaturedArticle];
-          }
-        });
-        setLiveArticle(overlay);
-      } catch {
-        // keep the static snapshot on network failure
-      }
+function resolvePages(articleData: any, staticPages: string | undefined): { firstPage?: string; lastPage?: string } {
+  if (articleData?.pages_from != null) {
+    return {
+      firstPage: String(articleData.pages_from),
+      lastPage: articleData.pages_to != null ? String(articleData.pages_to) : undefined,
     };
-    fetchArticle();
-  }, [id]);
+  }
+  const pagesStr = staticPages ?? '';
+  const parts = pagesStr.split('-');
+  return {
+    firstPage: parts[0] || undefined,
+    lastPage: parts[1] || undefined,
+  };
+}
 
-  const article: FeaturedArticle = { ...staticArticle, ...liveArticle };
-  const related = FEATURED_ARTICLES.filter((a) => a.id !== article.id && a.subject === article.subject).slice(0, 3);
+function resolvePubDate(articleData: any, staticPublished: string | undefined): string | undefined {
+  const raw = articleData?.publish_date ?? staticPublished;
+  if (!raw || typeof raw !== 'string') return undefined;
+  const parts = raw.slice(0, 10).split('-');
+  if (parts.length === 3) return parts.join('/');
+  return undefined;
+}
 
-  useEffect(() => {
-    const fetchAuthors = async () => {
-      try {
-        setIsLoadingAuthors(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}/authors`);
-        if (response.ok) {
-          const data = await response.json();
-          setAuthorsWithAffiliations(data.authors || []);
-        } else {
-          setAuthorsWithAffiliations([]);
-        }
-      } catch {
-        setAuthorsWithAffiliations([]);
-      } finally {
-        setIsLoadingAuthors(false);
-      }
-    };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
 
-    if (id) {
-      fetchAuthors();
-    } else {
-      setIsLoadingAuthors(false);
-    }
-  }, [id]);
+  const [articleData, authorsData] = await Promise.all([
+    fetchArticleData(id),
+    fetchAuthorsData(id),
+  ]);
 
-  // Track active section for highlighting sidebar navigation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      {
-        threshold: 0.3,
-        rootMargin: '-144px 0px -50% 0px', // Account for sticky navbar
-      }
-    );
+  const staticArticle = FEATURED_ARTICLES.find((a) => a.id === id);
 
-    // Observe all sections
-    const sections = ['header', 'graphical-abstract', 'keywords', 'citation', 'related'];
-    sections.forEach((sectionId) => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        observer.observe(element);
-      }
-    });
+  const rawTitle = articleData?.title ?? staticArticle?.title ?? '';
+  const rawAbstract = articleData?.abstract ?? staticArticle?.abstract ?? '';
+  const title = richTextToPlain(rawTitle);
+  const abstractPlain = richTextToPlain(rawAbstract);
+  const description = abstractPlain.length > 200
+    ? abstractPlain.slice(0, 197) + '...'
+    : abstractPlain || undefined;
 
-    return () => observer.disconnect();
-  }, []);
+  const volume: string | undefined = articleData?.volume ?? staticArticle?.volume;
+  const issue: string | undefined = articleData?.issue ?? staticArticle?.issue;
+  const doi: string | undefined = articleData?.doi ?? staticArticle?.doi;
+  const pdfUrl: string | undefined = articleData?.pdf_url ?? staticArticle?.pdf_url;
+  const graphicalAbstractUrl: string | undefined =
+    articleData?.graphical_abstract_url ?? staticArticle?.graphical_abstract_url;
 
-  const authorNames = getAuthorDisplay(article.authors);
-  const pdfDownloads = (article as any).pdf_downloads || 0;
+  const { firstPage, lastPage } = resolvePages(articleData, staticArticle?.pages);
+  const pubDate = resolvePubDate(articleData, staticArticle?.published);
+  const authorNames = resolveAuthorNames(authorsData, staticArticle?.authors ?? []);
+
+  const canonicalUrl = `${BASE_URL}/article/${id}`;
+
+  // Build Google Scholar citation_* meta tags — omit any whose value is unknown.
+  const other: Record<string, string | number | (string | number)[]> = {};
+  if (title) other['citation_title'] = title;
+  other['citation_journal_title'] = 'Advanced Materials Letters';
+  other['citation_issn'] = '0976-397X';
+  if (volume) other['citation_volume'] = volume;
+  if (issue) other['citation_issue'] = issue;
+  if (firstPage) other['citation_firstpage'] = firstPage;
+  if (lastPage) other['citation_lastpage'] = lastPage;
+  if (pubDate) other['citation_publication_date'] = pubDate;
+  if (doi) other['citation_doi'] = doi;
+  if (pdfUrl) other['citation_pdf_url'] = pdfUrl;
+  if (authorNames.length > 0) other['citation_author'] = authorNames;
+
+  const ogImages = graphicalAbstractUrl ? [{ url: graphicalAbstractUrl }] : [];
+
+  return {
+    title: title || 'Article',
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      type: 'article',
+      title: title || undefined,
+      description,
+      url: canonicalUrl,
+      ...(ogImages.length > 0 ? { images: ogImages } : {}),
+    },
+    twitter: {
+      card: ogImages.length > 0 ? 'summary_large_image' : 'summary',
+      title: title || undefined,
+      description,
+    },
+    other,
+  };
+}
+
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const [articleData, authorsData] = await Promise.all([
+    fetchArticleData(id),
+    fetchAuthorsData(id),
+  ]);
+
+  const staticArticle = FEATURED_ARTICLES.find((a) => a.id === id);
+
+  if (!articleData && !staticArticle) {
+    return <ArticleClient />;
+  }
+
+  const rawTitle = articleData?.title ?? staticArticle?.title ?? '';
+  const title = richTextToPlain(rawTitle);
+  const doi: string | undefined = articleData?.doi ?? staticArticle?.doi;
+  const volume: string | undefined = articleData?.volume ?? staticArticle?.volume;
+  const issue: string | undefined = articleData?.issue ?? staticArticle?.issue;
+  const canonicalUrl = `${BASE_URL}/article/${id}`;
+
+  const pubDate = (() => {
+    const raw = articleData?.publish_date ?? staticArticle?.published;
+    if (!raw || typeof raw !== 'string') return undefined;
+    return raw.slice(0, 10);
+  })();
+
+  const authorNames = resolveAuthorNames(authorsData, staticArticle?.authors ?? []);
+
+  const jsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'ScholarlyArticle',
+    ...(title ? { headline: title } : {}),
+    ...(authorNames.length > 0
+      ? { author: authorNames.map((name) => ({ '@type': 'Person', name })) }
+      : {}),
+    ...(pubDate ? { datePublished: pubDate } : {}),
+    publisher: {
+      '@type': 'Organization',
+      name: 'International Association of Advanced Materials (IAAM)',
+    },
+    isPartOf: {
+      '@type': 'PublicationVolume',
+      name: 'Advanced Materials Letters',
+      issn: '0976-397X',
+      ...(volume ? { volumeNumber: volume } : {}),
+      ...(issue ? { issueNumber: issue } : {}),
+    },
+    ...(doi
+      ? { identifier: { '@type': 'PropertyValue', propertyID: 'doi', value: doi } }
+      : {}),
+    url: canonicalUrl,
+  };
 
   return (
-    <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <Link href="/browse/current" className="inline-flex items-center gap-1 text-[#0f2d6b] text-base mb-6 hover:underline">
-        <ChevronLeft className="w-4 h-4" /> Back to Browse
-      </Link>
-
-      <div className="grid lg:grid-cols-4 gap-8">
-        {/* Sidebar - moved to left */}
-        <div className="lg:col-span-1 order-2 lg:order-1">
-          {/* Sticky container for sidebar content */}
-          <div className="sticky top-36 space-y-5 max-h-[calc(100vh-9rem)] overflow-y-auto">
-            {/* Download PDF Button */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <a
-                href={article.pdf_url || '#'}
-                className="flex items-center gap-2 px-4 py-3 bg-[#0f2d6b] text-white rounded-lg text-sm hover:bg-[#0d2560] transition-colors font-semibold w-full justify-center"
-                {...(article.pdf_url ? {} : { onClick: (e) => e.preventDefault() })}
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </a>
-            </div>
-
-            {/* Table of Contents / Section Links */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-black text-base font-semibold mb-4">Article Sections</h3>
-            <nav className="space-y-2">
-              <a
-                href="#header"
-                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'header' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('header')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Article Info
-              </a>
-              <a
-                href="#graphical-abstract"
-                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'graphical-abstract' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('graphical-abstract')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Abstract & Graphical Abstract
-              </a>
-              <a
-                href="#keywords"
-                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'keywords' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('keywords')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Keywords
-              </a>
-              <a
-                href="#citation"
-                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'citation' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('citation')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                How to Cite
-              </a>
-              <a
-                href="#related"
-                className={`block text-sm py-1 px-2 rounded transition-colors ${activeSection === 'related' ? 'text-[#0f2d6b] font-semibold bg-[#f0f4fb]' : 'text-[#3a4a6a] hover:text-[#0f2d6b]'}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('related')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Related Articles
-              </a>
-            </nav>
-            </div>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="lg:col-span-3 order-1 lg:order-2">
-          {/* Header */}
-          <div id="header" className="py-6 mb-8 border-b border-gray-200 scroll-mt-36">
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              <span className="px-2.5 py-0.5 bg-[#0f2d6b] text-white text-xs rounded" style={{ fontWeight: 600 }}>
-                {article.type}
-              </span>
-              <span className="px-2.5 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10">
-                {article.subject}
-              </span>
-            </div>
-
-            <h1 className="text-3xl text-[#0f1a2e] mb-4 leading-snug" style={{ fontWeight: 700 }}>
-              {article.title}
-            </h1>
-
-            {/* Authors with Affiliations */}
-            <div className="mb-4">
-              {isLoadingAuthors ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-[#0f2d6b] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-[#5a6a8a] text-base">Loading author information...</p>
-                </div>
-              ) : authorsWithAffiliations.length > 0 ? (
-                <div className="space-y-4">
-                  <h3 className="text-[#0f2d6b] text-base" style={{ fontWeight: 700 }}>Authors & Affiliations</h3>
-
-                  <div className="mb-3">
-                    <div className="flex flex-wrap gap-x-4 gap-y-1">
-                      {authorsWithAffiliations.map((author, index) => {
-                        const allAffiliations = authorsWithAffiliations
-                          .map(a => a.affiliation?.name || a.affiliation_text)
-                          .filter(Boolean);
-                        const uniqueAffiliations = [...new Set(allAffiliations)];
-                        const authorAffiliationName = author.affiliation?.name || author.affiliation_text;
-                        const affiliationNumber = uniqueAffiliations.indexOf(authorAffiliationName) + 1;
-
-                        return (
-                          <span key={author.id} className="inline-flex items-baseline gap-1">
-                            <span className="text-[#0f2d6b] text-base font-semibold">
-                              {author.name}
-                            </span>
-                            {affiliationNumber > 0 && (
-                              <sup className="text-[#0f2d6b] text-xs font-medium">
-                                {affiliationNumber}
-                              </sup>
-                            )}
-                            {author.is_corresponding && (
-                              <sup className="text-[#c9a227] text-xs font-bold">*</sup>
-                            )}
-                            {index < authorsWithAffiliations.length - 1 && (
-                              <span className="text-[#5a6a8a] text-base">,</span>
-                            )}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    {(() => {
-                      const allAffiliations = authorsWithAffiliations
-                        .map(a => ({
-                          name: a.affiliation?.name || a.affiliation_text,
-                        }))
-                        .filter(aff => aff.name);
-
-                      const uniqueAffiliations = allAffiliations.filter((aff, index, self) =>
-                        index === self.findIndex(a => a.name === aff.name)
-                      );
-
-                      return uniqueAffiliations.map((affiliation, index) => (
-                        <div key={index} className="text-sm text-[#5a6a8a] leading-relaxed">
-                          <sup className="text-[#0f2d6b] font-bold text-sm">
-                            {index + 1}
-                          </sup>
-                          {affiliation.name}
-                        </div>
-                      ));
-                    })()}
-                  </div>
-
-                  {authorsWithAffiliations.some(author => author.is_corresponding) && (
-                    <p className="text-xs text-[#5a6a8a] mt-2">
-                      <sup className="text-[#c9a227] font-bold">*</sup> Corresponding author
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <h3 className="text-[#0f2d6b] text-base mb-2" style={{ fontWeight: 700 }}>Authors</h3>
-                  <div className="flex flex-wrap gap-x-1 gap-y-1">
-                    {(article.authors || []).map((author: any, index: number) => {
-                      const name = getAuthorName(author);
-                      const affil = typeof author === 'object' && author?.affiliations?.[0];
-                      const isCorr = typeof author === 'object' && author?.is_corresponding;
-                      return (
-                        <span key={index} className="inline-flex items-baseline">
-                          <span className="text-[#0f2d6b] text-base font-semibold">{name}</span>
-                          {isCorr && <sup className="text-[#c9a227] text-xs font-bold">*</sup>}
-                          {index < (article.authors || []).length - 1 && <span className="text-[#5a6a8a] text-base mr-1">,</span>}
-                        </span>
-                      );
-                    })}
-                  </div>
-                  {/* Show affiliations from JSON data if available */}
-                  {(() => {
-                    const affiliations = new Set<string>();
-                    (article.authors || []).forEach((a: any) => {
-                      if (typeof a === 'object' && a?.affiliations) {
-                        a.affiliations.forEach((af: string) => affiliations.add(af));
-                      }
-                    });
-                    const affList = Array.from(affiliations).filter(a => a && a !== 'Research Institution');
-                    if (affList.length === 0) return null;
-                    return (
-                      <div className="mt-2 space-y-1">
-                        {affList.map((af, i) => (
-                          <p key={i} className="text-[#5a6a8a] text-sm"><sup className="text-[#0f2d6b] font-bold">{i + 1}</sup> {af}</p>
-                        ))}
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-            </div>
-
-            {/* Metadata */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 mb-5 border-y border-gray-200">
-              {[
-                { label: "Volume", value: article.volume },
-                { label: "Pages", value: article.pages },
-                { label: "Published", value: article.published },
-              ].map((m) => (
-                <div key={m.label}>
-                  <p className="text-[#5a6a8a] text-xs mb-0.5">{m.label}</p>
-                  <p className="text-[#0f1a2e] text-sm font-mono" style={{ fontWeight: 600 }}>{m.value}</p>
-                </div>
-              ))}
-              <div>
-                <p className="text-[#5a6a8a] text-xs mb-0.5">DOI</p>
-                <a
-                  href={`https://doi.org/${article.doi}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0f2d6b] text-sm font-mono hover:underline inline-flex items-center gap-1"
-                  style={{ fontWeight: 600 }}
-                >
-                  {article.doi}
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors" style={{ fontWeight: 600 }}>
-                <FileText className="w-4 h-4" /> View HTML
-              </button>
-              {(article.pdf_url || article.original_pdf_url) ? (
-                <a
-                  href={article.pdf_url || article.original_pdf_url}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-base hover:bg-primary/90 transition-colors"
-                  style={{ fontWeight: 600 }}
-                >
-                  <Download className="w-4 h-4" /> Download PDF
-                </a>
-              ) : (
-                <button
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg text-base cursor-not-allowed"
-                  style={{ fontWeight: 600 }}
-                  disabled
-                >
-                  <Download className="w-4 h-4" /> PDF Unavailable
-                </button>
-              )}
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
-                <Quote className="w-4 h-4" /> Cite
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
-                <BookmarkPlus className="w-4 h-4" /> Save
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
-                <Share2 className="w-4 h-4" /> Share
-              </button>
-            </div>
-          </div>
-
-          {/* Graphical Abstract and Abstract Side-by-Side */}
-          <div id="graphical-abstract" className="py-6 mb-8 scroll-mt-36">
-            <h2 className="text-black text-xl mb-4" style={{ fontWeight: 700 }}>Graphical Abstract & Abstract</h2>
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-              {/* Graphical Abstract Image (Left) */}
-              {article.graphical_abstract_url && (
-                <div className="flex-shrink-0 w-full md:w-1/3">
-                  <img
-                    src={article.graphical_abstract_url}
-                    alt={`Graphical abstract for ${article.title}`}
-                    className="w-full h-auto object-contain rounded-lg shadow-sm border border-border"
-                  />
-                </div>
-              )}
-
-              {/* Abstract Content (Right) */}
-              <div className="flex-grow">
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  {article.abstract}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Keywords */}
-          <div id="keywords" className="py-6 mb-8 scroll-mt-36">
-            <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>Keywords</h2>
-            <div className="flex flex-wrap gap-2">
-              {article.keywords.map((kw) => (
-                <Link
-                  key={kw}
-                  href={`/search?keyword=${encodeURIComponent(kw)}`}
-                  className="px-3 py-1 bg-[#f0f4fb] text-[#0f2d6b] text-sm rounded-full border border-[#0f2d6b]/15 hover:bg-[#0f2d6b] hover:text-white transition-colors cursor-pointer"
-                >
-                  {kw}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Citation */}
-          <div id="citation" className="bg-gray-50 py-6 px-0 scroll-mt-36">
-            <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>How to Cite</h2>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
-                {authorNames} ({article.year}). {article.title}. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
-                <a
-                  href={`https://doi.org/${article.doi}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0f2d6b] hover:underline"
-                >
-                  https://doi.org/{article.doi}
-                </a>
-              </p>
-            </div>
-            <div className="flex gap-2 mt-3">
-              {["APA", "MLA", "BibTeX", "RIS", "EndNote"].map((fmt) => (
-                <button key={fmt} className="px-3 py-1 border border-border rounded text-sm text-black bg-white hover:bg-black hover:text-white transition-colors">
-                  {fmt}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Related Articles - moved from sidebar */}
-          {related.length > 0 && (
-            <div id="related" className="py-6 mt-8 scroll-mt-36">
-              <h2 className="text-black text-xl mb-6" style={{ fontWeight: 700 }}>Related Articles</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {related.map((rel) => {
-                  const firstAuthor = getAuthorName((rel.authors || [])[0]);
-                  return (
-                    <Link key={rel.id} href={`/article/${rel.id}`} className="block bg-white rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-all">
-                      <p className="text-black text-base leading-snug mb-2 hover:text-[#0f2d6b]" style={{ fontWeight: 600 }}>
-                        {rel.title}
-                      </p>
-                      <p className="text-[#5a6a8a] text-sm">
-                        {firstAuthor}{(rel.authors || []).length > 1 ? ' et al.' : ''}
-                      </p>
-                      <p className="text-[#5a6a8a] text-sm mt-1">
-                        Vol. {rel.volume}, Issue {rel.issue} • {rel.year}
-                      </p>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-      </div>
-      </div>
-    </MainLayout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticleClient />
+    </>
   );
 }

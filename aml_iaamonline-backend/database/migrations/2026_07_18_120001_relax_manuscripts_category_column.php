@@ -15,11 +15,15 @@ return new class extends Migration
         // The original CHECK enum only allowed the seven hardcoded research
         // areas. Subjects are now admin-managed, so relax to a plain string;
         // values are validated against the subjects table in application logic.
-        DB::statement('ALTER TABLE manuscripts DROP CONSTRAINT IF EXISTS manuscripts_category_check');
+        // SQLite (used by the test suite) has no DROP CONSTRAINT and enum()
+        // maps to a plain column there anyway.
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE manuscripts DROP CONSTRAINT IF EXISTS manuscripts_category_check');
 
-        Schema::table('manuscripts', function (Blueprint $table) {
-            $table->string('category')->change();
-        });
+            Schema::table('manuscripts', function (Blueprint $table) {
+                $table->string('category')->change();
+            });
+        }
     }
 
     public function down(): void

@@ -471,7 +471,7 @@ export default function EditorialBoard() {
                 </div>
                 <div>
                   <h5 className="text-[#0f2d6b] text-xs mb-1" style={{ fontWeight: 600 }}>Open Access</h5>
-                  <p className="text-[#5a6a8a] text-xs">Diamond Open Access model ensures free publication and worldwide accessibility.</p>
+                  <p className="text-[#5a6a8a] text-xs">No article processing charges for authors; access via IAAM membership or subscription.</p>
                 </div>
               </div>
             </CardContent>

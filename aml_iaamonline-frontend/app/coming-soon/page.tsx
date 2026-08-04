@@ -45,6 +45,17 @@ export default function ComingSoonPage() {
             </a>
             .
           </p>
+
+          <p className="text-sm text-[#5a6a8a] mt-8">
+            Already have an account?{' '}
+            <Link
+              href="/account/login"
+              className="text-[#0f2d6b] font-medium underline underline-offset-4 hover:text-[#c9a227] transition-colors"
+            >
+              Sign in
+            </Link>{' '}
+            to preview the new site.
+          </p>
         </div>
       </div>
 

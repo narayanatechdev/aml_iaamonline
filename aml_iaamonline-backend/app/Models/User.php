@@ -17,6 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
     'phone', 'mobile', 'fax', 'country', 'city', 'affiliation',
     'postal_code', 'home_page', 'alt_email', 'username',
     'is_reviewer', 'receive_news', 'join_date', 'comments',
+    'membership_tier',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -55,6 +56,7 @@ class User extends Authenticatable
         if ($this->first_name || $this->last_name) {
             return trim("{$this->first_name} {$this->last_name}");
         }
+
         return $this->name ?? '';
     }
 

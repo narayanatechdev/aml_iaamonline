@@ -8,32 +8,32 @@ import { Database, Search, Globe, CheckCircle, Star, TrendingUp, Link, Award } f
 export default function Indexing() {
   const majorIndexes = [
     {
-      name: "Scopus",
+      name: "Scopus (Historical)",
       provider: "Elsevier",
-      description: "Largest abstract and citation database of peer-reviewed literature",
+      description: "Indexed in Scopus 2010–2016",
       coverage: "Global",
-      status: "Active",
-      since: "2015",
+      status: "Historical",
+      since: "2010",
       icon: <Database className="w-5 h-5 text-blue-600" />,
       featured: true
     },
     {
-      name: "Web of Science Core Collection",
-      provider: "Clarivate Analytics", 
-      description: "Premier global citation database spanning all disciplines",
+      name: "CrossRef",
+      provider: "CrossRef",
+      description: "All articles assigned a CrossRef Digital Object Identifier (DOI)",
       coverage: "International",
       status: "Active",
-      since: "2016",
+      since: "2010",
       icon: <Globe className="w-5 h-5 text-green-600" />,
       featured: true
     },
     {
-      name: "Directory of Open Access Journals (DOAJ)",
-      provider: "DOAJ Foundation",
-      description: "Community-curated directory of quality open access journals",
+      name: "Google Scholar",
+      provider: "Google",
+      description: "Freely discoverable via Google Scholar academic search",
       coverage: "Global",
-      status: "Active", 
-      since: "2014",
+      status: "Active",
+      since: "2010",
       icon: <Search className="w-5 h-5 text-orange-600" />,
       featured: true
     }
@@ -41,13 +41,9 @@ export default function Indexing() {
 
   const additionalIndexes = [
     "Chemical Abstracts Service (CAS)",
-    "CrossRef",
-    "Google Scholar",
-    "Microsoft Academic",
     "Semantic Scholar",
     "Dimensions",
     "BASE (Bielefeld Academic Search Engine)",
-    "ROAD (Directory of Open Access scholarly Resources)",
     "Ulrich's Periodicals Directory",
     "JournalGuide",
     "Academia.edu",
@@ -56,28 +52,28 @@ export default function Indexing() {
 
   const metrics = [
     {
-      metric: "CiteScore",
-      value: "3.2",
-      provider: "Scopus",
-      description: "Average citations per document published in the journal"
+      metric: "Publishing Since",
+      value: "2010",
+      provider: "IAAM",
+      description: "Volumes 1–17 published across all years"
     },
     {
-      metric: "SJR",
-      value: "0.68", 
-      provider: "Scimago",
-      description: "Scientific Journal Rankings based on citation data"
-    },
-    {
-      metric: "SNIP",
-      value: "1.15",
-      provider: "Scopus",
-      description: "Source Normalized Impact per Paper"
+      metric: "Countries",
+      value: "75+",
+      provider: "Author affiliations",
+      description: "Authors from more than 75 countries worldwide"
     },
     {
       metric: "h-index",
       value: "42",
       provider: "Google Scholar",
       description: "Largest number h such that h articles have at least h citations"
+    },
+    {
+      metric: "Articles",
+      value: "2,000+",
+      provider: "All volumes",
+      description: "Peer-reviewed articles published since 2010"
     }
   ];
 
@@ -223,16 +219,16 @@ export default function Indexing() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-center p-3 border-b border-gray-200">
-                    <div className="text-[#0f2d6b] text-lg font-bold">15+</div>
-                    <div className="text-[#5a6a8a] text-xs">Major Databases</div>
+                    <div className="text-[#0f2d6b] text-lg font-bold">2010</div>
+                    <div className="text-[#5a6a8a] text-xs">Publishing Since</div>
                   </div>
                   <div className="text-center p-3 border-b border-gray-200">
-                    <div className="text-[#0f2d6b] text-lg font-bold">50+</div>
-                    <div className="text-[#5a6a8a] text-xs">Countries Reached</div>
+                    <div className="text-[#0f2d6b] text-lg font-bold">75+</div>
+                    <div className="text-[#5a6a8a] text-xs">Countries (Authors)</div>
                   </div>
                   <div className="text-center p-3 border-b border-gray-200">
-                    <div className="text-[#0f2d6b] text-lg font-bold">1M+</div>
-                    <div className="text-[#5a6a8a] text-xs">Annual Downloads</div>
+                    <div className="text-[#0f2d6b] text-lg font-bold">2,000+</div>
+                    <div className="text-[#5a6a8a] text-xs">Articles Published</div>
                   </div>
                 </div>
               </CardContent>

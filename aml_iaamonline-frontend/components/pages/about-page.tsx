@@ -54,19 +54,18 @@ const EDITORIAL_BOARD = [
 ];
 
 const INDEXING_DATABASES = [
-  'Web of Science',
-  'Scopus',
-  'DOAJ',
   'Google Scholar',
-  'PubMed Central',
+  'CrossRef',
+  'Chemical Abstracts Service',
+  'Semantic Scholar',
+  'Dimensions',
 ];
 
 const JOURNAL_INFO = {
   issn: '0976-3961',
-  eISSN: '1998-0140',
+  eISSN: '0976-397X',
   currentVolume: '25',
   currentYear: '2025',
-  impactFactor: '3.82',
   hIndex: '42',
 };
 
@@ -97,11 +96,11 @@ export function AboutPage() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-4 text-[#3a4a6a] text-sm leading-relaxed">
             <p>
-              <strong>Advanced Materials Letters (AML)</strong> is an international, peer-reviewed,
-              Diamond Open Access scientific journal published by the International Association of
-              Advanced Materials (IAAM). Since its founding in 2010, AML has established itself as a
-              leading platform for disseminating high-impact research across all domains of materials
-              science and engineering.
+              <strong>Advanced Materials Letters (AML)</strong> is an international, peer-reviewed
+              scientific journal published by the International Association of Advanced Materials
+              (IAAM). Since its founding in 2010, AML has established itself as a leading platform
+              for disseminating high-impact research across all domains of materials science and
+              engineering.
             </p>
             <p>
               The journal covers a broad interdisciplinary scope including, but not limited to:
@@ -112,14 +111,13 @@ export function AboutPage() {
             </p>
             <p>
               AML publishes original research papers, comprehensive review articles, rapid
-              communications (Letters), and perspectives. All published content is freely available
-              online without subscription barriers, supporting the global open science movement and
-              maximizing research impact.
+              communications (Letters), and perspectives.
             </p>
             <p>
-              The journal operates under a <strong>Diamond Open Access</strong> model — there are no
-              Article Processing Charges (APCs) for authors, and no subscription fees for readers.
-              Access is open to all.
+              Advanced Materials Letters is available through IAAM membership and subscription.
+              IAAM members receive article access allowances based on membership category;
+              non-members can subscribe or purchase access to individual articles. The journal
+              does not charge authors article processing charges.
             </p>
           </div>
           <div className="space-y-4">
@@ -131,9 +129,9 @@ export function AboutPage() {
                   { label: 'eISSN (Online)', value: JOURNAL_INFO.eISSN },
                   { label: 'Current Volume', value: `Vol. ${JOURNAL_INFO.currentVolume} (${JOURNAL_INFO.currentYear})` },
                   { label: 'Issues/Year', value: '6' },
-                  { label: 'Impact Factor', value: JOURNAL_INFO.impactFactor },
-                  { label: 'h-Index', value: '42' },
-                  { label: 'Access Model', value: 'Diamond Open Access' },
+                  { label: 'h-Index (Scholar)', value: '42' },
+                  { label: 'Access Model', value: 'Membership & Subscription' },
+                  { label: 'Author Fees', value: 'None (No APC)' },
                   { label: 'Publisher', value: 'IAAM, Sweden' },
                 ].map((item) => (
                   <div key={item.label} className="flex justify-between gap-2">
@@ -193,8 +191,9 @@ export function AboutPage() {
           Indexing & Abstracting
         </h2>
         <p className="text-[#3a4a6a] text-sm leading-relaxed mb-6">
-          Advanced Materials Letters is indexed and abstracted in major international databases,
-          ensuring maximum visibility and discoverability of published research.
+          Advanced Materials Letters articles are discoverable through major academic search services.
+          The journal was previously indexed in Scopus (2010–2016). All articles carry CrossRef DOIs
+          and are indexed in Google Scholar.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {INDEXING_DATABASES.map((db) => (
@@ -229,17 +228,17 @@ export function AboutPage() {
               industry, and government research institutes.
             </p>
             <p>
-              Committed to open science, AML adopted the Diamond Open Access model in 2015,
-              eliminating all financial barriers for both authors and readers. This decision has
-              dramatically increased the global reach and impact of the journal.
+              Committed to supporting researchers, AML has never charged article processing charges
+              to authors. The journal is now available through IAAM membership and subscription,
+              ensuring long-term sustainability while keeping author publication costs at zero.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: BookOpen, value: '2010', label: 'Year Founded' },
               { icon: Globe, value: `${METRICS.countries}+`, label: 'Countries Represented' },
-              { icon: Users, value: METRICS.annualReadership, label: 'Annual Readership' },
-              { icon: Award, value: JOURNAL_INFO.impactFactor, label: 'Impact Factor' },
+              { icon: Users, value: '2,000+', label: 'Articles Published' },
+              { icon: Award, value: '42', label: 'h-Index (Google Scholar)' },
             ].map((stat) => {
               const Icon = stat.icon;
               return (

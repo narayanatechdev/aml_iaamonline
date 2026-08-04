@@ -1,4 +1,5 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import Link from 'next/link';
 
 export default function PrivacyCookiesPage() {
   return (
@@ -6,53 +7,59 @@ export default function PrivacyCookiesPage() {
       <div className="max-w-4xl mx-auto px-6 py-10">
         <div className="mb-8 border-b border-gray-200 pb-6">
           <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
-            GDPR & Cookies
+            Legal &amp; Privacy
           </h1>
           <p className="text-[#5a6a8a] text-sm">
-            How we use cookies and how we handle personal data under GDPR principles.
+            GDPR compliance, cookie usage, and terms governing access to this platform.
           </p>
         </div>
 
-        <section className="border-b border-gray-200 py-5">
-          <h2 className="text-[#0f2d6b] text-lg mb-2" style={{ fontWeight: 700 }}>
-            What is GDPR?
-          </h2>
-          <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            GDPR (General Data Protection Regulation) is a European data protection law. It gives users rights over
-            their personal data, including transparency, access, correction, and deletion where applicable.
-          </p>
-        </section>
+        <div className="grid gap-4">
+          <Link
+            href="/privacy-policy"
+            className="block border border-gray-200 rounded-lg p-5 hover:border-[#0f2d6b] transition-colors group"
+          >
+            <h2 className="text-[#0f2d6b] text-base font-bold mb-1 group-hover:underline">
+              Privacy Policy
+            </h2>
+            <p className="text-[#5a6a8a] text-sm">
+              How IAAM collects, uses, and protects your personal data — data controller details, lawful bases,
+              retention, your GDPR rights, and how to contact us.
+            </p>
+          </Link>
 
-        <section className="border-b border-gray-200 py-5">
-          <h2 className="text-[#0f2d6b] text-lg mb-2" style={{ fontWeight: 700 }}>
-            What are cookies?
-          </h2>
-          <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            Cookies are small text files stored in your browser. They help websites remember settings, keep sessions
-            active, and improve overall user experience.
-          </p>
-        </section>
+          <Link
+            href="/cookie-policy"
+            className="block border border-gray-200 rounded-lg p-5 hover:border-[#0f2d6b] transition-colors group"
+          >
+            <h2 className="text-[#0f2d6b] text-base font-bold mb-1 group-hover:underline">
+              Cookie Policy
+            </h2>
+            <p className="text-[#5a6a8a] text-sm">
+              Which cookies and local-storage items this site uses, why, and how to manage or withdraw your consent.
+            </p>
+          </Link>
 
-        <section className="border-b border-gray-200 py-5">
-          <h2 className="text-[#0f2d6b] text-lg mb-2" style={{ fontWeight: 700 }}>
-            How this platform uses cookies
-          </h2>
-          <ul className="text-[#3a4a6a] text-sm leading-relaxed space-y-2">
-            <li>We store your cookie consent choice (`accepted` or `rejected`).</li>
-            <li>Essential site functions may use technical cookies required for operation.</li>
-            <li>We do not ask for non-essential cookies without consent.</li>
-          </ul>
-        </section>
+          <Link
+            href="/terms-of-use"
+            className="block border border-gray-200 rounded-lg p-5 hover:border-[#0f2d6b] transition-colors group"
+          >
+            <h2 className="text-[#0f2d6b] text-base font-bold mb-1 group-hover:underline">
+              Terms of Use
+            </h2>
+            <p className="text-[#5a6a8a] text-sm">
+              Site use conditions, accounts, acceptable use, intellectual property, subscription access terms,
+              disclaimers, and governing law (Sweden).
+            </p>
+          </Link>
+        </div>
 
-        <section className="py-5">
-          <h2 className="text-[#0f2d6b] text-lg mb-2" style={{ fontWeight: 700 }}>
-            Your choices
-          </h2>
-          <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            You can accept or reject cookie consent from the consent banner. You can also clear cookies in your
-            browser settings at any time.
-          </p>
-        </section>
+        <p className="text-[#5a6a8a] text-xs mt-8">
+          For any legal or data-protection enquiries, contact the IAAM editorial office at{' '}
+          <a href="mailto:info@iaamonline.org" className="text-[#0f2d6b] underline">
+            info@iaamonline.org
+          </a>.
+        </p>
       </div>
     </MainLayout>
   );

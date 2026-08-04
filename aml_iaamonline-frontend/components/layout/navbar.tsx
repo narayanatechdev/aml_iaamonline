@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, Menu, X, Search, BookOpen, Moon, Sun, Bell as BellIcon, Rss } from 'lucide-react';
 import Link from 'next/link';
@@ -97,6 +97,27 @@ const NAV_CATEGORIES: NavCategory[] = [
   },
 ];
 
+interface HeaderPage {
+  id: number;
+  title: string;
+  slug: string;
+}
+
+function useHeaderPages(): HeaderPage[] {
+  const [pages, setPages] = useState<HeaderPage[]>([]);
+  const fetched = useRef(false);
+  useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/pages?placement=header`;
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((json) => setPages(json.data ?? []))
+      .catch(() => { /* silently degrade */ });
+  }, []);
+  return pages;
+}
+
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
   if (typeof author === 'object' && author !== null) {
@@ -107,6 +128,7 @@ function getAuthorName(author: any): string {
 
 export function Navbar() {
   const router = useRouter();
+  const headerPages = useHeaderPages();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -237,6 +259,18 @@ export function Navbar() {
                       )}
                     </a>
                   ))}
+                  {cat.label === 'About the journal' &&
+                    headerPages.map((p) => (
+                      <a
+                        key={`hp-${p.id}`}
+                        href={`/page/${p.slug}`}
+                        className="block p-2.5 rounded-lg transition-all hover:bg-gray-50"
+                      >
+                        <div className="text-sm font-semibold" style={{ color: '#171a1f' }}>
+                          {p.title}
+                        </div>
+                      </a>
+                    ))}
                 </div>
               )}
             </div>
@@ -311,6 +345,17 @@ export function Navbar() {
                       {item.label}
                     </a>
                   ))}
+                  {cat.label === 'About the journal' &&
+                    headerPages.map((p) => (
+                      <a
+                        key={`mhp-${p.id}`}
+                        href={`/page/${p.slug}`}
+                        className="block text-sm font-medium hover:text-[#c2682a] transition"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {p.title}
+                      </a>
+                    ))}
                 </div>
               </div>
             ))}

@@ -8,7 +8,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 const FAQ_ITEMS = [
   {
     q: "Does AML charge Article Processing Charges (APCs)?",
-    a: "No. Advanced Materials Letters operates under a Diamond Open Access model. There are absolutely no APCs, submission fees, or any other charges for authors. Publishing in AML is completely free.",
+    a: "No. Advanced Materials Letters does not charge authors any article processing charges, submission fees, or publication fees. IAAM covers publication costs; authors publish at no charge.",
   },
   {
     q: "How long does the peer review process take?",
@@ -62,7 +62,7 @@ export default function AuthorResourcesPage() {
           { icon: <FileText className="w-6 h-6" />, label: "Submit Manuscript", desc: "Start your submission online", to: "/submit", color: "bg-[#0f2d6b]", textColor: "text-white" },
           { icon: <CheckCircle className="w-6 h-6" />, label: "Track Submission", desc: "Check your manuscript status", to: "/track", color: "bg-[#1a3f8f]", textColor: "text-white" },
           { icon: <Shield className="w-6 h-6" />, label: "Review Process", desc: "Learn about peer review", to: "#ethics", color: "bg-[#254b9d]", textColor: "text-white" },
-          { icon: <DollarSign className="w-6 h-6" />, label: "Open Access Info", desc: "No APCs — Diamond OA", to: "#open-access", color: "bg-[#3260b5]", textColor: "text-white" },
+          { icon: <DollarSign className="w-6 h-6" />, label: "Fees & Access", desc: "No APCs — membership access", to: "#open-access", color: "bg-[#3260b5]", textColor: "text-white" },
         ].map((action) => (
           <Link
             key={action.label}
@@ -195,14 +195,14 @@ export default function AuthorResourcesPage() {
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/30 text-white text-xs mb-4" style={{ fontWeight: 600 }}>
-                Diamond Open Access
+                Access &amp; Membership
               </div>
-              <h3 className="text-2xl mb-4" style={{ fontWeight: 700 }}>Zero Fees for Authors & Readers</h3>
+              <h3 className="text-2xl mb-4" style={{ fontWeight: 700 }}>Zero Fees for Authors</h3>
               <p className="text-white/80 text-sm leading-relaxed mb-4">
-                Advanced Materials Letters is committed to the Diamond Open Access model. We believe scientific knowledge should be accessible to everyone without financial barriers.
+                Advanced Materials Letters does not charge authors article processing charges or submission fees. The journal is available to readers through IAAM membership and subscription.
               </p>
               <ul className="space-y-2">
-                {["No Article Processing Charges (APCs)", "No submission fees", "No reading or download fees", "Immediate open access upon publication", "CC BY 4.0 license — maximum reuse rights"].map((item) => (
+                {["No Article Processing Charges (APCs)", "No submission fees", "IAAM membership access by tier", "Per-article purchase available for non-members", "CC BY 4.0 license — maximum reuse rights"].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-white/90">
                     <CheckCircle className="w-4 h-4 text-white flex-shrink-0" />
                     {item}
@@ -212,8 +212,8 @@ export default function AuthorResourcesPage() {
             </div>
             <div className="bg-white/10 p-6 text-center">
               <div className="text-white mb-2" style={{ fontSize: "3rem", fontWeight: 800, lineHeight: 1 }}>$0</div>
-              <div className="text-white text-lg mb-2" style={{ fontWeight: 700 }}>Article Processing Charge</div>
-              <div className="text-white/70 text-sm">Forever free to publish & read</div>
+              <div className="text-white text-lg mb-2" style={{ fontWeight: 700 }}>Author Publication Cost</div>
+              <div className="text-white/70 text-sm">No charges to submit or publish</div>
               <Link
                 href="/submit"
                 className="inline-block mt-5 px-6 py-2.5 bg-white text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] transition-colors"

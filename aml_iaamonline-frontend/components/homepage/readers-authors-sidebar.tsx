@@ -32,14 +32,6 @@ export function ReadersAuthorsSidebar() {
       image: 'https://aml.iaamonline.org/data/aml/news/1649278482_indx_.jpg'
     },
     {
-      id: 4,
-      title: 'Advanced Materials Letters Joins DOAJ Database',
-      excerpt: 'The journal has been officially indexed in the Directory of Open Access Journals, further enhancing its visibility and accessibility to the global research community.',
-      date: '2026-05-08',
-      category: 'Indexing',
-      image: 'https://aml.iaamonline.org/data/aml/news/1649278489_indx_.jpg'
-    },
-    {
       id: 5,
       title: 'Webinar Series: AI in Materials Discovery',
       excerpt: 'Join our monthly webinar series featuring leading researchers discussing the application of artificial intelligence and machine learning in materials discovery and design.',
@@ -65,7 +57,7 @@ export function ReadersAuthorsSidebar() {
         <BookOpen className="w-8 h-8 text-[#0f2d6b] mb-4" />
         <h3 className="text-black text-2xl mb-4 font-bold">For Readers</h3>
         <p className="text-black text-base leading-relaxed mb-6">
-          Access {ARTICLE_STATS.total.toLocaleString()}+ peer-reviewed articles across all areas of materials science — completely free, no subscription required. Stay current with the latest research from {ARTICLE_STATS.totalCountries}+ countries.
+          Access {ARTICLE_STATS.total.toLocaleString()}+ peer-reviewed articles across all areas of materials science. Available through IAAM membership and subscription. Stay current with the latest research from {ARTICLE_STATS.totalCountries}+ countries.
         </p>
         <div className="flex gap-3">
           <a
@@ -88,7 +80,7 @@ export function ReadersAuthorsSidebar() {
         <FileText className="w-8 h-8 text-[#c9a227] mb-4" />
         <h3 className="text-black text-2xl mb-4 font-bold">For Authors</h3>
         <p className="text-black text-base leading-relaxed mb-6">
-          Publish your research in a Diamond Open Access journal — free to read, free to publish. Fast peer review, high visibility, and global reach.
+          Publish your research in Advanced Materials Letters — no article processing charges for authors. Fast peer review, high visibility, and global reach.
         </p>
         <div className="flex gap-3">
           <a
@@ -211,8 +203,8 @@ export function ReadersAuthorsSidebar() {
         <h3 className="text-black font-semibold text-lg mb-4">Publishing Parameters</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Impact Factor</span>
-            <span className="text-sm font-semibold text-[#0f2d6b]">3.82</span>
+            <span className="text-sm text-gray-600">Publishing Since</span>
+            <span className="text-sm font-semibold text-[#0f2d6b]">2010</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Review Time</span>
@@ -236,10 +228,10 @@ export function ReadersAuthorsSidebar() {
             <Award className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h4 className="text-[#c9a227] font-semibold text-sm mb-2">Diamond Open Access</h4>
+            <h4 className="text-[#c9a227] font-semibold text-sm mb-2">Access &amp; Membership</h4>
             <p className="text-xs text-gray-700 leading-relaxed">
-              Free to publish, free to read. No article processing charges (APC) or subscription fees. 
-              Supporting global scientific knowledge sharing.
+              No article processing charges for authors. Access available through IAAM membership or
+              subscription. IAAM members receive daily article allowances based on membership tier.
             </p>
           </div>
         </div>

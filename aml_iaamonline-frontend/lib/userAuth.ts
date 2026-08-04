@@ -1,6 +1,8 @@
 // Author / general-user auth — separate from admin auth (different storage keys).
 const TOKEN_KEY = 'user_token';
 const USER_KEY = 'user_user';
+// Cookie read by proxy.ts to let logged-in users through the coming-soon gate
+const PREVIEW_COOKIE = 'aml_user_preview';
 
 export interface AuthUser {
   name: string;
@@ -30,11 +32,14 @@ export function getUser(): AuthUser | null {
 export function saveAuth(token: string, user: AuthUser): void {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  // 30 days; lets the coming-soon gate recognise this browser as a logged-in user
+  document.cookie = `${PREVIEW_COOKIE}=1; path=/; max-age=2592000; samesite=lax`;
 }
 
 export function clearAuth(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  document.cookie = `${PREVIEW_COOKIE}=; path=/; max-age=0; samesite=lax`;
 }
 
 export function isAuthenticated(): boolean {

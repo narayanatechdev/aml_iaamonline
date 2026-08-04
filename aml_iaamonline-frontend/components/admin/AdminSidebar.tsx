@@ -70,6 +70,7 @@ const NAV_ITEMS: NavItem[] = [
     publisherOrAdmin: true,
     children: [
       { label: 'Homepage', path: '/admin/content/homepage' },
+      { label: 'Pages', path: '/admin/content/pages' },
     ],
   },
   {
@@ -78,6 +79,7 @@ const NAV_ITEMS: NavItem[] = [
     adminOnly: true,
     children: [
       { label: 'General', path: '/admin/settings/general' },
+      { label: 'Access & Subscription', path: '/admin/settings/access' },
       { label: 'Workflow', path: '/admin/settings/workflow' },
       { label: 'Email Templates', path: '/admin/settings/email-templates' },
       { label: 'Security', path: '/admin/settings/security' },

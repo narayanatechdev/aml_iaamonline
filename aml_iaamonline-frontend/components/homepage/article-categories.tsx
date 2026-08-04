@@ -95,8 +95,8 @@ export function ArticleCategories() {
                 <div className="text-xs text-gray-600 mt-1">countries contributing</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-900">500K+</div>
-                <div className="text-xs text-gray-600 mt-1">annual readers</div>
+                <div className="text-3xl font-bold text-blue-900">2,000+</div>
+                <div className="text-xs text-gray-600 mt-1">articles published</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-blue-900">135+</div>

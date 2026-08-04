@@ -9,6 +9,7 @@ use App\Models\Author;
 use App\Models\Manuscript;
 use App\Models\User;
 use App\Services\CitationFormatterService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -112,6 +113,34 @@ class ArticleController extends Controller
         });
 
         return response()->json(['media' => $media]);
+    }
+
+    /** Record a page view for an article (fire-and-forget from the frontend). */
+    public function recordView(string $id): JsonResponse
+    {
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->first();
+
+        if (! $article) {
+            return response()->json(['error' => 'Article not found'], 404);
+        }
+
+        $article->increment('views_count');
+
+        return response()->json(['data' => ['views_count' => $article->views_count]]);
+    }
+
+    /** Record a PDF download for an article. */
+    public function recordDownload(string $id): JsonResponse
+    {
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->first();
+
+        if (! $article) {
+            return response()->json(['error' => 'Article not found'], 404);
+        }
+
+        $article->increment('pdf_downloads');
+
+        return response()->json(['data' => ['pdf_downloads' => $article->pdf_downloads]]);
     }
 
     public function show(string $id)

@@ -3,6 +3,7 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { getFeaturedArticles } from '@/lib/realData';
+import { RichText } from '@/components/shared/rich-text';
 
 function getAuthorName(author: any): string {
   if (typeof author === 'string') return author;
@@ -59,9 +60,11 @@ export function FeaturedContent() {
               <h3
                 className="text-[#0f1a2e] text-base leading-snug mb-3 group-hover:text-[#0f2d6b] transition-colors line-clamp-3 font-bold"
               >
-                {article.title}
+                <RichText html={article.title} />
               </h3>
-              <p className="text-[#5a6a8a] text-xs mb-4 line-clamp-2 leading-relaxed">{article.abstract}</p>
+              <p className="text-[#5a6a8a] text-xs mb-4 line-clamp-2 leading-relaxed">
+                <RichText html={article.abstract} />
+              </p>
               
               <div className="text-[#0f2d6b] text-xs mb-4 font-semibold">
                 {(article.authors || []).slice(0, 2).map(getAuthorName).filter(Boolean).join(', ')}

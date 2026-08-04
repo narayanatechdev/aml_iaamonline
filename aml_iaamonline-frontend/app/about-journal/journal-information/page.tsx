@@ -48,7 +48,7 @@ export default function JournalInformationPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">ISSN Information</h3>
                   <div className="space-y-1">
                     <p className="text-gray-700">Print ISSN: 0976-3961</p>
-                    <p className="text-gray-700">Electronic ISSN: 1998-0140</p>
+                    <p className="text-gray-700">Electronic ISSN: 0976-397X</p>
                   </div>
                 </div>
                 
@@ -76,8 +76,8 @@ export default function JournalInformationPage() {
                 
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Model</h3>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 border border-green-300 text-green-800 text-sm font-medium">
-                    Diamond Open Access
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-300 text-blue-800 text-sm font-medium">
+                    Membership &amp; Subscription
                   </div>
                 </div>
               </div>
@@ -207,37 +207,37 @@ export default function JournalInformationPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div className="text-center p-6 bg-blue-50 rounded-lg">
                 <BookOpen className="w-8 h-8 text-[#0f2d6b] mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Scopus Indexed</h3>
-                <p className="text-sm text-gray-600">Indexed in Scopus database</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Scopus (Historical)</h3>
+                <p className="text-sm text-gray-600">Indexed in Scopus 2010–2016</p>
               </div>
-              
+
               <div className="text-center p-6 bg-green-50 rounded-lg">
-                <FileText className="w-8 h-8 text-[#0f2d6b] mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Web of Science</h3>
-                <p className="text-sm text-gray-600">Emerging Sources Citation Index</p>
-              </div>
-              
-              <div className="text-center p-6 bg-yellow-50 rounded-lg">
                 <Globe className="w-8 h-8 text-[#0f2d6b] mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">DOI Registration</h3>
-                <p className="text-sm text-gray-600">All articles receive DOI</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Google Scholar</h3>
+                <p className="text-sm text-gray-600">Freely discoverable via Google Scholar</p>
+              </div>
+
+              <div className="text-center p-6 bg-yellow-50 rounded-lg">
+                <FileText className="w-8 h-8 text-[#0f2d6b] mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900 mb-1">CrossRef DOI</h3>
+                <p className="text-sm text-gray-600">All articles receive a CrossRef DOI</p>
               </div>
             </div>
-            
+
             <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Indexing Services</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Discovery Services</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Chemical Abstracts Service (CAS)</li>
                   <li>• Google Scholar</li>
                   <li>• CrossRef</li>
-                  <li>• DOAJ (Directory of Open Access Journals)</li>
+                  <li>• OCLC WorldCat</li>
                 </ul>
                 <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• OCLC WorldCat</li>
-                  <li>• Academic Search Complete</li>
-                  <li>• Science Citation Index Expanded</li>
-                  <li>• Materials Science Citation Index</li>
+                  <li>• Semantic Scholar</li>
+                  <li>• Dimensions</li>
+                  <li>• BASE (Bielefeld Academic Search Engine)</li>
+                  <li>• ResearchGate</li>
                 </ul>
               </div>
             </div>

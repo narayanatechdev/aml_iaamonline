@@ -39,16 +39,6 @@ export default function NewsPage() {
       featured: true
     },
     {
-      id: 4,
-      title: 'Advanced Materials Letters Joins DOAJ Database',
-      excerpt: 'The journal has been officially indexed in the Directory of Open Access Journals, further enhancing its visibility and accessibility to the global research community.',
-      content: 'We are proud to announce that Advanced Materials Letters has been officially indexed in the Directory of Open Access Journals (DOAJ). This milestone further enhances the journal\'s visibility and accessibility to the global research community...',
-      date: '2026-05-08',
-      category: 'Indexing',
-      image: 'https://aml.iaamonline.org/data/aml/news/1649278489_indx_.jpg',
-      featured: false
-    },
-    {
       id: 5,
       title: 'Webinar Series: AI in Materials Discovery',
       excerpt: 'Join our monthly webinar series featuring leading researchers discussing the application of artificial intelligence and machine learning in materials discovery and design.',
@@ -65,8 +55,7 @@ export default function NewsPage() {
     { id: 'Awards', label: 'Awards', count: newsArticles.filter(n => n.category === 'Awards').length },
     { id: 'Special Issue', label: 'Special Issues', count: newsArticles.filter(n => n.category === 'Special Issue').length },
     { id: 'Featured', label: 'Featured', count: newsArticles.filter(n => n.category === 'Featured').length },
-    { id: 'Event', label: 'Events', count: newsArticles.filter(n => n.category === 'Event').length },
-    { id: 'Indexing', label: 'Indexing', count: newsArticles.filter(n => n.category === 'Indexing').length }
+    { id: 'Event', label: 'Events', count: newsArticles.filter(n => n.category === 'Event').length }
   ];
 
   const filteredNews = activeCategory === 'all' 

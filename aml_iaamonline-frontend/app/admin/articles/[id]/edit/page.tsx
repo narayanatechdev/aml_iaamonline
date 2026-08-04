@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, Check, AlertCircle, Upload } from 'lucide-react';
 import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
+import { RichTextInput } from '@/components/admin/rich-text-input';
 
 const API_URL = API_BASE;
 
@@ -90,6 +91,8 @@ const ALL_KEYS = SECTIONS.flatMap((s) => s.fields.map((f) => f.key));
 const DATE_KEYS = new Set(['publish_date', 'receive_date', 'revise_date', 'accept_date']);
 /** URL fields that should show a live image preview under the input. */
 const IMAGE_KEYS = new Set(['graphical_abstract_url']);
+/** Fields that use the rich-text editor (limited HTML: b/i/sup/sub). */
+const RICH_TEXT_KEYS = new Set(['title', 'abstract', 'keywords']);
 
 export default function ArticleEditPage() {
   const params = useParams();
@@ -236,9 +239,17 @@ export default function ArticleEditPage() {
               <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">{section.title}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {section.fields.map((f) => (
-                  <div key={f.key} className={f.type === 'textarea' ? 'md:col-span-2' : ''}>
+                  <div key={f.key} className={f.type === 'textarea' || RICH_TEXT_KEYS.has(f.key) ? 'md:col-span-2' : ''}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-                    {f.type === 'textarea' ? (
+                    {RICH_TEXT_KEYS.has(f.key) ? (
+                      <RichTextInput
+                        value={form[f.key] ?? ''}
+                        onChange={(html) => setField(f.key, html)}
+                        multiline={f.key !== 'keywords'}
+                        placeholder={f.label}
+                        className="w-full"
+                      />
+                    ) : f.type === 'textarea' ? (
                       <textarea
                         rows={f.key === 'abstract' ? 6 : 3}
                         value={form[f.key] ?? ''}
