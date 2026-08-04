@@ -15,9 +15,9 @@ const metrics: Metric[] = [
     description: 'Published since establishment',
   },
   {
-    label: 'Impact Factor',
-    value: '4.2',
-    description: '2024 Journal Citation Reports',
+    label: 'Publishing Since',
+    value: '2010',
+    description: 'Volumes 1–17, peer-reviewed research',
   },
   {
     label: 'Active Authors',

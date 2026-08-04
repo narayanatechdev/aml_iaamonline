@@ -152,9 +152,9 @@ export default function EditorialValuesPage() {
                 </h3>
                 <div className="pl-9 space-y-3">
                   <p className="text-gray-700 leading-relaxed">
-                    As a Diamond Open Access journal, we are committed to the principles of open science, 
-                    ensuring that research is freely available to advance human knowledge and address 
-                    global challenges.
+                    We are committed to the principles of open science, supporting the dissemination of
+                    research to advance human knowledge and address global challenges. The journal does
+                    not charge authors article processing charges.
                   </p>
                   <ul className="space-y-2">
                     {[
@@ -185,7 +185,7 @@ export default function EditorialValuesPage() {
                   <li>• Fair, timely, and constructive peer review</li>
                   <li>• Transparent editorial processes</li>
                   <li>• Maximum visibility for your research</li>
-                  <li>• No financial barriers to publication</li>
+                  <li>• No article processing charges for authors</li>
                   <li>• Support throughout the publication journey</li>
                 </ul>
               </div>
@@ -194,7 +194,7 @@ export default function EditorialValuesPage() {
                 <h3 className="text-lg font-semibold mb-4">To Readers</h3>
                 <ul className="space-y-2 text-white/90">
                   <li>• High-quality, rigorously reviewed content</li>
-                  <li>• Free and immediate access to all articles</li>
+                  <li>• Access via IAAM membership or subscription</li>
                   <li>• Reliable and trustworthy scientific information</li>
                   <li>• Commitment to editorial independence</li>
                   <li>• Continuous improvement and innovation</li>

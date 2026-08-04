@@ -64,10 +64,10 @@ export default function HistoryPage() {
                   <div className="text-2xl font-bold text-[#0f2d6b]">2018</div>
                 </div>
                 <div className="flex-grow pl-6 border-l-2 border-gray-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Scopus Indexing</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Platform Expansion</h3>
                   <p className="text-gray-700 leading-relaxed">
-                    Successfully indexed in Scopus, marking a significant milestone in 
-                    journal quality and international visibility.
+                    Expanded the journal's online platform and author services, improving
+                    manuscript submission and international discoverability.
                   </p>
                 </div>
               </div>

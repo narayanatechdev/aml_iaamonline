@@ -6,24 +6,24 @@ import { ARTICLE_STATS, JOURNAL_INFO } from '@/lib/realData';
 
 export function JournalMetricsSection() {
   const publishingParameters = [
-    { label: 'Impact Factor', value: '3.82', icon: TrendingUp, description: '2023 Journal Citation Reports' },
+    { label: 'Publishing Since', value: '2010', icon: TrendingUp, description: 'Volumes 1–17 published' },
     { label: 'Review Time', value: '4-6 weeks', icon: Clock, description: 'Average peer review duration' },
     { label: 'Publication Time', value: '2-3 weeks', icon: Zap, description: 'From acceptance to publication' },
     { label: 'Acceptance Rate', value: '35%', icon: CheckCircle, description: 'Rigorous peer review process' },
-    { label: 'Global Reach', value: '135+ Countries', icon: Globe, description: 'Worldwide readership' },
-    { label: 'Annual Readership', value: '500K+', icon: Users, description: 'Research community access' }
+    { label: 'Author Countries', value: '75+', icon: Globe, description: 'International author base' },
+    { label: 'Articles Published', value: '2,000+', icon: Users, description: 'Peer-reviewed since 2010' }
   ];
 
   const whyPublishBenefits = [
     {
-      title: 'Diamond Open Access',
-      description: 'No article processing charges (APC) for authors, completely free to publish and read',
+      title: 'No Author Fees',
+      description: 'No article processing charges (APC) or submission fees for authors; access via IAAM membership or subscription',
       icon: Award,
       color: 'text-[#c9a227] bg-[#c9a227]/10'
     },
     {
       title: 'Global Visibility',
-      description: 'Indexed in major databases including Scopus, Web of Science, and 25+ other databases',
+      description: 'Discoverable via Google Scholar, CrossRef DOI, and major academic search services',
       icon: Globe,
       color: 'text-blue-600 bg-blue-50'
     },
@@ -58,8 +58,8 @@ export function JournalMetricsSection() {
             Why Choose Advanced Materials Letters?
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            A leading international journal committed to advancing materials science research 
-            through diamond open access publishing and rigorous peer review.
+            A leading international journal committed to advancing materials science research
+            through rigorous peer review and accessible publishing.
           </p>
         </div>
 

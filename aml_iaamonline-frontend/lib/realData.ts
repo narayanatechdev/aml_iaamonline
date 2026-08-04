@@ -42,7 +42,7 @@ export const JOURNAL_INFO = {
   currentIssue: '1',
   currentYear: '2026',
   issn: '0976-3961',
-  eISSN: '1998-0140',
+  eISSN: '0976-397X',
 };
 
 // Load and process real articles data

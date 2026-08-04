@@ -125,7 +125,7 @@ export default function Process() {
         "Online publication",
         "Indexing in databases"
       ],
-      tips: "Articles are published immediately upon completion under our Diamond Open Access model."
+      tips: "Articles are published and made available upon completion of production."
     }
   ];
 

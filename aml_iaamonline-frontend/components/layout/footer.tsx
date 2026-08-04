@@ -1,12 +1,33 @@
 'use client';
 
-import { BookOpen, X, MailIcon, Rss } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BookOpen, MailIcon, Rss } from 'lucide-react';
+
+interface FooterPage {
+  id: number;
+  title: string;
+  slug: string;
+}
+
+function useFooterPages(): FooterPage[] {
+  const [pages, setPages] = useState<FooterPage[]>([]);
+  useEffect(() => {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/pages?placement=footer`;
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((json) => setPages(json.data ?? []))
+      .catch(() => { /* silently degrade */ });
+  }, []);
+  return pages;
+}
 
 export function Footer() {
+  const footerPages = useFooterPages();
+
   return (
     <footer className="bg-gray-100 text-black mt-16">
-      {/* Newsletter bar */}
-      <div className="bg-gray-200 border-b border-gray-300">
+      {/* Newsletter bar — #alerts is the target of the header "Sign up for alerts" link */}
+      <div id="alerts" className="bg-gray-200 border-b border-gray-300 scroll-mt-36">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Rss className="w-5 h-5 text-black" />
@@ -36,7 +57,7 @@ export function Footer() {
               </div>
               <div>
                 <div className="text-sm leading-tight font-bold text-black">Advanced Materials Letters</div>
-                <div className="text-xs text-gray-700 leading-tight">IAAM Open Access Journal</div>
+                <div className="text-xs text-gray-700 leading-tight">An IAAM Journal</div>
               </div>
             </div>
             <p className="text-xs text-gray-700 leading-relaxed mb-4">
@@ -45,13 +66,7 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="#twitter"
-                className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
-              >
-                <X className="w-3.5 h-3.5" />
-              </a>
-              <a
-                href="#rss"
+                href="/news"
                 className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
               >
                 <Rss className="w-3.5 h-3.5" />
@@ -70,11 +85,11 @@ export function Footer() {
             <h4 className="text-sm mb-4 text-black font-bold">About</h4>
             <ul className="space-y-2">
               {[
-                { label: 'Aims & Scope', href: '/about#aims' },
-                { label: 'Editorial Board', href: '/about#board' },
-                { label: 'Indexing & Abstracting', href: '/about#indexing' },
-                { label: 'Publication History', href: '/about#history' },
-                { label: 'Contact Us', href: '/about#contact' },
+                { label: 'Aims & Scope', href: '/aims-scope' },
+                { label: 'Editorial Board', href: '/editorial-board' },
+                { label: 'Indexing & Abstracting', href: '/indexing' },
+                { label: 'Publication History', href: '/about' },
+                { label: 'Contact Us', href: '/contact' },
               ].map((l) => (
                 <li key={l.label}>
                   <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
@@ -131,7 +146,7 @@ export function Footer() {
           <p className="text-xs text-gray-700">
             © 2026 IAAM – International Association of Advanced Materials. All rights reserved.
           </p>
-          <div className="flex gap-4 text-xs text-gray-700">
+          <div className="flex flex-wrap gap-4 text-xs text-gray-700">
             <a href="/privacy-policy" className="hover:text-black transition-colors">
               Privacy Policy
             </a>
@@ -141,6 +156,11 @@ export function Footer() {
             <a href="/cookie-policy" className="hover:text-black transition-colors">
               Cookie Policy
             </a>
+            {footerPages.map((p) => (
+              <a key={p.id} href={`/page/${p.slug}`} className="hover:text-black transition-colors">
+                {p.title}
+              </a>
+            ))}
           </div>
         </div>
       </div>

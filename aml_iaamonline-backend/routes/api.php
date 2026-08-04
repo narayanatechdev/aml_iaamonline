@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\AccessSettingsController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminAnalyticsController;
 use App\Http\Controllers\Api\AdminArticleController;
 use App\Http\Controllers\Api\AdminManuscriptController;
 use App\Http\Controllers\Api\AdminRoleController;
 use App\Http\Controllers\Api\AdminUserController;
+use App\Http\Controllers\Api\ArticleAccessController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\Api\ManagingEditorController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OaiController;
 use App\Http\Controllers\Api\OrcidController;
+use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
@@ -48,6 +51,8 @@ Route::get('/articles/stats', [ArticleController::class, 'stats'])->name('articl
 Route::get('/articles/citation-formats', [ArticleController::class, 'citationFormats'])->name('articles.citation-formats');
 Route::get('/articles/media-map', [ArticleController::class, 'mediaMap'])->name('articles.media-map');
 Route::get('/articles/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+')->name('articles.show');
+Route::post('/articles/{id}/view', [ArticleController::class, 'recordView'])->where('id', '[0-9]+')->middleware('throttle:60,1')->name('articles.record-view');
+Route::post('/articles/{id}/download', [ArticleController::class, 'recordDownload'])->where('id', '[0-9]+')->middleware('throttle:60,1')->name('articles.record-download');
 Route::get('/articles/{id}/authors', [ArticleController::class, 'getAuthorsWithAffiliations'])->name('article.authors');
 Route::get('/articles/{id}/affiliations', [ArticleController::class, 'getAffiliations'])->name('article.affiliations');
 Route::get('/articles/{id}/citation', [ArticleController::class, 'citation'])->name('article.citation');
@@ -61,6 +66,13 @@ Route::get('/home/sections', [HomeSectionController::class, 'index'])->name('hom
 
 // Subjects / research areas (public — powers submission forms and browse pages)
 Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+
+// Access model (public — membership tiers and article access allowances)
+Route::get('/access-model', [AccessSettingsController::class, 'show'])->name('access-model.show');
+
+// Site pages (public — admin-managed pages linked in header/footer menus)
+Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
 
 // Reference data + open scholarly endpoints (public)
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
@@ -80,6 +92,9 @@ Route::middleware('auth.token')->group(function () {
 
 // Editor Routes (require editor authentication)
 Route::middleware('auth:sanctum')->group(function () {
+    // Member article access check (consumes tier daily/monthly allowance)
+    Route::get('/articles/{id}/access', [ArticleAccessController::class, 'check'])->where('id', '[0-9]+')->name('articles.access');
+
     // Authenticated author's own workspace (any logged-in user)
     Route::get('/my/manuscripts', [AccountController::class, 'manuscripts'])->name('my.manuscripts');
     Route::get('/my/manuscripts/{id}', [AccountController::class, 'manuscriptDetail'])->name('my.manuscript.detail');
@@ -149,6 +164,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
 
         // Subject management (Settings → Subjects, via settings:* permissions)
+        // Site pages management (homepage:* permissions, same as other content)
+        Route::get('/pages', [PageController::class, 'adminIndex'])->name('admin.pages.index');
+        Route::post('/pages', [PageController::class, 'store'])->name('admin.pages.store');
+        Route::get('/pages/{id}', [PageController::class, 'adminShow'])->where('id', '[0-9]+')->name('admin.pages.show');
+        Route::patch('/pages/{id}', [PageController::class, 'update'])->where('id', '[0-9]+')->name('admin.pages.update');
+        Route::delete('/pages/{id}', [PageController::class, 'destroy'])->where('id', '[0-9]+')->name('admin.pages.destroy');
+
+        // Access model / subscription settings (settings:* permissions)
+        Route::get('/settings/access', [AccessSettingsController::class, 'adminShow'])->name('admin.settings.access.show');
+        Route::patch('/settings/access', [AccessSettingsController::class, 'update'])->name('admin.settings.access.update');
+
         Route::get('/subjects', [SubjectController::class, 'adminIndex'])->name('admin.subjects.index');
         Route::post('/subjects', [SubjectController::class, 'store'])->name('admin.subjects.store');
         Route::patch('/subjects/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');

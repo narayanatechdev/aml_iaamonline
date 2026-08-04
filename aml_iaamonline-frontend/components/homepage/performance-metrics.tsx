@@ -5,7 +5,7 @@ import { ARTICLE_STATS } from '@/lib/realData';
 
 export function PerformanceMetrics() {
   const metrics = [
-    { label: 'Impact Factor (2025)', value: '3.82', icon: TrendingUp, color: 'text-[#0f2d6b]' },
+    { label: 'Publishing Since', value: '2010', icon: TrendingUp, color: 'text-[#0f2d6b]' },
     { label: 'h-Index', value: '32', icon: Award, color: 'text-[#0f2d6b]' },
     {
       label: 'Total Citations',

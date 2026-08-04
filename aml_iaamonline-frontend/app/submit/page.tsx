@@ -17,7 +17,7 @@ export default function SubmitPage() {
               Submit Manuscript
             </h1>
             <p className="text-gray-600">
-              Advanced Materials Letters — Diamond Open Access
+              Advanced Materials Letters — No Author Fees
             </p>
           </div>
 

@@ -38,20 +38,20 @@ export default function FAQ() {
       ]
     },
     {
-      category: "Open Access & Publication Fees",
+      category: "Access & Publication Fees",
       icon: <DollarSign className="w-4 h-4" />,
       faqs: [
         {
           question: "Are there any publication fees or Article Processing Charges (APCs)?",
-          answer: "No, Advanced Materials Letters operates under a Diamond Open Access model. There are no publication fees, article processing charges, or submission fees for authors. All costs are covered by our publisher, IAAM, making research freely accessible worldwide."
+          answer: "No. Advanced Materials Letters does not charge authors any article processing charges, submission fees, or publication fees. IAAM covers publication costs; authors publish at no charge."
         },
         {
-          question: "What does Diamond Open Access mean?",
-          answer: "Diamond Open Access means that articles are freely available to readers worldwide AND there are no charges for authors to publish. This is different from Gold Open Access (which may charge APCs) and Green Open Access (which may have embargo periods)."
+          question: "How do readers access articles?",
+          answer: "Advanced Materials Letters is available through IAAM membership and subscription. IAAM members receive article access allowances based on their membership category. Non-members can subscribe or purchase access to individual articles."
         },
         {
           question: "Can I publish in AML if my institution doesn't have funding for publication fees?",
-          answer: "Absolutely! Since we don't charge any publication fees, funding availability is not a barrier to publishing in AML. We welcome submissions from researchers worldwide regardless of their financial circumstances or institutional support."
+          answer: "Yes. Advanced Materials Letters does not charge authors any publication fees, so funding availability is not a barrier to submitting or publishing. We welcome submissions from researchers worldwide."
         },
         {
           question: "What license is used for published articles?",

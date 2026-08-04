@@ -36,7 +36,7 @@ export default function About() {
                   <strong>Advanced Materials Letters (AML)</strong> is an international scientific journal published by the International Association of Advanced Materials (IAAM). The journal serves as a platform for researchers, scientists, and engineers to share their latest discoveries and innovations in the rapidly evolving field of materials science.
                 </p>
                 <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  Since its inception, AML has been committed to maintaining the highest standards of scientific excellence while ensuring rapid dissemination of research findings. The journal operates under a Diamond Open Access model, making all content freely available to readers worldwide without any financial barriers.
+                  Since its inception, AML has been committed to maintaining the highest standards of scientific excellence while ensuring rapid dissemination of research findings. Advanced Materials Letters is available through IAAM membership and subscription; the journal does not charge authors article processing charges.
                 </p>
                 <p className="text-[#3a4a6a] text-base leading-relaxed">
                   Our mission is to bridge the gap between fundamental research and practical applications, fostering collaboration across disciplines and geographical boundaries. We welcome submissions from researchers at all career stages, from emerging scientists to established leaders in the field.
@@ -69,26 +69,28 @@ export default function About() {
               </CardContent>
             </Card>
 
-            {/* Open Access Commitment */}
+            {/* Access & Membership */}
             <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
               <CardHeader>
                 <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <Globe className="w-5 h-5" />
-                  Diamond Open Access
+                  Access &amp; Membership
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  AML is proud to operate under a <strong>Diamond Open Access</strong> model, which means:
+                  Advanced Materials Letters is available through IAAM membership and subscription.
+                  IAAM members receive article access allowances based on membership category;
+                  non-members can subscribe or purchase access to individual articles.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {[
-                    "No Article Processing Charges (APCs)",
-                    "No submission or publication fees",
-                    "Free access for all readers worldwide",
-                    "Immediate availability upon publication",
+                    "No Article Processing Charges (APCs) for authors",
+                    "No submission or publication fees for authors",
+                    "IAAM member access by membership tier",
+                    "Individual article purchase available",
                     "CC BY 4.0 licensing for maximum reuse",
-                    "No financial barriers to knowledge"
+                    "Institutional subscription options available"
                   ].map((item, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
@@ -115,7 +117,7 @@ export default function About() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#5a6a8a] text-sm">eISSN</span>
-                    <Badge variant="secondary">1998-0140</Badge>
+                    <Badge variant="secondary">0976-397X</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#5a6a8a] text-sm">Publisher</span>
@@ -203,10 +205,10 @@ export default function About() {
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { title: "Scopus Indexed", desc: "Listed in Scopus database for global visibility" },
-                { title: "Web of Science", desc: "Tracked in Clarivate's Web of Science Core Collection" },
-                { title: "DOAJ Listed", desc: "Directory of Open Access Journals certified" },
-                { title: "CrossRef DOI", desc: "Digital Object Identifiers for all articles" }
+                { title: "Scopus (2010–2016)", desc: "Previously indexed in Scopus during its coverage period" },
+                { title: "Google Scholar", desc: "Freely discoverable via Google Scholar academic search" },
+                { title: "CrossRef DOI", desc: "Digital Object Identifiers for all published articles" },
+                { title: "Publishing Since 2010", desc: "Over 15 years of peer-reviewed materials science research" }
               ].map((item, index) => (
                 <div key={index} className="text-center p-4 border-b border-gray-200">
                   <div className="w-12 h-12 bg-[#0f2d6b]/10 rounded-full flex items-center justify-center mx-auto mb-3">
