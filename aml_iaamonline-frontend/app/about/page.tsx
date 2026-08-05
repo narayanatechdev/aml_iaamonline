@@ -1,227 +1,29 @@
-"use client";
-
+import type { Metadata } from 'next';
 import { MainLayout } from '@/components/layout/main-layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { Award, Globe, Users, Calendar, Target, BookOpen, Zap, CheckCircle } from 'lucide-react';
+import { fetchCmsPage } from '@/lib/cms-pages';
+import { CmsPageContent } from '@/components/shared/cms-page-content';
+import AboutStatic from './about-static';
 
-export default function About() {
-  return (
-    <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <Breadcrumb 
-          items={[{ label: 'About' }]} 
-          className="mb-6"
-        />
-        <div className="mb-10 border-b border-border pb-8">
-          <h1 className="text-black mb-6" style={{ fontSize: "2.5rem", fontWeight: 700 }}>About Advanced Materials Letters</h1>
-          <p className="text-[#5a6a8a] text-xl leading-relaxed">
-            A premier international, peer-reviewed, open access journal dedicated to advancing the field of materials science and engineering through high-quality research publications.
-          </p>
-        </div>
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'About Advanced Materials Letters — a peer-reviewed international journal of the International Association of Advanced Materials (IAAM), publishing since 2010.',
+};
 
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
-          {/* Journal Overview */}
-          <div className="lg:col-span-2">
-            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-2xl flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Journal Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  <strong>Advanced Materials Letters (AML)</strong> is an international scientific journal published by the International Association of Advanced Materials (IAAM). The journal serves as a platform for researchers, scientists, and engineers to share their latest discoveries and innovations in the rapidly evolving field of materials science.
-                </p>
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  Since its inception, AML has been committed to maintaining the highest standards of scientific excellence while ensuring rapid dissemination of research findings. Advanced Materials Letters is available through IAAM membership and subscription; the journal does not charge authors article processing charges.
-                </p>
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  Our mission is to bridge the gap between fundamental research and practical applications, fostering collaboration across disciplines and geographical boundaries. We welcome submissions from researchers at all career stages, from emerging scientists to established leaders in the field.
-                </p>
-              </CardContent>
-            </Card>
+/**
+ * Admin-overridable: if a published CMS page with slug "about" exists
+ * (Admin → Content → Pages), it replaces the built-in content below.
+ */
+export default async function AboutPage() {
+  const cmsPage = await fetchCmsPage('about');
 
-            {/* Publication Types */}
-            <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-2xl flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Publication Types
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    { type: "Research Articles", desc: "Original research with comprehensive experimental details and analysis" },
-                    { type: "Review Articles", desc: "Comprehensive reviews of established topics and emerging trends" },
-                    { type: "Letters", desc: "Short communications reporting urgent or significant findings" },
-                    { type: "Perspectives", desc: "Forward-looking opinion pieces by invited experts in the field" }
-                  ].map((item) => (
-                    <div key={item.type} className="py-3 border-b border-gray-200">
-                      <h4 className="text-black text-base mb-3" style={{ fontWeight: 600 }}>{item.type}</h4>
-                      <p className="text-[#5a6a8a] text-sm leading-relaxed">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+  if (cmsPage) {
+    return (
+      <MainLayout>
+        <CmsPageContent page={cmsPage} />
+      </MainLayout>
+    );
+  }
 
-            {/* Access & Membership */}
-            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-2xl flex items-center gap-2">
-                  <Globe className="w-5 h-5" />
-                  Access &amp; Membership
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  Advanced Materials Letters is available through IAAM membership and subscription.
-                  IAAM members receive article access allowances based on membership category;
-                  non-members can subscribe or purchase access to individual articles.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {[
-                    "No Article Processing Charges (APCs) for authors",
-                    "No submission or publication fees for authors",
-                    "IAAM member access by membership tier",
-                    "Individual article purchase available",
-                    "CC BY 4.0 licensing for maximum reuse",
-                    "Institutional subscription options available"
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                      <span className="text-[#3a4a6a] text-base">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Key Metrics */}
-            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-xl">Key Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-base">ISSN (Print)</span>
-                    <Badge variant="secondary">0976-3961</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-sm">eISSN</span>
-                    <Badge variant="secondary">0976-397X</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-sm">Publisher</span>
-                    <span className="text-black text-base" style={{ fontWeight: 600 }}>IAAM</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-sm">Frequency</span>
-                    <span className="text-black text-base" style={{ fontWeight: 600 }}>Monthly</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#5a6a8a] text-sm">Language</span>
-                    <span className="text-black text-base" style={{ fontWeight: 600 }}>English</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Focus Areas */}
-            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-xl flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  Focus Areas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Nanomaterials",
-                    "Biomaterials", 
-                    "Smart Materials",
-                    "Energy Materials",
-                    "2D Materials",
-                    "Composites",
-                    "Ceramics",
-                    "Polymers",
-                    "Metals & Alloys",
-                    "Electronic Materials"
-                  ].map((area) => (
-                    <Badge key={area} variant="outline" className="text-xs">
-                      {area}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact */}
-            <Card className="border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-black text-xl flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  Editorial Office
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>International Association of Advanced Materials</p>
-                  <p className="text-[#5a6a8a] text-sm leading-relaxed">
-                    Gammalkilsvägen 18A<br />
-                    16974 Vaxholm, Sweden
-                  </p>
-                </div>
-                <div>
-                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>Email</p>
-                  <p className="text-[#5a6a8a] text-sm">aml@iaamonline.org</p>
-                </div>
-                <div>
-                  <p className="text-black text-base mb-2" style={{ fontWeight: 600 }}>Website</p>
-                  <p className="text-[#5a6a8a] text-sm">www.iaamonline.org</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Awards & Recognition */}
-        <Card className="mb-8 border-0 border-b border-gray-200 rounded-none shadow-none bg-transparent">
-          <CardHeader>
-            <CardTitle className="text-black text-2xl flex items-center gap-2">
-              <Award className="w-5 h-5" />
-              Recognition & Indexing
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { title: "Scopus (2010–2016)", desc: "Previously indexed in Scopus during its coverage period" },
-                { title: "Google Scholar", desc: "Freely discoverable via Google Scholar academic search" },
-                { title: "CrossRef DOI", desc: "Digital Object Identifiers for all published articles" },
-                { title: "Publishing Since 2010", desc: "Over 15 years of peer-reviewed materials science research" }
-              ].map((item, index) => (
-                <div key={index} className="text-center p-4 border-b border-gray-200">
-                  <div className="w-12 h-12 bg-[#0f2d6b]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Award className="w-6 h-6 text-[#0f2d6b]" />
-                  </div>
-                  <h4 className="text-black text-base mb-3" style={{ fontWeight: 600 }}>{item.title}</h4>
-                  <p className="text-[#5a6a8a] text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </MainLayout>
-  );
+  return <AboutStatic />;
 }
