@@ -84,7 +84,7 @@ export function AboutPage() {
           About the Journal
         </h1>
         <p className="text-[#5a6a8a] text-sm">
-          Advanced Materials Letters — IAAM's flagship open-access publication
+          Advanced Materials Letters — IAAM's flagship peer-reviewed publication
         </p>
       </div>
 

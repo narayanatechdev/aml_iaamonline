@@ -131,7 +131,7 @@ export default function JournalisticPrinciplesPage() {
                     of materials science for the benefit of society.
                   </p>
                   <ul className="text-gray-600 space-y-2">
-                    <li>• Commitment to diamond open access for universal knowledge sharing</li>
+                    <li>• Commitment to fee-free publishing for authors and worldwide dissemination</li>
                     <li>• Support for researchers at all career stages</li>
                     <li>• Promotion of global collaboration and inclusion</li>
                     <li>• Dedication to advancing scientific understanding</li>

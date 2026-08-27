@@ -95,7 +95,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@aml.iaamonline.org"
+                  placeholder="your.email@example.com"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-[#f4f7fc] text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b] transition-colors"
                   required
                   autoFocus
@@ -145,14 +145,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Hint box */}
-          <div className="mt-6 pt-5 border-t border-gray-100">
-            <div className="bg-[#f0f4fb] rounded-xl p-4 text-xs text-[#5a6a8a] space-y-1">
-              <p className="font-semibold text-[#0f2d6b]">Admin credentials</p>
-              <p>Email: <span className="font-mono text-[#0f2d6b]">admin@aml.iaamonline.org</span></p>
-              <p>Password: <span className="font-mono text-[#0f2d6b]">AmlAdmin@2026</span></p>
-            </div>
-          </div>
         </div>
 
         <div className="text-center mt-6">

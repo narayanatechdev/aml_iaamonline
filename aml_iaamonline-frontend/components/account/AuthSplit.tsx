@@ -6,7 +6,7 @@ import { BookOpen, Check } from 'lucide-react';
 const FEATURES = [
   { title: 'Quick, frictionless submission', desc: 'Submit your manuscript in minutes with a guided, conversational form.' },
   { title: 'Transparent peer review', desc: 'Track your work through every stage — from editor screening to decision.' },
-  { title: 'Diamond open access', desc: 'Free to publish and free to read. Your research, openly available.' },
+  { title: 'No author fees', desc: 'Free to publish — no APCs or submission charges. Access via IAAM membership and subscription.' },
 ];
 
 export function AuthSplit({ children }: { children: React.ReactNode }) {

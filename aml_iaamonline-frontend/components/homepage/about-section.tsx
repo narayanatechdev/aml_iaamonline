@@ -12,7 +12,7 @@ export function AboutSection() {
               About Advanced Materials Letters
             </h2>
             <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-              Advanced Materials Letters is an open-access, peer-reviewed academic journal dedicated to publishing
+              Advanced Materials Letters is a peer-reviewed academic journal dedicated to publishing
               high-quality research, reviews, and short communications in the field of materials science,
               nanotechnology, and advanced functional materials.
             </p>

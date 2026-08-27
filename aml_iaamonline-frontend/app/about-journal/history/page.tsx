@@ -41,7 +41,7 @@ export default function HistoryPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Journal Launch</h3>
                   <p className="text-gray-700 leading-relaxed">
                     Advanced Materials Letters was founded by IAAM with a vision to provide 
-                    a diamond open access platform for materials science research.
+                    a leading international platform for materials science research.
                   </p>
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function HistoryPage() {
             
             <p className="text-white/90 leading-relaxed mb-6">
               As we continue our journey, Advanced Materials Letters remains committed to 
-              advancing materials science through open access publishing, fostering global 
+              advancing materials science through high-quality publishing, fostering global 
               collaboration, and supporting breakthrough research that shapes the future.
             </p>
             

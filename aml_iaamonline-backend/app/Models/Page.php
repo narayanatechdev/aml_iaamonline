@@ -9,7 +9,7 @@ class Page extends Model
 {
     public const PLACEMENTS = ['header', 'footer', 'none'];
 
-    protected $fillable = ['title', 'slug', 'content', 'placement', 'position', 'is_published'];
+    protected $fillable = ['title', 'slug', 'content', 'layout', 'placement', 'position', 'is_published'];
 
     protected $casts = [
         'is_published' => 'boolean',

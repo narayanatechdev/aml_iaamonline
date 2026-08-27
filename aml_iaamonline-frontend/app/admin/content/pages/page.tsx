@@ -12,6 +12,7 @@ interface Page {
   id: number;
   title: string;
   slug: string;
+  layout: string;
   placement: 'header' | 'footer' | 'none';
   position: number;
   is_published: boolean;
@@ -184,7 +185,14 @@ export default function AdminPagesListPage() {
               <tbody>
                 {pages.map((page) => (
                   <tr key={page.id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3 font-medium text-gray-900">{page.title}</td>
+                    <td className="px-5 py-3 font-medium text-gray-900">
+                      {page.title}
+                      {page.layout && page.layout !== 'prose' && (
+                        <span className="ml-2 inline-block px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase tracking-wide">
+                          Designed layout
+                        </span>
+                      )}
+                    </td>
                     <td className="px-5 py-3 text-gray-500 font-mono text-xs">{page.slug}</td>
                     <td className="px-5 py-3">
                       <span

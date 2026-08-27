@@ -53,7 +53,7 @@ export default function EditorialValuesPage() {
                 <Globe className="w-12 h-12 text-[#0f2d6b] mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Accessibility</h3>
                 <p className="text-sm text-gray-600">
-                  Making scientific knowledge freely available to all researchers worldwide
+                  Serving the global research community through IAAM membership and subscription access
                 </p>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function EditorialValuesPage() {
                   </p>
                   <ul className="space-y-2">
                     {[
-                      "Immediate open access to all published articles",
+                      "Timely worldwide availability of all published articles",
                       "Support for open data and reproducible research",
                       "Encouragement of preprint sharing and collaboration",
                       "Commitment to long-term preservation of scientific record"

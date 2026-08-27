@@ -190,7 +190,7 @@ export default function AuthorResourcesPage() {
 
       {/* Open Access */}
       <section id="open-access" className="mb-14 scroll-mt-40">
-        <h2 className="text-[#0f2d6b] mb-6" style={{ fontSize: "1.3rem", fontWeight: 700 }}>Fees & Open Access Policy</h2>
+        <h2 className="text-[#0f2d6b] mb-6" style={{ fontSize: "1.3rem", fontWeight: 700 }}>Fees & Access Policy</h2>
         <div className="bg-gradient-to-br from-[#0f2d6b] to-[#1a3f8f] p-8 text-white">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>

@@ -61,8 +61,8 @@ export function Footer() {
               </div>
             </div>
             <p className="text-xs text-gray-700 leading-relaxed mb-4">
-              An international, peer-reviewed, diamond open access journal covering all aspects of
-              materials science and engineering.
+              An international, peer-reviewed journal covering all aspects of materials science
+              and engineering, available through IAAM membership and subscription.
             </p>
             <div className="flex gap-3">
               <a

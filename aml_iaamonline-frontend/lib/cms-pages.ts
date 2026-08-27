@@ -3,6 +3,8 @@ export interface CmsPage {
   title: string;
   slug: string;
   content: string;
+  /** 'prose' = free HTML; otherwise a designed layout key from lib/page-layouts.ts */
+  layout: string;
   placement: string;
   position: number;
   is_published: boolean;

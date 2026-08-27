@@ -221,7 +221,7 @@ export function ReadersAuthorsSidebar() {
         </div>
       </div>
 
-      {/* Open Access Notice */}
+      {/* Access & Membership Notice */}
       <div className="bg-gradient-to-br from-[#c9a227]/10 to-[#c9a227]/5 border border-[#c9a227]/20 rounded-xl p-6">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 bg-[#c9a227] rounded-lg flex items-center justify-center flex-shrink-0">

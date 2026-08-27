@@ -19,7 +19,7 @@ export function AimsScope() {
               Aims & Scope
             </h2>
             <p className="text-[#3a4a6a] text-sm leading-relaxed mb-4">
-              <em>Advanced Materials Letters</em> is a fully open-access, internationally peer-reviewed journal dedicated to publishing high-quality original research across the entire spectrum of materials science. The journal bridges the gap between fundamental science and applied technology.
+              <em>Advanced Materials Letters</em> is an internationally peer-reviewed journal dedicated to publishing high-quality original research across the entire spectrum of materials science. The journal bridges the gap between fundamental science and applied technology.
             </p>
             <p className="text-[#3a4a6a] text-sm leading-relaxed">
               AML publishes Research Articles, Review Articles, Letters, and Communications addressing synthesis, processing, characterization, properties, and applications of advanced materials.

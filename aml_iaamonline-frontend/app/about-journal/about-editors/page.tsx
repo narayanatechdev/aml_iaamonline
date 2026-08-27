@@ -280,8 +280,8 @@ export default function AboutEditorsPage() {
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-[#c9a227] rounded-full mt-2 flex-shrink-0"></div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Open Access</h4>
-                      <p className="text-sm text-gray-600">Committed to making research freely available to all</p>
+                      <h4 className="font-semibold text-gray-900">Accessibility</h4>
+                      <p className="text-sm text-gray-600">Committed to worldwide dissemination of research through IAAM membership and subscription</p>
                     </div>
                   </div>
                 </div>

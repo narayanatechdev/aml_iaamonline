@@ -23,6 +23,8 @@ export function CmsPageContent({ page }: { page: CmsPage }) {
         .page-content h3 { font-size: 1.25rem; font-weight: 600; color: #0f2d6b; margin: 1.25rem 0 0.5rem; }
         .page-content h4 { font-size: 1.1rem; font-weight: 600; color: #3a4a6a; margin: 1rem 0 0.5rem; }
         .page-content p  { color: #3a4a6a; line-height: 1.75; margin: 0.75rem 0; }
+        .page-content ul { list-style-type: disc; }
+        .page-content ol { list-style-type: decimal; }
         .page-content ul, .page-content ol { color: #3a4a6a; padding-left: 1.5rem; margin: 0.75rem 0; }
         .page-content li { margin: 0.25rem 0; line-height: 1.7; }
         .page-content a  { color: #0f2d6b; text-decoration: underline; }
