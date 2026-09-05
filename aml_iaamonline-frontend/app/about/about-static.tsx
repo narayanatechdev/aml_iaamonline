@@ -7,6 +7,7 @@ import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Award, Globe, Users, Calendar, Target, BookOpen, Zap, CheckCircle } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
 import { SectionBody } from '@/components/shared/section-body';
+import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
 
 type OverviewParagraph = { text: string };
@@ -69,6 +70,9 @@ const DEFAULT_RECOGNITION: RecognitionItem[] = [
 export default function About({ content = {} }: { content?: PageContentData }) {
   const title = pickText(content, 'title', 'About Advanced Materials Letters');
   const subtitle = pickText(content, 'subtitle', 'A premier international, peer-reviewed journal dedicated to advancing the field of materials science and engineering through high-quality research publications.');
+  const overviewTitle = pickText(content, 'overview_title', 'Journal Overview');
+  const publicationTypesTitle = pickText(content, 'publication_types_title', 'Publication Types');
+  const accessTitle = pickText(content, 'access_title', 'Access & Membership');
   const overviewParagraphs = pickList<OverviewParagraph>(content, 'overview_paragraphs', DEFAULT_OVERVIEW_PARAGRAPHS);
   const publicationTypes = pickList<PublicationType>(content, 'publication_types', DEFAULT_PUBLICATION_TYPES);
   const accessIntro = pickText(content, 'access_intro', 'Advanced Materials Letters is available through IAAM membership and subscription. IAAM members receive article access allowances based on membership category; non-members can subscribe or purchase access to individual articles.');
@@ -105,19 +109,13 @@ export default function About({ content = {} }: { content?: PageContentData }) {
               <CardHeader>
                 <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <BookOpen className="w-5 h-5" />
-                  Journal Overview
+                  {overviewTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  {overviewParagraphs[0]?.text}
-                </p>
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  {overviewParagraphs[1]?.text}
-                </p>
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  {overviewParagraphs[2]?.text}
-                </p>
+                {overviewParagraphs.map((paragraph, i) => (
+                  <CmsRichText key={i} value={paragraph.text ?? ''} className="text-[#3a4a6a] text-base leading-relaxed" />
+                ))}
               </CardContent>
             </Card>
 
@@ -126,7 +124,7 @@ export default function About({ content = {} }: { content?: PageContentData }) {
               <CardHeader>
                 <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <Target className="w-5 h-5" />
-                  Publication Types
+                  {publicationTypesTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -134,7 +132,7 @@ export default function About({ content = {} }: { content?: PageContentData }) {
                   {publicationTypes.map((item) => (
                     <div key={item.title} className="py-3 border-b border-gray-200">
                       <h4 className="text-black text-base mb-3" style={{ fontWeight: 600 }}>{item.title}</h4>
-                      <p className="text-[#5a6a8a] text-sm leading-relaxed">{item.description}</p>
+                      <CmsRichText value={item.description} className="text-[#5a6a8a] text-sm leading-relaxed" />
                     </div>
                   ))}
                 </div>
@@ -146,13 +144,11 @@ export default function About({ content = {} }: { content?: PageContentData }) {
               <CardHeader>
                 <CardTitle className="text-black text-2xl flex items-center gap-2">
                   <Globe className="w-5 h-5" />
-                  Access &amp; Membership
+                  {accessTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-[#3a4a6a] text-base leading-relaxed">
-                  {accessIntro}
-                </p>
+                <CmsRichText value={accessIntro} className="text-[#3a4a6a] text-base leading-relaxed" />
                 <div className="grid sm:grid-cols-2 gap-3">
                   {accessPoints.map((item, index) => (
                     <div key={index} className="flex items-center gap-2">

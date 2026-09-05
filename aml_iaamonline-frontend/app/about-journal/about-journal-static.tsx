@@ -7,6 +7,7 @@ import { BookOpen, Users, Award, Globe, FileText, CheckCircle } from 'lucide-rea
 import type { LucideIcon } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
 import { SectionBody } from '@/components/shared/section-body';
+import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
 
 type CardItem = { title: string; description: string };
@@ -42,6 +43,9 @@ const DEFAULT_FEATURES: FeatureItem[] = [
 export default function AboutJournalPage({ content = {} }: { content?: PageContentData }) {
   const title = pickText(content, 'title', 'About Journal');
   const subtitle = pickText(content, 'subtitle', 'Learn more about Advanced Materials Letters and our commitment to materials science research');
+  const overviewTitle = pickText(content, 'overview_title', 'Journal Overview');
+  const featuresTitle = pickText(content, 'features_title', 'Key Features');
+  const overviewBody = typeof content['overview_body'] === 'string' ? (content['overview_body'] as string) : '';
   const overviewP1 = pickText(content, 'overview_p1', 'Advanced Materials Letters (AML) is an international, peer-reviewed journal that covers all aspects of materials science and engineering. Established to promote cutting-edge research in advanced materials, AML serves as a premier platform for researchers, scientists, and engineers worldwide.');
   const overviewP2 = pickText(content, 'overview_p2', 'The journal is committed to publishing high-quality research articles, reviews, and communications that advance our understanding of materials properties, synthesis, characterization, and applications. Advanced Materials Letters is available through IAAM membership and subscription.');
   const cards = pickList<CardItem>(content, 'cards', DEFAULT_CARDS, 6);
@@ -71,15 +75,17 @@ export default function AboutJournalPage({ content = {} }: { content?: PageConte
           <div className="bg-white rounded-xl border border-gray-100 p-8 mb-8">
             <div className="flex items-center gap-3 mb-6">
               <BookOpen className="w-8 h-8 text-[#0f2d6b]" />
-              <h2 className="text-2xl font-bold text-[#0f2d6b]">Journal Overview</h2>
+              <h2 className="text-2xl font-bold text-[#0f2d6b]">{overviewTitle}</h2>
             </div>
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 leading-relaxed mb-4">
-                {overviewP1}
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                {overviewP2}
-              </p>
+              {overviewBody.trim() !== '' ? (
+                <CmsRichText value={overviewBody} className="text-gray-700 leading-relaxed" />
+              ) : (
+                <>
+                  <CmsRichText value={overviewP1} className="text-gray-700 leading-relaxed mb-4" />
+                  <CmsRichText value={overviewP2} className="text-gray-700 leading-relaxed" />
+                </>
+              )}
             </div>
           </div>
 
@@ -107,7 +113,7 @@ export default function AboutJournalPage({ content = {} }: { content?: PageConte
 
           {/* Key Features */}
           <div className="bg-white rounded-xl border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-[#0f2d6b] mb-6">Key Features</h2>
+            <h2 className="text-2xl font-bold text-[#0f2d6b] mb-6">{featuresTitle}</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {features.slice(0, 3).map((feature, i) => (

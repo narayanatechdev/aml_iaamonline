@@ -12,12 +12,16 @@ export interface LayoutItemField {
   key: string;
   label: string;
   type: 'text' | 'textarea';
+  /** textarea only: edit as rich text (bold/italic/sub/sup/links/lists, stored as HTML). */
+  rich?: boolean;
 }
 
 export interface LayoutField {
   key: string;
   label: string;
   type: 'text' | 'textarea' | 'list';
+  /** textarea only: edit as rich text (bold/italic/sub/sup/links/lists, stored as HTML). */
+  rich?: boolean;
   help?: string;
   /** For type 'list': the fields of each list item. */
   itemFields?: LayoutItemField[];
@@ -41,8 +45,14 @@ export const PAGE_LAYOUTS: Record<string, PageLayoutDef> = {
     fields: [
       { key: 'title', label: 'Page title', type: 'text' },
       { key: 'subtitle', label: 'Subtitle', type: 'textarea' },
-      { key: 'overview_p1', label: 'Journal Overview — paragraph 1', type: 'textarea' },
-      { key: 'overview_p2', label: 'Journal Overview — paragraph 2', type: 'textarea' },
+      { key: 'overview_title', label: 'Journal Overview — section title', type: 'text' },
+      {
+        key: 'overview_body',
+        label: 'Journal Overview — content',
+        type: 'textarea',
+        rich: true,
+        help: 'The section body. Use Enter for new paragraphs; formatting, links and lists are supported.',
+      },
       {
         key: 'cards',
         label: 'Navigation cards',
@@ -54,6 +64,7 @@ export const PAGE_LAYOUTS: Record<string, PageLayoutDef> = {
           { key: 'description', label: 'Card description', type: 'textarea' },
         ],
       },
+      { key: 'features_title', label: 'Key Features — section title', type: 'text' },
       {
         key: 'features',
         label: 'Key Features',
@@ -84,22 +95,26 @@ export const PAGE_LAYOUTS: Record<string, PageLayoutDef> = {
     fields: [
       { key: 'title', label: 'Page title', type: 'text' },
       { key: 'subtitle', label: 'Intro paragraph', type: 'textarea' },
+      { key: 'overview_title', label: 'Journal Overview — section title', type: 'text' },
       {
         key: 'overview_paragraphs',
-        label: 'Journal Overview paragraphs',
+        label: 'Journal Overview — content',
         type: 'list',
-        itemFields: [{ key: 'text', label: 'Paragraph', type: 'textarea' }],
+        itemFields: [{ key: 'text', label: 'Paragraph', type: 'textarea', rich: true }],
       },
+      { key: 'publication_types_title', label: 'Publication Types — section title', type: 'text' },
       {
         key: 'publication_types',
         label: 'Publication Types',
         type: 'list',
+        help: 'Repeatable: each item is a title + rich-text content. Add or remove types as needed.',
         itemFields: [
-          { key: 'title', label: 'Type', type: 'text' },
-          { key: 'description', label: 'Description', type: 'textarea' },
+          { key: 'title', label: 'Title', type: 'text' },
+          { key: 'description', label: 'Content', type: 'textarea', rich: true },
         ],
       },
-      { key: 'access_intro', label: 'Access & Membership — intro', type: 'textarea' },
+      { key: 'access_title', label: 'Access & Membership — section title', type: 'text' },
+      { key: 'access_intro', label: 'Access & Membership — intro', type: 'textarea', rich: true },
       {
         key: 'access_points',
         label: 'Access & Membership — bullet points',
@@ -153,13 +168,13 @@ export const PAGE_LAYOUTS: Record<string, PageLayoutDef> = {
     label: 'Editorial Board (designed layout)',
     route: '/editorial-board',
     fields: [
-      { key: 'intro', label: 'Page introduction', type: 'textarea' },
+      { key: 'intro', label: 'Page introduction', type: 'textarea', rich: true },
       { key: 'eic_name', label: 'Editor-in-Chief — name', type: 'text' },
       { key: 'eic_title', label: 'Editor-in-Chief — role title', type: 'text' },
       { key: 'eic_affiliation', label: 'Editor-in-Chief — affiliation', type: 'text' },
       { key: 'eic_location', label: 'Editor-in-Chief — location', type: 'text' },
       { key: 'eic_email', label: 'Editor-in-Chief — email', type: 'text' },
-      { key: 'eic_bio', label: 'Editor-in-Chief — biography', type: 'textarea' },
+      { key: 'eic_bio', label: 'Editor-in-Chief — biography', type: 'textarea', rich: true },
       {
         key: 'eic_photo',
         label: 'Editor-in-Chief — photo path',

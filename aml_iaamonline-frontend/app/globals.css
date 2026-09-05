@@ -319,3 +319,12 @@
     transform: translateX(0);
   }
 }
+
+/* Rich-text CMS fields (components/shared/rich-text.tsx) */
+.cms-rich p { margin: 0 0 0.9em; }
+.cms-rich p:last-child { margin-bottom: 0; }
+.cms-rich ul, .cms-rich ol { padding-left: 1.4em; margin: 0 0 0.9em; }
+.cms-rich ul { list-style-type: disc; }
+.cms-rich ol { list-style-type: decimal; }
+.cms-rich li { margin-bottom: 0.25em; }
+.cms-rich a { text-decoration: underline; }

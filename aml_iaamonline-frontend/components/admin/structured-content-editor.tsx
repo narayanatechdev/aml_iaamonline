@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Trash2, ChevronDown, GripVertical } from 'lucide-react';
+import { RichTextField } from './rich-text-field';
 import type { PageLayoutDef, LayoutField, PageContentData } from '@/lib/page-layouts';
 
 const inputCls =
@@ -108,7 +109,15 @@ export function StructuredContentEditor({
                   />
                 )}
 
-                {field.type === 'textarea' && (
+                {field.type === 'textarea' && field.rich && (
+                  <RichTextField
+                    value={typeof value[field.key] === 'string' ? (value[field.key] as string) : ''}
+                    onChange={(html) => setField(field.key, html)}
+                    placeholder="Leave empty to keep the built-in text"
+                  />
+                )}
+
+                {field.type === 'textarea' && !field.rich && (
                   <textarea
                     value={typeof value[field.key] === 'string' ? (value[field.key] as string) : ''}
                     onChange={(e) => setField(field.key, e.target.value)}
@@ -146,7 +155,13 @@ export function StructuredContentEditor({
                               <label className="block text-xs font-semibold text-gray-600 mb-1">
                                 {itemField.label}
                               </label>
-                              {itemField.type === 'textarea' ? (
+                              {itemField.type === 'textarea' && itemField.rich ? (
+                                <RichTextField
+                                  value={item[itemField.key] ?? ''}
+                                  onChange={(html) => setListItem(field, index, itemField.key, html)}
+                                  placeholder="Leave empty to keep the built-in text"
+                                />
+                              ) : itemField.type === 'textarea' ? (
                                 <textarea
                                   value={item[itemField.key] ?? ''}
                                   onChange={(e) =>
