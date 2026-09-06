@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Affiliation;
 use App\Models\Article;
+use App\Models\ArticleAuthor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -398,6 +400,90 @@ class AdminArticleController extends Controller
             'data' => ['graphical_abstract_url' => $url],
             'message' => 'Graphical abstract uploaded.',
         ]);
+    }
+
+    /**
+     * List this article's authors with their contact, ORCID, and affiliation
+     * assignments, plus every affiliation currently on the article, for the
+     * admin author editor.
+     */
+    public function authors(string $id): JsonResponse
+    {
+        $this->authorizeView();
+
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->firstOrFail();
+
+        $articleAuthors = ArticleAuthor::where('article_id', $article->legacy_id)
+            ->with(['author', 'affiliation'])
+            ->orderBy('position')
+            ->get();
+
+        $affiliations = [];
+        foreach ($articleAuthors as $articleAuthor) {
+            foreach ($articleAuthor->affiliationIdList() as $affId) {
+                $affiliations[$affId] = true;
+            }
+        }
+        $affiliationRows = Affiliation::whereIn('id', array_keys($affiliations))
+            ->get(['id', 'name', 'country'])
+            ->toArray();
+
+        return response()->json([
+            'data' => [
+                'authors' => $articleAuthors->map(fn (ArticleAuthor $aa) => [
+                    'author_id' => $aa->author_id,
+                    'name' => $aa->author?->full_name,
+                    'email' => $aa->author?->email,
+                    'orcid' => $aa->author?->orcid,
+                    'is_corresponding' => $aa->is_corresponding,
+                    'affiliation_ids' => $aa->affiliationIdList(),
+                    'affiliation_text' => $aa->affiliation_text,
+                ])->toArray(),
+                'affiliations' => $affiliationRows,
+            ],
+        ]);
+    }
+
+    /**
+     * Update per-author contact details, ORCID ids, corresponding flags, and
+     * multi-affiliation assignments for one article.
+     */
+    public function updateAuthors(Request $request, string $id): JsonResponse
+    {
+        $this->authorizeEdit();
+
+        $article = Article::where('legacy_id', $id)->orWhere('id', $id)->firstOrFail();
+
+        $validated = $request->validate([
+            'authors' => ['required', 'array', 'min:1'],
+            'authors.*.author_id' => ['required', 'integer', 'exists:authors,id'],
+            'authors.*.email' => ['nullable', 'email', 'max:255'],
+            'authors.*.orcid' => ['nullable', 'string', 'max:39', 'regex:/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/'],
+            'authors.*.is_corresponding' => ['required', 'boolean'],
+            'authors.*.affiliation_ids' => ['present', 'array'],
+            'authors.*.affiliation_ids.*' => ['integer', 'exists:affiliations,id'],
+        ]);
+
+        foreach ($validated['authors'] as $row) {
+            $articleAuthor = ArticleAuthor::where('article_id', $article->legacy_id)
+                ->where('author_id', $row['author_id'])
+                ->first();
+            if (! $articleAuthor) {
+                continue;
+            }
+
+            $articleAuthor->update([
+                'is_corresponding' => $row['is_corresponding'],
+                'affiliation_ids' => array_values(array_unique(array_map('intval', $row['affiliation_ids']))),
+            ]);
+
+            $articleAuthor->author?->update([
+                'email' => $row['email'] ?? null,
+                'orcid' => $row['orcid'] ?? null,
+            ]);
+        }
+
+        return $this->authors($article->legacy_id);
     }
 
     private function authorizeView(): void

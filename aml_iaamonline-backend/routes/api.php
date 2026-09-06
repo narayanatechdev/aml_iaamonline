@@ -160,6 +160,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles/bulk', [AdminArticleController::class, 'bulkStore'])->name('admin.articles.bulk');
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
+        Route::get('/articles/{id}/authors', [AdminArticleController::class, 'authors'])->name('admin.articles.authors');
+        Route::patch('/articles/{id}/authors', [AdminArticleController::class, 'updateAuthors'])->name('admin.articles.authors.update');
         Route::post('/articles/{id}/pdf', [AdminArticleController::class, 'uploadPdf'])->name('admin.articles.pdf');
         Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
 

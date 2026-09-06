@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2, Check, AlertCircle, Upload } from 'lucide-react';
 import { authFetch, API_BASE, getToken } from '@/lib/adminAuth';
 import { RichTextInput } from '@/components/admin/rich-text-input';
+import { ArticleAuthorsEditor } from '@/components/admin/article-authors-editor';
 
 const API_URL = API_BASE;
 
@@ -332,15 +333,12 @@ export default function ArticleEditPage() {
             </div>
           ))}
 
-          {/* Authors (read-only for now) */}
+          {/* Authors & affiliations */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Authors</h2>
-            <p className="text-sm text-gray-600">
-              {authorNames.length ? authorNames.join(', ') : 'No linked authors.'}
-            </p>
-            <p className="mt-1 text-xs text-gray-400">
-              Author list editing is managed separately; contact the developer to enable inline author editing.
-            </p>
+            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+              Authors &amp; Affiliations
+            </h2>
+            <ArticleAuthorsEditor articleId={id} />
           </div>
 
           {/* Sticky save bar */}

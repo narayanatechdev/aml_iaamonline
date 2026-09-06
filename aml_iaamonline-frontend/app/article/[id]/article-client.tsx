@@ -39,6 +39,34 @@ interface AuthorAffiliation {
     full_address: string | null;
   } | null;
   affiliation_text: string | null;
+  /** All affiliations for this author, in display order (multi-affiliation support). */
+  affiliations?: { id: number; name: string }[];
+}
+
+/**
+ * Union of every author's affiliation names, ordered by first appearance —
+ * the page numbers them 1, 2, 3… and each author shows their numbers.
+ */
+function affiliationUnion(authors: AuthorAffiliation[]): string[] {
+  const names: string[] = [];
+  authors.forEach((a) => {
+    const own = (a.affiliations?.length
+      ? a.affiliations.map((x) => x.name)
+      : [a.affiliation?.name || a.affiliation_text]
+    ).filter(Boolean) as string[];
+    own.forEach((n) => {
+      if (!names.includes(n)) names.push(n);
+    });
+  });
+  return names;
+}
+
+function authorAffiliationNumbers(author: AuthorAffiliation, union: string[]): number[] {
+  const own = (author.affiliations?.length
+    ? author.affiliations.map((x) => x.name)
+    : [author.affiliation?.name || author.affiliation_text]
+  ).filter(Boolean) as string[];
+  return own.map((n) => union.indexOf(n) + 1).filter((n) => n > 0);
 }
 
 function getAuthorName(author: any): string {
@@ -366,21 +394,17 @@ export default function ArticleClient() {
                   <div className="mb-3">
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
                       {authorsWithAffiliations.map((author, index) => {
-                        const allAffiliations = authorsWithAffiliations
-                          .map(a => a.affiliation?.name || a.affiliation_text)
-                          .filter(Boolean);
-                        const uniqueAffiliations = [...new Set(allAffiliations)];
-                        const authorAffiliationName = author.affiliation?.name || author.affiliation_text;
-                        const affiliationNumber = uniqueAffiliations.indexOf(authorAffiliationName) + 1;
+                        const union = affiliationUnion(authorsWithAffiliations);
+                        const numbers = authorAffiliationNumbers(author, union);
 
                         return (
                           <span key={author.id} className="inline-flex items-baseline gap-1">
                             <span className="text-[#0f2d6b] text-base font-semibold">
                               {author.name}
                             </span>
-                            {affiliationNumber > 0 && (
+                            {numbers.length > 0 && (
                               <sup className="text-[#0f2d6b] text-xs font-medium">
-                                {affiliationNumber}
+                                {numbers.join(', ')}
                               </sup>
                             )}
                             {author.is_corresponding && (
@@ -398,7 +422,7 @@ export default function ArticleClient() {
                                 iD
                               </a>
                             )}
-                            {author.is_corresponding && author.email && (
+                            {author.email && (
                               <a
                                 href={`mailto:${author.email}`}
                                 title={author.email}
@@ -418,26 +442,14 @@ export default function ArticleClient() {
                   </div>
 
                   <div className="space-y-2">
-                    {(() => {
-                      const allAffiliations = authorsWithAffiliations
-                        .map(a => ({
-                          name: a.affiliation?.name || a.affiliation_text,
-                        }))
-                        .filter(aff => aff.name);
-
-                      const uniqueAffiliations = allAffiliations.filter((aff, index, self) =>
-                        index === self.findIndex(a => a.name === aff.name)
-                      );
-
-                      return uniqueAffiliations.map((affiliation, index) => (
-                        <div key={index} className="text-sm text-[#5a6a8a] leading-relaxed">
-                          <sup className="text-[#0f2d6b] font-bold text-sm">
-                            {index + 1}
-                          </sup>
-                          {affiliation.name}
-                        </div>
-                      ));
-                    })()}
+                    {affiliationUnion(authorsWithAffiliations).map((name, index) => (
+                      <div key={index} className="text-sm text-[#5a6a8a] leading-relaxed">
+                        <sup className="text-[#0f2d6b] font-bold text-sm">
+                          {index + 1}
+                        </sup>
+                        {name}
+                      </div>
+                    ))}
                   </div>
 
                   {authorsWithAffiliations.some(author => author.is_corresponding) && (
