@@ -143,6 +143,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
         Route::patch('/users/{id}/roles', [AdminUserController::class, 'updateRoles'])->name('admin.users.roles');
+        Route::patch('/users/{id}/affiliations', [AdminUserController::class, 'updateAffiliations'])->name('admin.users.affiliations');
         Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
         Route::get('/users/{id}/articles', [AdminUserController::class, 'articles'])->name('admin.users.articles');
 

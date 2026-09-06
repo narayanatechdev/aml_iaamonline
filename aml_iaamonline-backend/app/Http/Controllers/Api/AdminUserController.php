@@ -172,7 +172,7 @@ class AdminUserController extends Controller
             'home_page', 'alt_email', 'username',
             'is_reviewer', 'receive_news', 'join_date', 'comments',
         ])
-            ->with(['activeRoles:id,name,display_name,description', 'authorProfile:id,user_id,article_count,orcid'])
+            ->with(['activeRoles:id,name,display_name,description', 'authorProfile:id,user_id,article_count,orcid', 'affiliations'])
             ->findOrFail($id);
 
         $roles = $user->activeRoles->pluck('name')->toArray();
@@ -227,6 +227,53 @@ class AdminUserController extends Controller
         return response()->json([
             'data' => $user->fresh(['activeRoles']),
             'message' => 'User updated successfully.',
+        ]);
+    }
+
+    /**
+     * Replace a user's structured affiliation list. Exactly one entry ends up
+     * primary: the first flagged one, else the first entry.
+     */
+    public function updateAffiliations(Request $request, int $id): JsonResponse
+    {
+        $this->authorizeAdmin();
+
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'affiliations' => ['present', 'array', 'max:10'],
+            'affiliations.*.name' => ['required', 'string', 'max:1000'],
+            'affiliations.*.email' => ['nullable', 'email', 'max:255'],
+            'affiliations.*.is_primary' => ['required', 'boolean'],
+        ]);
+
+        $rows = array_values($validated['affiliations']);
+        $primaryIndex = 0;
+        foreach ($rows as $i => $row) {
+            if ($row['is_primary']) {
+                $primaryIndex = $i;
+                break;
+            }
+        }
+
+        $user->affiliations()->delete();
+        foreach ($rows as $i => $row) {
+            $user->affiliations()->create([
+                'name' => trim($row['name']),
+                'email' => $row['email'] ?? null,
+                'is_primary' => $i === $primaryIndex,
+                'position' => $i + 1,
+            ]);
+        }
+
+        $this->logAction('notification_sent', "Updated affiliations for user: {$user->email}", [
+            'resource_type' => 'user',
+            'resource_id' => (string) $user->id,
+        ]);
+
+        return response()->json([
+            'data' => $user->affiliations()->get(),
+            'message' => 'Affiliations updated.',
         ]);
     }
 

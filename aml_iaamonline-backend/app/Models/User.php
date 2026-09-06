@@ -46,6 +46,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function affiliations()
+    {
+        return $this->hasMany(UserAffiliation::class)->orderBy('position');
+    }
+
     public function authorProfile()
     {
         return $this->hasOne(Author::class);

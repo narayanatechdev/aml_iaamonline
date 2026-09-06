@@ -11,6 +11,7 @@ import { UserForm, UserFormData, Role } from '@/components/forms/UserForm';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
 import { authFetch, API_BASE } from '@/lib/adminAuth';
+import { UserAffiliationsEditor } from '@/components/admin/user-affiliations-editor';
 
 interface UserDetails extends UserFormData {
   created_at: string;
@@ -18,6 +19,7 @@ interface UserDetails extends UserFormData {
   last_login_ip: string | null;
   orcid: string | null;
   affiliation: string | null;
+  affiliations?: { name: string; email: string | null; is_primary: boolean }[];
   country: string | null;
   city: string | null;
   degree: string | null;
@@ -386,7 +388,6 @@ export default function EditUserPage() {
                 { label: 'User ID',     value: `#${user.id}` },
                 { label: 'Degree',      value: user.degree },
                 { label: 'Position',    value: user.position },
-                { label: 'Affiliation', value: user.affiliation },
                 { label: 'Country',     value: user.country },
                 { label: 'City',        value: user.city },
                 { label: 'ORCID',       value: user.orcid },
@@ -400,6 +401,9 @@ export default function EditUserPage() {
               ) : null)}
             </div>
           </div>
+
+          {/* Structured affiliations (Affiliation 1, 2… with primary + email) */}
+          <UserAffiliationsEditor userId={Number(user.id ?? 0)} initial={user.affiliations ?? []} />
 
           {/* Author link card */}
           {user.author_id && (
