@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Save, Info, Loader2 } from 'lucide-react';
+import { Save, Info, Loader2, Plus, Trash2 } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
 import { authFetch, API_BASE } from '@/lib/adminAuth';
@@ -13,10 +13,26 @@ interface AccessTier {
   monthly_limit: number;
 }
 
+interface SubscriptionPlan {
+  key: string;
+  name: string;
+  audience: 'individual' | 'institutional';
+  price: number;
+  currency: string;
+  period: 'year' | 'month';
+  description: string;
+  benefits: string[];
+  featured: boolean;
+}
+
 interface AccessModel {
   enabled: boolean;
   preview: 'abstract' | 'none';
   tiers: AccessTier[];
+  plans: SubscriptionPlan[];
+  article_price: number;
+  currency: string;
+  contact_email: string;
 }
 
 export default function AccessSettingsPage() {
@@ -61,13 +77,27 @@ export default function AccessSettingsPage() {
     []
   );
 
+  const updatePlan = (index: number, patch: Partial<SubscriptionPlan>) => {
+    setModel((prev) => {
+      if (!prev) return prev;
+      return { ...prev, plans: prev.plans.map((p, i) => (i === index ? { ...p, ...patch } : p)) };
+    });
+  };
+
   const save = async () => {
     if (!model) return;
     setSaving(true);
     try {
+      const payload = {
+        ...model,
+        plans: (model.plans ?? []).map((p) => ({
+          ...p,
+          benefits: p.benefits.map((b) => b.trim()).filter((b) => b !== ''),
+        })),
+      };
       const res = await authFetch(`${API_BASE}/admin/settings/access`, {
         method: 'PATCH',
-        body: JSON.stringify(model),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
@@ -207,6 +237,120 @@ export default function AccessSettingsPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Subscription plans & fees */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-gray-900">Subscription plans & fees</h2>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Shown on the public Subscriptions page. Edit prices before launch.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setModel({
+                    ...model,
+                    plans: [
+                      ...(model.plans ?? []),
+                      {
+                        key: `plan-${Date.now()}`,
+                        name: '',
+                        audience: 'individual',
+                        price: 0,
+                        currency: model.currency || 'USD',
+                        period: 'year',
+                        description: '',
+                        benefits: [],
+                        featured: false,
+                      },
+                    ],
+                  })
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dashed border-gray-300 text-xs font-medium text-gray-500 hover:border-[#0f2d6b] hover:text-[#0f2d6b] transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add plan
+              </button>
+            </div>
+
+            {(model.plans ?? []).map((plan, i) => (
+              <div key={plan.key} className="rounded-xl border border-gray-200 bg-gray-50/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#0f2d6b] uppercase tracking-wider">Plan {i + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => setModel({ ...model, plans: model.plans.filter((_, j) => j !== i) })}
+                    className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                    aria-label={`Remove plan ${i + 1}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Plan name</label>
+                    <input value={plan.name} onChange={(e) => updatePlan(i, { name: e.target.value })} className={input} placeholder="Individual Subscription" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Audience</label>
+                    <select value={plan.audience} onChange={(e) => updatePlan(i, { audience: e.target.value as SubscriptionPlan['audience'] })} className={input}>
+                      <option value="individual">Individual</option>
+                      <option value="institutional">Institutional</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="col-span-1">
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Price</label>
+                      <input type="number" min={0} value={plan.price} onChange={(e) => updatePlan(i, { price: Math.max(0, Number(e.target.value) || 0) })} className={input} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Currency</label>
+                      <input value={plan.currency} maxLength={3} onChange={(e) => updatePlan(i, { currency: e.target.value.toUpperCase() })} className={input} placeholder="USD" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1">Per</label>
+                      <select value={plan.period} onChange={(e) => updatePlan(i, { period: e.target.value as SubscriptionPlan['period'] })} className={input}>
+                        <option value="year">Year</option>
+                        <option value="month">Month</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Short description</label>
+                    <input value={plan.description} onChange={(e) => updatePlan(i, { description: e.target.value })} className={input} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Benefits (one per line)</label>
+                  <textarea
+                    value={plan.benefits.join('\n')}
+                    onChange={(e) => updatePlan(i, { benefits: e.target.value.split('\n') })}
+                    className={input + ' min-h-[70px] resize-y'}
+                  />
+                </div>
+                <label className="flex items-center gap-2 text-xs font-medium text-gray-600 cursor-pointer">
+                  <input type="checkbox" checked={plan.featured} onChange={(e) => updatePlan(i, { featured: e.target.checked })} className="w-4 h-4 accent-[#0f2d6b]" />
+                  Highlight as recommended plan
+                </label>
+              </div>
+            ))}
+
+            <div className="grid sm:grid-cols-3 gap-3 pt-2 border-t border-gray-100">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Per-article purchase fee</label>
+                <input type="number" min={0} value={model.article_price ?? 0} onChange={(e) => setModel({ ...model, article_price: Math.max(0, Number(e.target.value) || 0) })} className={input} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Currency</label>
+                <input value={model.currency ?? 'USD'} maxLength={3} onChange={(e) => setModel({ ...model, currency: e.target.value.toUpperCase() })} className={input} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Subscription contact email</label>
+                <input value={model.contact_email ?? ''} onChange={(e) => setModel({ ...model, contact_email: e.target.value })} className={input} />
+              </div>
             </div>
           </div>
 

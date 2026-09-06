@@ -53,7 +53,11 @@ export default async function AccessModelPage() {
           </h1>
           <p className="text-[#5a6a8a] text-sm">
             Advanced Materials Letters is a curated, not-for-profit journal of the International
-            Association of Advanced Materials (IAAM).
+            Association of Advanced Materials (IAAM). See{' '}
+            <a href="/subscribe" className="text-[#0f2d6b] underline">
+              Subscriptions &amp; Fees
+            </a>{' '}
+            for plans and pricing.
           </p>
         </div>
 

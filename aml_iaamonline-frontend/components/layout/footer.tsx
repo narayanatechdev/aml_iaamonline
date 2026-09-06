@@ -88,6 +88,7 @@ export function Footer() {
                 { label: 'Aims & Scope', href: '/aims-scope' },
                 { label: 'Editorial Board', href: '/editorial-board' },
                 { label: 'Indexing & Abstracting', href: '/indexing' },
+                { label: 'Subscriptions & Fees', href: '/subscribe' },
                 { label: 'Publication History', href: '/about' },
                 { label: 'Contact Us', href: '/contact' },
               ].map((l) => (
