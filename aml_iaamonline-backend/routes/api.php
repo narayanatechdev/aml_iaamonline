@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
+use App\Http\Controllers\Api\WorkflowSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -144,6 +145,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
         Route::patch('/users/{id}/roles', [AdminUserController::class, 'updateRoles'])->name('admin.users.roles');
         Route::patch('/users/{id}/affiliations', [AdminUserController::class, 'updateAffiliations'])->name('admin.users.affiliations');
+        Route::get('/settings/workflow', [WorkflowSettingsController::class, 'show'])->name('admin.settings.workflow');
+        Route::patch('/settings/workflow', [WorkflowSettingsController::class, 'update'])->name('admin.settings.workflow.update');
         Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
         Route::get('/users/{id}/articles', [AdminUserController::class, 'articles'])->name('admin.users.articles');
 
