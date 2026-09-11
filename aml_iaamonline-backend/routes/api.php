@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
 use App\Http\Controllers\Api\HomeSectionController;
+use App\Http\Controllers\Api\IndexingExportController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ManagingEditorController;
 use App\Http\Controllers\Api\NotificationController;
@@ -79,6 +80,16 @@ Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show')
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
 Route::get('/oai', [OaiController::class, 'handle'])->name('oai');
 Route::get('/articles/{id}/jats', [OaiController::class, 'jats'])->where('id', '[0-9]+')->name('articles.jats');
+
+Route::prefix('export')->name('export.')->group(function () {
+    Route::get('/issues', [IndexingExportController::class, 'issues'])->name('issues');
+    Route::get('/kbart', [IndexingExportController::class, 'kbart'])->name('kbart');
+    Route::get('/{volume}/{issue}/ris', [IndexingExportController::class, 'ris'])->name('ris');
+    Route::get('/{volume}/{issue}/bibtex', [IndexingExportController::class, 'bibtex'])->name('bibtex');
+    Route::get('/{volume}/{issue}/doaj', [IndexingExportController::class, 'doaj'])->name('doaj');
+    Route::get('/{volume}/{issue}/pubmed', [IndexingExportController::class, 'pubmed'])->name('pubmed');
+    Route::get('/{volume}/{issue}/agris', [IndexingExportController::class, 'agris'])->name('agris');
+});
 Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
 Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
 

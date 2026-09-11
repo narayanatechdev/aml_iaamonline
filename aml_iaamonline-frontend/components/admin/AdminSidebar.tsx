@@ -71,6 +71,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: 'Homepage', path: '/admin/content/homepage' },
       { label: 'Pages', path: '/admin/content/pages' },
+      { label: 'Indexing Exports', path: '/admin/content/indexing-exports' },
     ],
   },
   {
