@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -17,36 +17,72 @@ class ImportUsersSeeder extends Seeder
             base_path('../users_import.json')
         );
 
-        if (!file_exists($csvPath)) {
+        if (! file_exists($csvPath)) {
             $this->command->error("File not found: {$csvPath}");
+
             return;
         }
 
         $users = json_decode(file_get_contents($csvPath), true);
-        if (!$users) {
-            $this->command->error("Could not parse JSON file");
+        if (! $users) {
+            $this->command->error('Could not parse JSON file');
+
             return;
         }
 
-        $this->command->info("Found " . count($users) . " users to import");
+        $this->command->info('Found '.count($users).' users to import');
         $bar = $this->command->getOutput()->createProgressBar(count($users));
 
         $imported = 0;
+        $enriched = 0;
         $skipped = 0;
+
+        $enrichable = [
+            'title', 'first_name', 'last_name', 'degree', 'position', 'specialty',
+            'field_of_study', 'orcid', 'phone', 'mobile', 'country', 'city',
+            'affiliation', 'postal_code', 'home_page', 'alt_email', 'username',
+            'join_date', 'comments',
+        ];
 
         DB::beginTransaction();
 
         try {
             foreach ($users as $data) {
                 $email = $data['email'] ?? null;
-                if (!$email || User::where('email', $email)->exists()) {
+                if (! $email) {
                     $skipped++;
                     $bar->advance();
+
+                    continue;
+                }
+
+                $existing = User::whereRaw('lower(email) = ?', [strtolower($email)])->first();
+                if ($existing) {
+                    // Fill blank fields only — never overwrite data a user
+                    // (or an admin) has already set.
+                    $updates = [];
+                    foreach ($enrichable as $field) {
+                        $incoming = $data[$field] ?? null;
+                        if (filled($incoming) && blank($existing->{$field})) {
+                            $updates[$field] = $incoming;
+                        }
+                    }
+                    if (blank($existing->name) && (filled($data['first_name'] ?? null) || filled($data['last_name'] ?? null))) {
+                        $updates['name'] = trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? ''));
+                    }
+                    if ($updates !== []) {
+                        $existing->update($updates);
+                        $enriched++;
+                    } else {
+                        $skipped++;
+                    }
+                    $bar->advance();
+
                     continue;
                 }
 
                 $user = User::create([
-                    'name' => trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? '')),
+                    'name' => trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? '')),
                     'email' => $email,
                     'password' => Hash::make('ChangeMeOnFirstLogin!'),
                     'title' => $data['title'] ?? null,
@@ -93,12 +129,13 @@ class ImportUsersSeeder extends Seeder
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->command->error("Import failed: " . $e->getMessage());
+            $this->command->error('Import failed: '.$e->getMessage());
+
             return;
         }
 
         $bar->finish();
         $this->command->newLine();
-        $this->command->info("Imported: {$imported}, Skipped: {$skipped}");
+        $this->command->info("Imported: {$imported}, Enriched: {$enriched}, Skipped: {$skipped}");
     }
 }

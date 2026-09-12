@@ -15,6 +15,9 @@ class ReviewAssignment extends Model
         'response_date',
         'due_date',
         'completed_at',
+        'invite_reminder_sent_at',
+        'due_soon_reminder_sent_at',
+        'due_reminder_sent_at',
     ];
 
     protected $casts = [
@@ -22,6 +25,9 @@ class ReviewAssignment extends Model
         'response_date' => 'datetime',
         'due_date' => 'datetime',
         'completed_at' => 'datetime',
+        'invite_reminder_sent_at' => 'datetime',
+        'due_soon_reminder_sent_at' => 'datetime',
+        'due_reminder_sent_at' => 'datetime',
     ];
 
     public function manuscript()

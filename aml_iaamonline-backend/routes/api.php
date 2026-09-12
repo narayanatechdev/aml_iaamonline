@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
 use App\Http\Controllers\Api\HomeSectionController;
+use App\Http\Controllers\Api\IndexingExportController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ManagingEditorController;
 use App\Http\Controllers\Api\NotificationController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
+use App\Http\Controllers\Api\WorkflowSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -78,6 +80,16 @@ Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show')
 Route::get('/reference', [ReferenceController::class, 'index'])->name('reference');
 Route::get('/oai', [OaiController::class, 'handle'])->name('oai');
 Route::get('/articles/{id}/jats', [OaiController::class, 'jats'])->where('id', '[0-9]+')->name('articles.jats');
+
+Route::prefix('export')->name('export.')->group(function () {
+    Route::get('/issues', [IndexingExportController::class, 'issues'])->name('issues');
+    Route::get('/kbart', [IndexingExportController::class, 'kbart'])->name('kbart');
+    Route::get('/{volume}/{issue}/ris', [IndexingExportController::class, 'ris'])->name('ris');
+    Route::get('/{volume}/{issue}/bibtex', [IndexingExportController::class, 'bibtex'])->name('bibtex');
+    Route::get('/{volume}/{issue}/doaj', [IndexingExportController::class, 'doaj'])->name('doaj');
+    Route::get('/{volume}/{issue}/pubmed', [IndexingExportController::class, 'pubmed'])->name('pubmed');
+    Route::get('/{volume}/{issue}/agris', [IndexingExportController::class, 'agris'])->name('agris');
+});
 Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
 Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
 
@@ -143,6 +155,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
         Route::patch('/users/{id}/roles', [AdminUserController::class, 'updateRoles'])->name('admin.users.roles');
+        Route::patch('/users/{id}/affiliations', [AdminUserController::class, 'updateAffiliations'])->name('admin.users.affiliations');
+        Route::get('/settings/workflow', [WorkflowSettingsController::class, 'show'])->name('admin.settings.workflow');
+        Route::patch('/settings/workflow', [WorkflowSettingsController::class, 'update'])->name('admin.settings.workflow.update');
         Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
         Route::get('/users/{id}/articles', [AdminUserController::class, 'articles'])->name('admin.users.articles');
 
@@ -160,6 +175,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles/bulk', [AdminArticleController::class, 'bulkStore'])->name('admin.articles.bulk');
         Route::get('/articles/{id}', [AdminArticleController::class, 'show'])->name('admin.articles.show');
         Route::patch('/articles/{id}', [AdminArticleController::class, 'update'])->name('admin.articles.update');
+        Route::get('/articles/{id}/authors', [AdminArticleController::class, 'authors'])->name('admin.articles.authors');
+        Route::patch('/articles/{id}/authors', [AdminArticleController::class, 'updateAuthors'])->name('admin.articles.authors.update');
         Route::post('/articles/{id}/pdf', [AdminArticleController::class, 'uploadPdf'])->name('admin.articles.pdf');
         Route::post('/articles/{id}/graphical-abstract', [AdminArticleController::class, 'uploadGraphicalAbstract'])->name('admin.articles.graphical-abstract');
 

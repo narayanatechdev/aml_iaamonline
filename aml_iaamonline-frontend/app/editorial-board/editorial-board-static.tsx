@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Star, Globe, Mail, Award, BookOpen } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
+import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
 
 type Member = { name: string; affiliation: string; location: string; photo: string };
@@ -165,9 +166,7 @@ export default function EditorialBoardStatic({
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="mb-10 border-b border-border pb-8">
           <h1 className="text-[#0f2d6b] mb-4" style={{ fontSize: "2rem", fontWeight: 700 }}>Editorial Board</h1>
-          <p className="text-[#5a6a8a] text-lg leading-relaxed">
-            {intro}
-          </p>
+          <CmsRichText value={intro} className="text-[#5a6a8a] text-lg leading-relaxed" />
         </div>
 
         {/* Editor-in-Chief */}
@@ -206,7 +205,7 @@ export default function EditorialBoardStatic({
                       </a>
                     </div>
                   </div>
-                  <p className="text-[#3a4a6a] text-sm mb-4 leading-relaxed">{editorInChief.bio}</p>
+                  <CmsRichText value={editorInChief.bio} className="text-[#3a4a6a] text-sm mb-4 leading-relaxed" />
                   {expertise.length > 0 && (
                     <div>
                       <p className="text-[#0f2d6b] text-xs mb-2" style={{ fontWeight: 600 }}>Expertise Areas:</p>

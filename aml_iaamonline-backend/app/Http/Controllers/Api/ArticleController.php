@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Affiliation;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\Author;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Services\CitationFormatterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ArticleController extends Controller
@@ -233,9 +235,13 @@ class ArticleController extends Controller
             ->orderBy('position')
             ->get();
 
+        $affiliationMap = $this->affiliationsForAuthors($authors);
+
         return response()->json([
             'article_id' => $articleId,
-            'authors' => $authors->map(function ($articleAuthor) {
+            'authors' => $authors->map(function ($articleAuthor) use ($affiliationMap) {
+                $ids = $articleAuthor->affiliationIdList();
+
                 return [
                     'id' => $articleAuthor->author->id,
                     'name' => $articleAuthor->author->full_name,
@@ -253,6 +259,11 @@ class ArticleController extends Controller
                         'department' => $articleAuthor->affiliation->department,
                         'full_address' => $articleAuthor->affiliation->full_address,
                     ] : null,
+                    'affiliations' => array_values(array_filter(array_map(
+                        fn (int $id) => $affiliationMap[$id] ?? null,
+                        $ids
+                    ))),
+                    'affiliation_ids' => $ids,
                     'affiliation_text' => $articleAuthor->affiliation_text,
                 ];
             })->toArray(),
@@ -263,24 +274,20 @@ class ArticleController extends Controller
     public function getAffiliations(string $articleId)
     {
         $articleAuthors = ArticleAuthor::where('article_id', $articleId)
-            ->with('affiliation')
-            ->whereNotNull('affiliation_id')
+            ->orderBy('position')
             ->get();
 
-        $affiliations = $articleAuthors->groupBy('affiliation_id')
-            ->map(function ($authors) {
-                $affiliation = $authors->first()->affiliation;
+        $affiliationMap = $this->affiliationsForAuthors($articleAuthors);
 
-                return [
-                    'id' => $affiliation->id,
-                    'name' => $affiliation->name,
-                    'country' => $affiliation->country,
-                    'city' => $affiliation->city,
-                    'department' => $affiliation->department,
-                    'full_address' => $affiliation->full_address,
-                    'author_count' => $authors->count(),
-                ];
-            })
+        $counts = [];
+        foreach ($articleAuthors as $articleAuthor) {
+            foreach ($articleAuthor->affiliationIdList() as $id) {
+                $counts[$id] = ($counts[$id] ?? 0) + 1;
+            }
+        }
+
+        $affiliations = collect($affiliationMap)
+            ->map(fn (array $affiliation) => $affiliation + ['author_count' => $counts[$affiliation['id']] ?? 0])
             ->values();
 
         return response()->json([
@@ -288,6 +295,49 @@ class ArticleController extends Controller
             'affiliations' => $affiliations->toArray(),
             'total_affiliations' => $affiliations->count(),
         ]);
+    }
+
+    /**
+     * The article's numbered affiliation list: the union of every author's
+     * affiliations, ordered by first appearance in author order — the same
+     * order the public page numbers them (1, 2, 3…).
+     *
+     * @param  Collection<int, ArticleAuthor>  $articleAuthors
+     * @return array<int, array{id: int, name: string|null, country: string|null, city: string|null, department: string|null, full_address: string|null}>
+     */
+    private function affiliationsForAuthors($articleAuthors): array
+    {
+        $orderedIds = [];
+        foreach ($articleAuthors as $articleAuthor) {
+            foreach ($articleAuthor->affiliationIdList() as $id) {
+                if (! in_array($id, $orderedIds, true)) {
+                    $orderedIds[] = $id;
+                }
+            }
+        }
+
+        if ($orderedIds === []) {
+            return [];
+        }
+
+        $rows = Affiliation::whereIn('id', $orderedIds)->get()->keyBy('id');
+
+        $map = [];
+        foreach ($orderedIds as $id) {
+            $affiliation = $rows->get($id);
+            if ($affiliation) {
+                $map[$id] = [
+                    'id' => $affiliation->id,
+                    'name' => $affiliation->name,
+                    'country' => $affiliation->country,
+                    'city' => $affiliation->city,
+                    'department' => $affiliation->department,
+                    'full_address' => $affiliation->full_address,
+                ];
+            }
+        }
+
+        return $map;
     }
 
     public function citation(string $id, Request $request)

@@ -28,9 +28,14 @@ class AuthorController extends Controller
             ])
             ->groupBy('authors.id', 'authors.name', 'authors.email', 'authors.orcid', 'authors.article_count', 'affiliations.name', 'authors.affiliation', 'affiliations.country', 'affiliations.city', 'affiliations.department');
 
-        // Apply filters
-        if ($request->filled('search')) {
-            $query->where('authors.name', 'like', '%'.$request->search.'%');
+        // Apply filters (the admin UI sends ?q=, older callers ?search=)
+        $searchTerm = $request->input('q', $request->input('search'));
+        if (filled($searchTerm)) {
+            $like = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+            $query->where(function ($inner) use ($searchTerm, $like) {
+                $inner->where('authors.name', $like, '%'.$searchTerm.'%')
+                    ->orWhere('authors.email', $like, '%'.$searchTerm.'%');
+            });
         }
 
         if ($request->filled('affiliation')) {

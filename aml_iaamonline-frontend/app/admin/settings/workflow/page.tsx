@@ -1,92 +1,162 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Save, Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Save, Info, Loader2 } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
-
-const STORAGE_KEY = 'admin_settings_workflow';
+import { authFetch, API_BASE } from '@/lib/adminAuth';
 
 interface WorkflowSettings {
-  reviewersPerManuscript: number;
-  reviewDeadlineDays: number;
-  minReviewsForDecision: number;
-  autoAssignEditor: boolean;
-  doubleBlind: boolean;
+  review_deadline_days: number;
+  invite_response_days: number;
+  invite_reminder_after_days: number;
+  due_soon_reminder_days: number;
 }
 
-const DEFAULTS: WorkflowSettings = {
-  reviewersPerManuscript: 3,
-  reviewDeadlineDays: 21,
-  minReviewsForDecision: 2,
-  autoAssignEditor: true,
-  doubleBlind: true,
-};
+const FIELDS: { key: keyof WorkflowSettings; label: string; help: string }[] = [
+  {
+    key: 'review_deadline_days',
+    label: 'Review deadline (days)',
+    help: 'Default time reviewers get to submit their report after accepting.',
+  },
+  {
+    key: 'invite_response_days',
+    label: 'Invitation response window (days)',
+    help: 'Invitations not answered within this window expire automatically.',
+  },
+  {
+    key: 'invite_reminder_after_days',
+    label: 'Invitation reminder after (days)',
+    help: 'A single nudge email is sent this many days after an unanswered invitation.',
+  },
+  {
+    key: 'due_soon_reminder_days',
+    label: 'Due-soon reminder (days before deadline)',
+    help: 'Reviewers get a reminder this many days before their review is due, and again on the due date.',
+  },
+];
 
 export default function WorkflowSettingsPage() {
-  const [form, setForm] = useState<WorkflowSettings>(DEFAULTS);
-  const [toast, setToast] = useState<{ type: ToastType; message: string; isVisible: boolean }>({ type: 'success', message: '', isVisible: false });
+  const [settings, setSettings] = useState<WorkflowSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: ToastType; message: string; isVisible: boolean }>({
+    type: 'success',
+    message: '',
+    isVisible: false,
+  });
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setForm({ ...DEFAULTS, ...JSON.parse(raw) });
-    } catch { /* ignore */ }
+    (async () => {
+      try {
+        const res = await authFetch(`${API_BASE}/admin/settings/workflow`);
+        if (!res.ok) throw new Error(`Failed to load settings (${res.status})`);
+        setSettings((await res.json()).data);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to load settings');
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const save = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-    setToast({ type: 'success', message: 'Workflow settings saved.', isVisible: true });
+  const save = async () => {
+    if (!settings) return;
+    setSaving(true);
+    try {
+      const res = await authFetch(`${API_BASE}/admin/settings/workflow`, {
+        method: 'PATCH',
+        body: JSON.stringify(settings),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message || `Save failed (${res.status})`);
+      }
+      setToast({ type: 'success', message: 'Workflow settings saved.', isVisible: true });
+    } catch (e) {
+      setToast({ type: 'error', message: e instanceof Error ? e.message : 'Save failed', isVisible: true });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const input = 'w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]';
+  const input =
+    'w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]';
 
   return (
     <div className="min-h-full max-w-3xl">
-      <AdminBreadcrumb items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Settings' }, { label: 'Workflow' }]} />
+      <AdminBreadcrumb
+        items={[
+          { label: 'Dashboard', href: '/admin' },
+          { label: 'Settings' },
+          { label: 'Workflow' },
+        ]}
+      />
 
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Workflow Settings</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Peer review process and editorial defaults</p>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Peer-review deadlines and the automated reminder cadence.
+        </p>
       </div>
 
       <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-6 flex items-start gap-2">
         <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-blue-800">Settings are saved in this browser. Server-side persistence can be wired to a settings API when available.</p>
+        <p className="text-xs text-blue-800">
+          The reminder scheduler runs daily at 06:00 server time: it nudges unanswered
+          invitations, expires stale ones, and reminds reviewers before and on their deadline.
+          Changes here apply from the next run.
+        </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Reviewers / manuscript</label>
-            <input type="number" min={1} max={6} className={input} value={form.reviewersPerManuscript} onChange={(e) => setForm({ ...form, reviewersPerManuscript: Number(e.target.value) })} />
+      {loading ? (
+        <div className="flex items-center gap-2 text-gray-500 text-sm py-12 justify-center">
+          <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+        </div>
+      ) : error || !settings ? (
+        <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-sm text-red-700">
+          {error ?? 'Settings unavailable.'}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+            {FIELDS.map((field) => (
+              <div key={field.key}>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{field.label}</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={settings[field.key]}
+                  onChange={(e) =>
+                    setSettings({ ...settings, [field.key]: Math.max(1, parseInt(e.target.value, 10) || 1) })
+                  }
+                  className={input}
+                />
+                <p className="text-xs text-gray-400 mt-1">{field.help}</p>
+              </div>
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Review deadline (days)</label>
-            <input type="number" min={7} max={90} className={input} value={form.reviewDeadlineDays} onChange={(e) => setForm({ ...form, reviewDeadlineDays: Number(e.target.value) })} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Min reviews for decision</label>
-            <input type="number" min={1} max={6} className={input} value={form.minReviewsForDecision} onChange={(e) => setForm({ ...form, minReviewsForDecision: Number(e.target.value) })} />
+
+          <div className="flex justify-end">
+            <button
+              onClick={save}
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0f2d6b] text-white text-sm font-medium hover:bg-[#0d2560] disabled:opacity-60 transition-colors"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Save changes
+            </button>
           </div>
         </div>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" className="accent-[#0f2d6b] w-4 h-4" checked={form.autoAssignEditor} onChange={(e) => setForm({ ...form, autoAssignEditor: e.target.checked })} />
-          <span className="text-sm text-gray-700">Automatically assign a handling editor on submission</span>
-        </label>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" className="accent-[#0f2d6b] w-4 h-4" checked={form.doubleBlind} onChange={(e) => setForm({ ...form, doubleBlind: e.target.checked })} />
-          <span className="text-sm text-gray-700">Double-blind review (hide author identities from reviewers)</span>
-        </label>
+      )}
 
-        <div className="pt-4 border-t border-gray-100 flex justify-end">
-          <button onClick={save} className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c] transition-colors shadow-sm">
-            <Save className="w-4 h-4" /> Save Changes
-          </button>
-        </div>
-      </div>
-
-      <SimpleToast {...toast} onClose={() => setToast((t) => ({ ...t, isVisible: false }))} />
+      <SimpleToast
+        type={toast.type}
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((t) => ({ ...t, isVisible: false }))}
+      />
     </div>
   );
 }
