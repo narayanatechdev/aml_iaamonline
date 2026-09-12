@@ -183,13 +183,7 @@ export function Navbar() {
       <div className="border-b border-gray-200 px-4 py-4" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
           <a href="/" className="flex items-center gap-4 flex-shrink-0">
-            <div className="w-11 h-11 rounded-lg bg-black">
-              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full p-1.5">
-                <path d="M16 3 4 9v14l12 6 12-6V9L16 3Z" stroke="#fff" strokeWidth="1.4" opacity=".9"/>
-                <path d="M16 3v26M4 9l24 14M28 9 4 23" stroke="#ccc" strokeWidth="1" opacity=".7"/>
-                <circle cx="16" cy="16" r="3.4" fill="#fff"/>
-              </svg>
-            </div>
+            <img src="/logo.jpg" alt="Advanced Materials Letters Logo" className="h-14 w-auto object-contain rounded-md" />
             <div>
               <div className="text-lg font-semibold text-black">Advanced Materials Letters</div>
               <div className="text-xs text-gray-600">Published by International Association of Advanced Materials</div>
