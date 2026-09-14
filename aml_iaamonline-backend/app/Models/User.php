@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Services\IaamIdService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable([
-    'name', 'email', 'password', 'title', 'first_name', 'last_name',
+    'iaam_id', 'name', 'email', 'password', 'title', 'first_name', 'last_name',
     'degree', 'position', 'specialty', 'field_of_study', 'orcid',
     'phone', 'mobile', 'fax', 'country', 'city', 'affiliation',
     'postal_code', 'home_page', 'alt_email', 'username',
@@ -24,6 +25,16 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (blank($user->iaam_id)) {
+                $cohortDate = $user->join_date ?? now();
+                $user->iaam_id = app(IaamIdService::class)->generate($cohortDate);
+            }
+        });
+    }
 
     public function getRoleNames(): array
     {
