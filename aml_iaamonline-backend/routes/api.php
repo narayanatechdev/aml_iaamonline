@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
+use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
 use App\Http\Controllers\Api\WorkflowSettingsController;
@@ -92,6 +93,14 @@ Route::prefix('export')->name('export.')->group(function () {
 });
 Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
 Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
+
+// Service-to-service fetch API — for other IAAM systems (the Portal,
+// eventually AMP) to ask "what does AML have on this person," keyed by
+// IAAM ID. Authenticated as a system (ServiceApiAuth), never as a user.
+Route::prefix('service')->name('service.')->middleware('auth.service')->group(function () {
+    Route::get('/users/{iaamId}', [ServiceApiController::class, 'showUser'])->name('users.show');
+    Route::get('/users/by-email/{email}', [ServiceApiController::class, 'showUserByEmail'])->name('users.show-by-email');
+});
 
 // Reviewer Routes
 Route::post('/reviewer/verify-email', [ReviewerController::class, 'verifyEmail'])->name('reviewer.verify-email');

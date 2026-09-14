@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FEATURED_ARTICLES, FeaturedArticle } from "@/lib/realData";
-import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock } from "lucide-react";
+import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock, Copy, Check, Loader2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { RichText } from "@/components/shared/rich-text";
 import { richTextToPlain } from "@/lib/rich-text";
@@ -94,6 +94,11 @@ export default function ArticleClient() {
   const [accessModel, setAccessModel] = useState<AccessModel | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [accessCheck, setAccessCheck] = useState<AccessCheck | null>(null);
+  const [citeFormat, setCiteFormat] = useState<string | null>(null);
+  const [citeText, setCiteText] = useState<Record<string, string>>({});
+  const [citeLoading, setCiteLoading] = useState(false);
+  const [citeError, setCiteError] = useState<string | null>(null);
+  const [citeCopied, setCiteCopied] = useState(false);
 
   // Subscription gate: anonymous visitors see the preview with a
   // subscribe/membership prompt; signed-in members consume their tier's
@@ -246,6 +251,46 @@ export default function ArticleClient() {
 
   const authorNames = getAuthorDisplay(article.authors);
   const pdfDownloads = (article as any).pdf_downloads || 0;
+
+  // Backend accepts apa/mla/bibtex/ris/endonote (its own spelling) — map from the button labels.
+  const CITE_FORMAT_PARAM: Record<string, string> = {
+    APA: 'apa',
+    MLA: 'mla',
+    BibTeX: 'bibtex',
+    RIS: 'ris',
+    EndNote: 'endonote',
+  };
+
+  const selectCiteFormat = async (label: string) => {
+    setCiteFormat(label);
+    setCiteCopied(false);
+    if (citeText[label]) return;
+
+    setCiteLoading(true);
+    setCiteError(null);
+    try {
+      const format = CITE_FORMAT_PARAM[label];
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}/citation?format=${format}`);
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to generate citation.');
+      setCiteText((prev) => ({ ...prev, [label]: json.citation as string }));
+    } catch (e) {
+      setCiteError(e instanceof Error ? e.message : 'Failed to generate citation.');
+    } finally {
+      setCiteLoading(false);
+    }
+  };
+
+  const copyCitation = async () => {
+    if (!citeFormat || !citeText[citeFormat]) return;
+    try {
+      await navigator.clipboard.writeText(citeText[citeFormat]);
+      setCiteCopied(true);
+      setTimeout(() => setCiteCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable (e.g. insecure context) — silently ignore.
+    }
+  };
 
   return (
     <MainLayout>
@@ -569,7 +614,10 @@ export default function ArticleClient() {
                   <Download className="w-4 h-4" /> PDF Unavailable
                 </button>
               ))}
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
+              <button
+                onClick={() => document.getElementById('citation')?.scrollIntoView({ behavior: 'smooth' })}
+                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
+              >
                 <Quote className="w-4 h-4" /> Cite
               </button>
               <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
@@ -645,21 +693,50 @@ export default function ArticleClient() {
           <div id="citation" className="bg-gray-50 py-6 px-0 scroll-mt-36">
             <h2 className="text-black text-lg mb-3" style={{ fontWeight: 700 }}>How to Cite</h2>
             <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
-                {authorNames} ({article.year}). <RichText html={article.title} />. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
-                <a
-                  href={`https://doi.org/${article.doi}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0f2d6b] hover:underline"
-                >
-                  https://doi.org/{article.doi}
-                </a>
-              </p>
+              {!citeFormat ? (
+                <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
+                  {authorNames} ({article.year}). <RichText html={article.title} />. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
+                  <a
+                    href={`https://doi.org/${article.doi}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0f2d6b] hover:underline"
+                  >
+                    https://doi.org/{article.doi}
+                  </a>
+                </p>
+              ) : citeLoading ? (
+                <div className="flex items-center gap-2 text-[#5a6a8a] text-sm py-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Generating {citeFormat} citation…
+                </div>
+              ) : citeError ? (
+                <p className="text-red-600 text-sm">{citeError}</p>
+              ) : (
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono whitespace-pre-wrap flex-1">
+                    {citeText[citeFormat]}
+                  </p>
+                  <button
+                    onClick={copyCitation}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-border text-xs text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors flex-shrink-0"
+                  >
+                    {citeCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {citeCopied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+              )}
             </div>
             <div className="flex gap-2 mt-3">
               {["APA", "MLA", "BibTeX", "RIS", "EndNote"].map((fmt) => (
-                <button key={fmt} className="px-3 py-1 border border-border rounded text-sm text-black bg-white hover:bg-black hover:text-white transition-colors">
+                <button
+                  key={fmt}
+                  onClick={() => selectCiteFormat(fmt)}
+                  className={`px-3 py-1 border border-border rounded text-sm transition-colors ${
+                    citeFormat === fmt
+                      ? 'bg-black text-white'
+                      : 'text-black bg-white hover:bg-black hover:text-white'
+                  }`}
+                >
                   {fmt}
                 </button>
               ))}
