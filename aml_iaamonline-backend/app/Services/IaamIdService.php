@@ -15,14 +15,19 @@ use Illuminate\Support\Facades\DB;
  *   C        Luhn check digit over the 9 digits before it, so any system
  *            can validate an ID with arithmetic alone — no DB round trip.
  *
- * Central identity is meant to be owned by the IAAM portal long-term (see
- * the portal restructure plan). Until that system exists, AML mints its
- * own IDs here — real, correctly-formatted, ready to be adopted as-is
- * once a central issuer is built, rather than left as a placeholder.
+ * AML and the IAAM Portal both mint IDs in this same format, independently,
+ * so the 7-digit sequence range is split to avoid two systems ever handing
+ * out the same ID: AML issues from the low end (1..4,999,999 per year),
+ * the Portal issues from 5,000,000 up. generate() guards the AML side of
+ * that boundary — if it ever fires, AML's own volume has become the
+ * problem, not the split itself.
  */
 class IaamIdService
 {
     private const PREFIX = 'IAAM';
+
+    /** Highest sequence AML may issue per year — everything above is the Portal's reserved range. */
+    private const MAX_SEQUENCE = 4_999_999;
 
     /** Mint the next IAAM ID for a person whose identity dates to $cohortDate. */
     public function generate(\DateTimeInterface $cohortDate): string
@@ -35,6 +40,11 @@ class IaamIdService
                 $row = IaamIdSequence::create(['year' => $year, 'next_sequence' => 1]);
             }
             $next = $row->next_sequence;
+
+            if ($next > self::MAX_SEQUENCE) {
+                throw new \RuntimeException("IAAM ID sequence for year {$year} exhausted AML's reserved range (".self::MAX_SEQUENCE.'); it would collide with the Portal\'s range.');
+            }
+
             $row->update(['next_sequence' => $next + 1]);
 
             return $next;
