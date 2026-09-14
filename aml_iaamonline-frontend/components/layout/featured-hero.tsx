@@ -89,12 +89,12 @@ export function FeaturedArticle({ content = {} }: { content?: HeroContent } = {}
                 >
                   Download PDF
                 </a>
-                <button
+                {/* <button
                   className="px-4 py-2 border border-gray-700 text-gray-800 text-sm font-semibold rounded hover:bg-gray-800 hover:text-white transition-colors"
                   style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
                 >
                   Cite
-                </button>
+                </button> */}
               </div>
 
               <div className="text-gray-800">
