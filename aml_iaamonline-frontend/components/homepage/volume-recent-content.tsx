@@ -140,20 +140,7 @@ export function VolumeRecentContent() {
         </Link>
       </div>
 
-      {/* Journal Covers Banner */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <div className="w-full overflow-hidden rounded-lg">
-          <img 
-            src="https://aml.iaamonline.org/data/aml/coversheet/head_en.jpg"
-            alt="Advanced Materials Letters Journal Covers"
-            className="w-full h-auto object-contain"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
-          />
-        </div>
-      </div>
+
 
       {/* Recent Issues */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">

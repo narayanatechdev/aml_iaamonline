@@ -3,11 +3,9 @@ import type { ComponentType } from 'react';
 import { FeaturedArticle } from '@/components/layout/featured-hero';
 import { FeaturedArticles } from '@/components/homepage/featured-articles';
 import { OnTheCover } from '@/components/homepage/on-the-cover';
-import { ChallengeDivisions } from '@/components/homepage/challenge-divisions';
-import { Announcements } from '@/components/homepage/announcements';
-import { IAAMFellowship } from '@/components/homepage/iaam-fellowship';
-import { ArticleCategories } from '@/components/homepage/article-categories';
-import { JournalInfoHeader } from '@/components/homepage/journal-info-header';
+
+
+
 import { HeroSection } from '@/components/homepage/hero-section';
 import { ContentLayout } from '@/components/homepage/content-layout';
 import { CTASection } from '@/components/homepage/cta-section';
@@ -43,11 +41,8 @@ export const BLOCK_COMPONENTS: Record<string, BlockComponent> = {
   featured_hero: FeaturedArticle,
   featured_articles: FeaturedArticles,
   on_the_cover: OnTheCover,
-  challenge_divisions: ChallengeDivisions,
-  announcements: Announcements,
-  iaam_fellowship: IAAMFellowship,
-  article_categories: ArticleCategories,
-  journal_info_header: JournalInfoHeader,
+
+
   hero_section: HeroSection,
   content_layout: ContentLayout,
   cta_section: CTASection,
@@ -60,11 +55,8 @@ export const BLOCK_CATALOGUE: BlockTypeMeta[] = [
   { type: 'featured_hero', label: 'Featured Article (Hero)', description: 'Large hero — latest article automatically, or pick your own.', editable: true },
   { type: 'featured_articles', label: 'Featured Articles', description: 'Carousel of featured/recent articles.', editable: true },
   { type: 'on_the_cover', label: 'On the Cover', description: 'Current issue cover spotlight — image, title, description, volume/issue.', editable: true },
-  { type: 'challenge_divisions', label: 'Challenge Divisions', description: 'Scrollable cards for the research challenge divisions — heading, intro and each card are editable.', editable: true },
-  { type: 'announcements', label: 'Announcements', description: 'Latest journal announcements.', editable: true },
-  { type: 'iaam_fellowship', label: 'IAAM Fellowship', description: 'Fellowship promo section.', editable: false },
-  { type: 'article_categories', label: 'Article Categories', description: 'Browse-by-category grid.', editable: false },
-  { type: 'journal_info_header', label: 'Journal Info Header', description: 'Journal metadata / cover strip.', editable: false },
+
+
   { type: 'hero_section', label: 'Hero Section', description: 'Secondary hero banner.', editable: false },
   { type: 'content_layout', label: 'Content Layout', description: 'Main content + sidebar layout.', editable: false },
   { type: 'cta_section', label: 'Call To Action', description: 'Closing call-to-action band.', editable: false },
