@@ -15,34 +15,33 @@ use Illuminate\Support\Facades\DB;
  *   C        Luhn check digit over the 9 digits before it, so any system
  *            can validate an ID with arithmetic alone — no DB round trip.
  *
- * AML and the IAAM Portal both mint IDs in this same format, independently,
- * so the 7-digit sequence range is split to avoid two systems ever handing
- * out the same ID: AML issues from the low end (1..4,999,999 per year),
- * the Portal issues from 5,000,000 up. generate() guards the AML side of
- * that boundary — if it ever fires, AML's own volume has become the
- * problem, not the split itself.
+ * AML, AMP, and the IAAM Portal all mint IDs in this same format,
+ * independently, so the 7-digit sequence is split into a non-overlapping
+ * range per deployment (config/iaam_id.php, set via .env) to avoid two
+ * systems ever handing out the same ID. generate() guards this app's own
+ * slice of that range — if it ever fires, this app's own volume has
+ * outgrown its slice, not a flaw in the split itself.
  */
 class IaamIdService
 {
     private const PREFIX = 'IAAM';
 
-    /** Highest sequence AML may issue per year — everything above is the Portal's reserved range. */
-    private const MAX_SEQUENCE = 4_999_999;
-
     /** Mint the next IAAM ID for a person whose identity dates to $cohortDate. */
     public function generate(\DateTimeInterface $cohortDate): string
     {
         $year = (int) $cohortDate->format('y');
+        $rangeStart = (int) config('iaam_id.range_start');
+        $rangeEnd = (int) config('iaam_id.range_end');
 
-        $sequence = DB::transaction(function () use ($year) {
+        $sequence = DB::transaction(function () use ($year, $rangeStart, $rangeEnd) {
             $row = IaamIdSequence::lockForUpdate()->find($year);
             if (! $row) {
-                $row = IaamIdSequence::create(['year' => $year, 'next_sequence' => 1]);
+                $row = IaamIdSequence::create(['year' => $year, 'next_sequence' => $rangeStart]);
             }
             $next = $row->next_sequence;
 
-            if ($next > self::MAX_SEQUENCE) {
-                throw new \RuntimeException("IAAM ID sequence for year {$year} exhausted AML's reserved range (".self::MAX_SEQUENCE.'); it would collide with the Portal\'s range.');
+            if ($next > $rangeEnd) {
+                throw new \RuntimeException("IAAM ID sequence for year {$year} exhausted this app's reserved range ({$rangeStart}-{$rangeEnd}); it would collide with another system's range.");
             }
 
             $row->update(['next_sequence' => $next + 1]);

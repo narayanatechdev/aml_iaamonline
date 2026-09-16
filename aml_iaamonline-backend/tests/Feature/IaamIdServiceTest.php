@@ -19,13 +19,24 @@ test('generate mints a well-formed, checksum-valid id and increments the per-yea
         ->and(substr($second, 4, 9))->toBeGreaterThan(substr($first, 4, 9));
 });
 
-test('generate refuses to cross into the portal\'s reserved sequence range', function () {
+test('generate refuses to cross past this app\'s configured range ceiling', function () {
     $service = app(IaamIdService::class);
+    $rangeEnd = config('iaam_id.range_end');
 
-    IaamIdSequence::create(['year' => 26, 'next_sequence' => 5_000_000]);
+    IaamIdSequence::create(['year' => 26, 'next_sequence' => $rangeEnd + 1]);
 
     $service->generate(new DateTime('2026-01-01'));
-})->throws(RuntimeException::class, "would collide with the Portal's range");
+})->throws(RuntimeException::class, 'exhausted this app\'s reserved range');
+
+test('generate starts a fresh year at the configured range floor, not always at 1', function () {
+    config(['iaam_id.range_start' => 2_500_000, 'iaam_id.range_end' => 4_999_999]);
+    $service = app(IaamIdService::class);
+
+    $id = $service->generate(new DateTime('2026-01-01'));
+
+    expect($id)->toBe($service->format(26, 2_500_000))
+        ->and(IaamIdSequence::find(26)->next_sequence)->toBe(2_500_001);
+});
 
 test('isValid rejects malformed and checksum-invalid ids', function (string $iaamId) {
     expect(app(IaamIdService::class)->isValid($iaamId))->toBeFalse();
