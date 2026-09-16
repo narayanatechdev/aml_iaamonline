@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://amljournal.iaamonline.org'),
+  // Overridden per-build so canonical/OG URLs match wherever this build is
+  // actually served — see NEXT_PUBLIC_BASE_PATH in next.config.js.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://amljournal.iaamonline.org'),
   title: {
     default: 'Advanced Materials Letters',
     template: '%s | Advanced Materials Letters',

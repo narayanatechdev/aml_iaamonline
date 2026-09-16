@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { FEATURED_ARTICLES } from '@/lib/realData';
 
-const BASE_URL = 'https://amljournal.iaamonline.org';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://amljournal.iaamonline.org';
 
 const STATIC_ROUTES = [
   '',

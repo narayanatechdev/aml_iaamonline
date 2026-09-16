@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin', '/dashboard', '/account', '/api'],
     },
-    sitemap: 'https://amljournal.iaamonline.org/sitemap.xml',
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://amljournal.iaamonline.org'}/sitemap.xml`,
   };
 }
