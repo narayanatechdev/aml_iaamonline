@@ -22,9 +22,11 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
                 <h1 className="text-2xl font-bold text-black leading-tight">
                   {JOURNAL_INFO.name}
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1 uppercase tracking-wider">
-                  {JOURNAL_INFO.tagline}
-                </p>
+                {JOURNAL_INFO.tagline && (
+                  <p className="text-sm text-muted-foreground mt-1 uppercase tracking-wider">
+                    {JOURNAL_INFO.tagline}
+                  </p>
+                )}
               </div>
             </div>
             
