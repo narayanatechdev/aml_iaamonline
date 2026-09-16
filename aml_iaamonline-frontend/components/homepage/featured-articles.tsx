@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { getRecentArticles } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import { FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -44,9 +45,9 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
             {heading}
           </h2>
           <div className="flex items-center gap-4">
-            <a href="/articles" className="text-amber-700 font-semibold hover:text-amber-800 transition">
+            <Link href="/articles" className="text-amber-700 font-semibold hover:text-amber-800 transition">
               All articles →
-            </a>
+            </Link>
             <div className="flex gap-2">
               <button
                 onClick={() => scroll('left')}
@@ -70,7 +71,7 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
         <div ref={scrollContainerRef} className="overflow-x-hidden pb-4" style={{ scrollBehavior: 'smooth' }}>
           <div className="flex gap-6 min-w-max">
           {articles.map((article) => (
-            <a
+            <Link
               key={article.id}
               href={`/article/${article.id}`}
               className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0 w-80 flex flex-col"
@@ -126,17 +127,17 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
                       PDF
                     </a>
                   )}
-                  <a
+                  <Link
                     href={`/article/${article.id}`}
                     onClick={(e) => e.stopPropagation()}
                     className="flex-1 flex items-center justify-center gap-1 px-2 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded text-xs font-semibold transition-colors"
                   >
                     <FileText className="w-3 h-3" />
                     Full text
-                  </a>
+                  </Link>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
           </div>
         </div>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
 import { JOURNAL_INFO } from '@/lib/realData';
 
@@ -52,7 +53,7 @@ export default function PrivacyPolicyPage() {
 
           <h3 className="text-[#0f2d6b] text-sm font-semibold mb-1 mt-3">Cookie data</h3>
           <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            See our <a href="/cookie-policy" className="text-[#0f2d6b] underline">Cookie Policy</a> for a full list
+            See our <Link href="/cookie-policy" className="text-[#0f2d6b] underline">Cookie Policy</Link> for a full list
             of cookies used and their purposes.
           </p>
         </section>

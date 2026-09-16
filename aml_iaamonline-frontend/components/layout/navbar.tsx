@@ -182,25 +182,25 @@ export function Navbar() {
       {/* ===== MASTHEAD ===== */}
       <div className="border-b border-gray-200 px-4 py-4" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
-          <a href="/" className="flex items-center gap-4 flex-shrink-0">
+          <Link href="/" className="flex items-center gap-4 flex-shrink-0">
             <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/logo.jpg`} alt={`${JOURNAL_INFO.name} Logo`} className="h-14 w-auto object-contain rounded-md" />
             <div>
               <div className="text-lg font-semibold text-black">{JOURNAL_INFO.name}</div>
               <div className="text-xs text-gray-600">Published by International Association of Advanced Materials</div>
             </div>
-          </a>
+          </Link>
           <div className="flex items-center gap-4">
-            <a href="/feed" className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded transition text-gray-700 text-sm font-semibold" title="RSS Feed">
+            <Link href="/feed" className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded transition text-gray-700 text-sm font-semibold" title="RSS Feed">
               <Rss className="w-4 h-4" />
               RSS feed
-            </a>
+            </Link>
             <div className="border-l border-gray-300 h-6"></div>
-            <a href="/account/login" className="text-sm font-semibold text-black hover:text-gray-700 transition">
+            <Link href="/account/login" className="text-sm font-semibold text-black hover:text-gray-700 transition">
               Log in
-            </a>
-            <a href="/account/register" className="text-sm font-semibold px-4 py-2 rounded bg-black text-white hover:bg-gray-800 transition">
+            </Link>
+            <Link href="/account/register" className="text-sm font-semibold px-4 py-2 rounded bg-black text-white hover:bg-gray-800 transition">
               Register
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -238,7 +238,7 @@ export function Navbar() {
                   style={{ borderTop: '3px solid #000' }}
                 >
                   {cat.items.map((item) => (
-                    <a
+                    <Link
                       key={item.label}
                       href={item.path}
                       className="block p-2.5 rounded-lg transition-all hover:bg-gray-50"
@@ -251,11 +251,11 @@ export function Navbar() {
                           {item.description}
                         </div>
                       )}
-                    </a>
+                    </Link>
                   ))}
                   {cat.label === 'About the journal' &&
                     headerPages.map((p) => (
-                      <a
+                      <Link
                         key={`hp-${p.id}`}
                         href={`/page/${p.slug}`}
                         className="block p-2.5 rounded-lg transition-all hover:bg-gray-50"
@@ -263,7 +263,7 @@ export function Navbar() {
                         <div className="text-sm font-semibold" style={{ color: '#171a1f' }}>
                           {p.title}
                         </div>
-                      </a>
+                      </Link>
                     ))}
                 </div>
               )}
@@ -330,25 +330,25 @@ export function Navbar() {
                 </div>
                 <div className="space-y-2 ml-2">
                   {cat.items.map((item) => (
-                    <a
+                    <Link
                       key={item.label}
                       href={item.path}
                       className="block text-sm font-medium hover:text-[#c2682a] transition"
                       onClick={() => setMobileOpen(false)}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   ))}
                   {cat.label === 'About the journal' &&
                     headerPages.map((p) => (
-                      <a
+                      <Link
                         key={`mhp-${p.id}`}
                         href={`/page/${p.slug}`}
                         className="block text-sm font-medium hover:text-[#c2682a] transition"
                         onClick={() => setMobileOpen(false)}
                       >
                         {p.title}
-                      </a>
+                      </Link>
                     ))}
                 </div>
               </div>
@@ -411,38 +411,38 @@ export function Navbar() {
 
                   {/* Quick links */}
                   <div className="flex gap-4 text-sm">
-                    <a href="/search/advanced" className="font-semibold text-amber-700 hover:text-amber-800">
+                    <Link href="/search/advanced" className="font-semibold text-amber-700 hover:text-amber-800">
                       Advanced search
-                    </a>
-                    <a href="/search/authors" className="font-semibold text-amber-700 hover:text-amber-800">
+                    </Link>
+                    <Link href="/search/authors" className="font-semibold text-amber-700 hover:text-amber-800">
                       By author
-                    </a>
-                    <a href="/search/issues" className="font-semibold text-amber-700 hover:text-amber-800">
+                    </Link>
+                    <Link href="/search/issues" className="font-semibold text-amber-700 hover:text-amber-800">
                       By issue
-                    </a>
-                    <a href="/search/keywords" className="font-semibold text-amber-700 hover:text-amber-800">
+                    </Link>
+                    <Link href="/search/keywords" className="font-semibold text-amber-700 hover:text-amber-800">
                       Keyword index
-                    </a>
+                    </Link>
                   </div>
                 </div>
 
                 {/* Right: Featured cards */}
                 <div className="grid grid-cols-2 gap-3">
-                  <a
+                  <Link
                     href="/browse/divisions"
                     className="block px-4 py-3 bg-blue-900 text-white rounded hover:opacity-90 transition-opacity"
                   >
                     <h3 className="font-bold text-sm leading-tight">Browse Divisions</h3>
                     <p className="text-xs text-blue-200 leading-tight">Five challenge streams</p>
-                  </a>
+                  </Link>
 
-                  <a
+                  <Link
                     href="/browse/collections"
                     className="block px-4 py-3 bg-slate-700 text-white rounded hover:opacity-90 transition-opacity"
                   >
                     <h3 className="font-bold text-sm leading-tight">Collections</h3>
                     <p className="text-xs text-slate-300 leading-tight">Fellow-led special issues</p>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

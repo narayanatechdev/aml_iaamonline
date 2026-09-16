@@ -177,7 +177,7 @@ export default function HomepageBuilderPage() {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="/"
+            href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/`}
             target="_blank"
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
           >

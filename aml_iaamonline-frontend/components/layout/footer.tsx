@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { BookOpen, MailIcon, Rss } from 'lucide-react';
 import { JOURNAL_INFO } from '@/lib/realData';
 
@@ -66,12 +67,12 @@ export function Footer() {
               and engineering, available through IAAM membership and subscription.
             </p>
             <div className="flex gap-3">
-              <a
+              <Link
                 href="/news"
                 className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
               >
                 <Rss className="w-3.5 h-3.5" />
-              </a>
+              </Link>
               <a
                 href="mailto:info@iaamonline.org"
                 className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition-colors text-black"
@@ -94,9 +95,9 @@ export function Footer() {
                 { label: 'Contact Us', href: '/contact' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
+                  <Link href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -114,9 +115,9 @@ export function Footer() {
                 { label: 'News & Announcements', href: '/news' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
+                  <Link href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -134,9 +135,9 @@ export function Footer() {
                 { label: 'Track Submission', href: '/track' },
               ].map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
+                  <Link href={l.href} className="text-xs text-gray-700 hover:text-black transition-colors">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -149,19 +150,19 @@ export function Footer() {
             © 2026 IAAM – International Association of Advanced Materials. All rights reserved.
           </p>
           <div className="flex flex-wrap gap-4 text-xs text-gray-700">
-            <a href="/privacy-policy" className="hover:text-black transition-colors">
+            <Link href="/privacy-policy" className="hover:text-black transition-colors">
               Privacy Policy
-            </a>
-            <a href="/terms-of-use" className="hover:text-black transition-colors">
+            </Link>
+            <Link href="/terms-of-use" className="hover:text-black transition-colors">
               Terms of Use
-            </a>
-            <a href="/cookie-policy" className="hover:text-black transition-colors">
+            </Link>
+            <Link href="/cookie-policy" className="hover:text-black transition-colors">
               Cookie Policy
-            </a>
+            </Link>
             {footerPages.map((p) => (
-              <a key={p.id} href={`/page/${p.slug}`} className="hover:text-black transition-colors">
+              <Link key={p.id} href={`/page/${p.slug}`} className="hover:text-black transition-colors">
                 {p.title}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

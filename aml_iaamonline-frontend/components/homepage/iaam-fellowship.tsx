@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface FellowshipItem {
   id: string;
   letter: string;
@@ -41,9 +43,9 @@ export function IAAMFellowship() {
           <h2 className="text-4xl font-bold text-black" style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', 'Source Serif 4', serif" }}>
             From the IAAM Fellowship
           </h2>
-          <a href="/fellowship" className="text-black font-semibold hover:text-gray-700 transition">
+          <Link href="/fellowship" className="text-black font-semibold hover:text-gray-700 transition">
             All invited content →
-          </a>
+          </Link>
         </div>
 
         {/* Divider */}

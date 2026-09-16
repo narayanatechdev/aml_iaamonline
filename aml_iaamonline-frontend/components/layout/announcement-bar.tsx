@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export function AnnouncementBar() {
   return (
     <div className="bg-amber-50 border-b border-amber-200 px-4 py-3">
@@ -13,13 +15,13 @@ export function AnnouncementBar() {
               <span className="font-semibold">A curated, not-for-profit publishing platform.</span> Advanced Materials Letters publishes by invitation — articles from IAAM Fellows, awardees and collaborating institutions — with reading access through <span className="italic">IAAM membership and subscription.</span> Authors are never charged a fee.
             </div>
           </div>
-          <a
+          <Link
             href="/access-model"
             className="text-sm font-semibold text-amber-900 hover:text-amber-800 whitespace-nowrap"
             style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
           >
             See the access model →
-          </a>
+          </Link>
         </div>
       </div>
     </div>

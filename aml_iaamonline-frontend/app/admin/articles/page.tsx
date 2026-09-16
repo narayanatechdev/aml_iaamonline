@@ -1117,11 +1117,11 @@ function BulkUploadModal({
             </p>
             <p className="mt-2 text-xs">
               <span className="text-gray-500">Download a template: </span>
-              <a href="/samples/articles-sample.csv" download className="font-medium text-[#0f2d6b] hover:underline">
+              <a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/samples/articles-sample.csv`} download className="font-medium text-[#0f2d6b] hover:underline">
                 sample CSV
               </a>
               <span className="text-gray-400"> · </span>
-              <a href="/samples/articles-sample.xml" download className="font-medium text-[#0f2d6b] hover:underline">
+              <a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/samples/articles-sample.xml`} download className="font-medium text-[#0f2d6b] hover:underline">
                 sample XML
               </a>
             </p>

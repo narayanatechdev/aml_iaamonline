@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Mail, MapPin, Phone, Clock, Send, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function ContactPage() {
@@ -201,18 +202,18 @@ export default function ContactPage() {
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-xl font-bold text-[#0f2d6b] mb-4">Quick Links</h3>
                 <div className="space-y-3">
-                  <a href="/author-resources" className="block text-[#0f2d6b] hover:underline">
+                  <Link href="/author-resources" className="block text-[#0f2d6b] hover:underline">
                     Author Guidelines
-                  </a>
-                  <a href="/about-journal" className="block text-[#0f2d6b] hover:underline">
+                  </Link>
+                  <Link href="/about-journal" className="block text-[#0f2d6b] hover:underline">
                     About the Journal
-                  </a>
-                  <a href="/submit" className="block text-[#0f2d6b] hover:underline">
+                  </Link>
+                  <Link href="/submit" className="block text-[#0f2d6b] hover:underline">
                     Submit Manuscript
-                  </a>
-                  <a href="/track" className="block text-[#0f2d6b] hover:underline">
+                  </Link>
+                  <Link href="/track" className="block text-[#0f2d6b] hover:underline">
                     Track Submission
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

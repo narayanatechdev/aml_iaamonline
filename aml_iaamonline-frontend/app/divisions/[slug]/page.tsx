@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 import { MainLayout } from '@/components/layout/main-layout';
@@ -71,12 +72,12 @@ export default async function DivisionPage({
   return (
     <MainLayout>
       <div className="max-w-5xl mx-auto px-4 py-12">
-        <a
+        <Link
           href="/divisions"
           className="inline-flex items-center gap-1.5 text-sm text-amber-700 font-semibold hover:text-amber-800 mb-6"
         >
           <ArrowLeft className="w-4 h-4" /> All divisions
-        </a>
+        </Link>
 
         <h1
           className="text-4xl font-bold text-black mb-2"
@@ -125,7 +126,7 @@ export default async function DivisionPage({
             <ul className="divide-y divide-gray-100">
               {articles.map((a) => (
                 <li key={a.id}>
-                  <a
+                  <Link
                     href={`/article/${a.legacy_id ?? a.id}`}
                     className="block py-3 group"
                   >
@@ -141,7 +142,7 @@ export default async function DivisionPage({
                         .filter(Boolean)
                         .join(' · ')}
                     </p>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -149,18 +150,18 @@ export default async function DivisionPage({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <a
+          <Link
             href="/browse/current"
             className="px-4 py-2 text-sm font-medium text-white bg-[#0f2d6b] rounded-lg hover:bg-[#1a3d7c]"
           >
             Browse latest articles
-          </a>
-          <a
+          </Link>
+          <Link
             href="/submit"
             className="px-4 py-2 text-sm font-medium text-[#0f2d6b] border border-[#0f2d6b]/30 rounded-lg hover:bg-[#f0f4fb]"
           >
             Submit to this division
-          </a>
+          </Link>
         </div>
       </div>
     </MainLayout>

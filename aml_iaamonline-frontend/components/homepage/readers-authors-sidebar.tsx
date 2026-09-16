@@ -60,18 +60,18 @@ export function ReadersAuthorsSidebar() {
           Access {ARTICLE_STATS.total.toLocaleString()}+ peer-reviewed articles across all areas of materials science. Available through IAAM membership and subscription. Stay current with the latest research from {ARTICLE_STATS.totalCountries}+ countries.
         </p>
         <div className="flex gap-3">
-          <a
+          <Link
             href="/browse/current"
             className="px-5 py-3 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors font-semibold"
           >
             Current Issue
-          </a>
-          <a
+          </Link>
+          <Link
             href="/browse/archive"
             className="px-5 py-3 bg-white border border-gray-300 text-black rounded-lg text-base hover:bg-gray-50 transition-colors"
           >
             Browse Archive
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -83,12 +83,12 @@ export function ReadersAuthorsSidebar() {
           Publish your research in Advanced Materials Letters — no article processing charges for authors. Fast peer review, high visibility, and global reach.
         </p>
         <div className="flex gap-3">
-          <a
+          <Link
             href="/submit"
             className="px-5 py-3 bg-[#c9a227] text-white rounded-lg text-base hover:bg-[#b8911f] transition-colors font-semibold"
           >
             Submit Now
-          </a>
+          </Link>
           <a
             href="#guidelines"
             className="px-5 py-3 bg-white border border-gray-300 text-black rounded-lg text-base hover:bg-gray-50 transition-colors"
