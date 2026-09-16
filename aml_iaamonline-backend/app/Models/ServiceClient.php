@@ -8,14 +8,24 @@ use Illuminate\Support\Str;
 
 class ServiceClient extends Model
 {
-    protected $fillable = ['name', 'api_key_hash', 'is_active', 'last_used_at'];
+    /** Abilities a client can be granted on top of the read-only fetch API. */
+    public const ABILITIES = ['manuscripts.write'];
+
+    protected $fillable = ['name', 'api_key_hash', 'is_active', 'last_used_at', 'abilities'];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
             'last_used_at' => 'datetime',
+            'abilities' => 'array',
         ];
+    }
+
+    /** Every client can read; anything more has to be granted (service-clients:grant). */
+    public function hasAbility(string $ability): bool
+    {
+        return in_array($ability, $this->abilities ?? [], true);
     }
 
     /**

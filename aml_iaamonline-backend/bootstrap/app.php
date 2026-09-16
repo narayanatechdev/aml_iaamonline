@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ReviewerTokenAuth;
+use App\Http\Middleware\ServiceAbility;
 use App\Http\Middleware\ServiceApiAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.token' => ReviewerTokenAuth::class,
             'auth.service' => ServiceApiAuth::class,
+            'service.ability' => ServiceAbility::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Manuscript extends Model
 {
@@ -54,6 +56,8 @@ class Manuscript extends Model
         'final_decision',
         'decision_date',
         'decision_notes',
+        'iaam_id',
+        'submitted_via',
     ];
 
     protected $casts = [
@@ -93,5 +97,25 @@ class Manuscript extends Model
     public function sdgs(): BelongsToMany
     {
         return $this->belongsToMany(SustainableDevelopmentGoal::class, 'manuscript_sdgs');
+    }
+
+    /**
+     * Manuscripts belonging to the person with this IAAM ID: stamped with it
+     * (Portal submissions and anything since), or — for older AML papers
+     * that predate IAAM IDs — sent from the email of the AML account that
+     * holds it.
+     */
+    public function scopeOwnedByIaamId(Builder $query, string $iaamId): Builder
+    {
+        $emails = User::where('iaam_id', $iaamId)->pluck('email')->map(fn ($e) => strtolower($e));
+
+        return $query->where(function (Builder $q) use ($iaamId, $emails) {
+            $q->where('iaam_id', $iaamId);
+
+            if ($emails->isNotEmpty()) {
+                $q->orWhere(fn (Builder $q) => $q->whereNull('iaam_id')
+                    ->whereIn(DB::raw('lower(author_email)'), $emails->all()));
+            }
+        });
     }
 }

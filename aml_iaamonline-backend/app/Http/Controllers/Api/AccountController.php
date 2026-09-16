@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\AuditLog;
 use App\Models\Manuscript;
-use App\Models\ManuscriptFile;
-use App\Models\ReviewAssignment;
+use App\Services\ManuscriptSubmissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -92,20 +90,8 @@ class AccountController extends Controller
             ->with(['files', 'reviews'])
             ->findOrFail($id);
 
-        // Blind review: authors never see reviewer identities or confidential
-        // (editor-only) comments. Reviewers are anonymised as "Reviewer N".
         $data = $manuscript->toArray();
-        $data['reviews'] = $manuscript->reviews
-            ->where('is_submitted', true)
-            ->values()
-            ->map(fn ($r, $i) => [
-                'reviewer' => 'Reviewer '.($i + 1),
-                'recommendation' => $r->recommendation,
-                'strengths' => $r->strengths,
-                'weaknesses' => $r->weaknesses,
-                'comments' => $r->comments,            // comments to author only
-                'questions' => $r->questions,
-            ]);
+        $data['reviews'] = app(ManuscriptSubmissionService::class)->reviewsForAuthor($manuscript);
 
         return response()->json(['data' => $data]);
     }
@@ -115,71 +101,22 @@ class AccountController extends Controller
      * round, re-attaches files, returns the manuscript to under review and
      * resets reviewer assignments for another look.
      */
-    public function revise(Request $request, int $id): JsonResponse
+    public function revise(Request $request, int $id, ManuscriptSubmissionService $submissions): JsonResponse
     {
         $manuscript = Manuscript::where('author_email', $request->user()->email)->findOrFail($id);
 
-        if ($manuscript->status !== 'revision_required') {
+        if ($manuscript->status !== ManuscriptSubmissionService::AWAITING_REVISION) {
             return response()->json(['success' => false, 'message' => 'This manuscript is not awaiting a revision.'], 422);
         }
 
-        $request->validate([
-            'response' => 'required|string|min:10|max:10000',
-            'files' => 'nullable|array',
-            'files.*' => 'file|mimes:pdf|max:52428800',
-        ]);
+        $request->validate($submissions->revisionRules());
 
-        $round = (int) $manuscript->revision_round + 1;
+        $submissions->revise($manuscript, $request, $request->user()->email);
 
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $i => $file) {
-                $name = $manuscript->submission_id."_R{$round}_".($i + 1).'.pdf';
-                $path = $file->storeAs('manuscripts', $name, 'local');
-                ManuscriptFile::create([
-                    'manuscript_id' => $manuscript->id,
-                    'file_name' => $file->getClientOriginalName(),
-                    'file_path' => $path,
-                    'file_type' => 'pdf',
-                    'file_size' => $file->getSize(),
-                    'mime_type' => $file->getMimeType(),
-                    'file_type_category' => 'revision',
-                    'uploaded_at' => now(),
-                ]);
-            }
-        }
-
-        // Reset reviewers for a fresh look
-        ReviewAssignment::where('manuscript_id', $manuscript->id)->delete();
-
-        $manuscript->update([
-            'revision_round' => $round,
-            'revision_response' => $request->input('response'),
-            'status' => 'under_review',
-        ]);
-
-        AuditLog::create([
-            'action' => 'file_uploaded',
-            'actor_email' => $request->user()->email,
-            'actor_type' => 'author',
-            'manuscript_id' => $manuscript->id,
-            'description' => "Revision R{$round} submitted for manuscript: ".$manuscript->submission_id,
-            'status' => 'success',
-            'actor_ip' => $request->ip(),
-        ]);
-
-        return response()->json(['success' => true, 'message' => "Revision R{$round} submitted.", 'data' => $manuscript]);
+        return response()->json(['success' => true, 'message' => "Revision R{$manuscript->revision_round} submitted.", 'data' => $manuscript]);
     }
 
-    /**
-     * Statuses grouped for the author dashboard summary cards.
-     *
-     * @var array<string, list<string>>
-     */
-    private const STATUS_GROUPS = [
-        'in_progress' => ['submitted', 'with_editor', 'under_review', 'decision'],
-        'awaiting_revision' => ['revision_required'],
-        'decided' => ['accepted', 'rejected', 'published'],
-    ];
+    private const STATUS_GROUPS = ManuscriptSubmissionService::STATUS_GROUPS;
 
     /**
      * List the authenticated author's own manuscripts with summary stats.

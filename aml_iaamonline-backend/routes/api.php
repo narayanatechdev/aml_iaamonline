@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\ServiceApiController;
+use App\Http\Controllers\Api\ServiceManuscriptController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
 use App\Http\Controllers\Api\WorkflowSettingsController;
@@ -100,6 +101,15 @@ Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('
 Route::prefix('service')->name('service.')->middleware('auth.service')->group(function () {
     Route::get('/users/{iaamId}', [ServiceApiController::class, 'showUser'])->name('users.show');
     Route::get('/users/by-email/{email}', [ServiceApiController::class, 'showUserByEmail'])->name('users.show-by-email');
+
+    // Manuscripts for a person identified by IAAM ID (Portal members have no AML login).
+    Route::get('/manuscript-options', [ServiceManuscriptController::class, 'options'])->name('manuscripts.options');
+    Route::get('/users/{iaamId}/manuscripts', [ServiceManuscriptController::class, 'index'])->name('manuscripts.index');
+    Route::get('/users/{iaamId}/manuscripts/{submissionId}', [ServiceManuscriptController::class, 'show'])->name('manuscripts.show');
+    Route::middleware('service.ability:manuscripts.write')->group(function () {
+        Route::post('/users/{iaamId}/manuscripts', [ServiceManuscriptController::class, 'store'])->name('manuscripts.store');
+        Route::post('/users/{iaamId}/manuscripts/{submissionId}/revise', [ServiceManuscriptController::class, 'revise'])->name('manuscripts.revise');
+    });
 });
 
 // Reviewer Routes
