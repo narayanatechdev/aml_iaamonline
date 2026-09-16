@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export function AboutSection() {
   return (
@@ -9,7 +10,7 @@ export function AboutSection() {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              About Advanced Materials Letters
+              About {JOURNAL_INFO.name}
             </h2>
             <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
               Advanced Materials Letters is a peer-reviewed academic journal dedicated to publishing

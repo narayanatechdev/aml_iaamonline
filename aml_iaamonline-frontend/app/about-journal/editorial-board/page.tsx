@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import EditorialBoardStatic from '../../editorial-board/editorial-board-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Editorial Board',
   description:
-    'The international editorial board of Advanced Materials Letters — Editor-in-Chief, Managing Editor, Academic Editors, and Advisory Board Members.',
+    `The international editorial board of ${JOURNAL_INFO.name} — Editor-in-Chief, Managing Editor, Academic Editors, and Advisory Board Members.`,
 };
 
 /**

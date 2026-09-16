@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Mail, MapPin, Phone, Clock, Send, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ export default function ContactPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
           <p className="text-lg text-gray-700">
-            Get in touch with the Advanced Materials Letters editorial team
+            Get in touch with the {JOURNAL_INFO.name} editorial team
           </p>
         </div>
       </div>

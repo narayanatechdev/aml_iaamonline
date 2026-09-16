@@ -9,6 +9,7 @@ import {
   resolveChallengeDivisions,
   type DivisionData,
 } from '@/components/homepage/challenge-divisions-data';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -49,9 +50,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const division = await findDivision(slug);
-  if (!division) return { title: 'Division not found | Advanced Materials Letters' };
+  if (!division) return { title: `Division not found | ${JOURNAL_INFO.name}` };
   return {
-    title: `${division.name} | Advanced Materials Letters`,
+    title: `${division.name} | ${JOURNAL_INFO.name}`,
     description: division.description || `The ${division.name} challenge division.`,
   };
 }

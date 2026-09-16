@@ -5,6 +5,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { HelpCircle, ChevronDown, ChevronUp, Search, FileText, Clock, DollarSign, Users, Globe } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function FAQ() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
@@ -16,7 +17,7 @@ export default function FAQ() {
       icon: <FileText className="w-4 h-4" />,
       faqs: [
         {
-          question: "How do I submit my manuscript to Advanced Materials Letters?",
+          question: `How do I submit my manuscript to ${JOURNAL_INFO.name}?`,
           answer: "Manuscripts can be submitted through our online submission system. Please ensure your manuscript follows our formatting guidelines and includes all required files (main document, figures, supplementary materials). You'll need to create an account on our submission portal and follow the step-by-step submission process."
         },
         {

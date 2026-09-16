@@ -1,4 +1,5 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function PrivacyPolicyPage() {
   return (
@@ -16,7 +17,7 @@ export default function PrivacyPolicyPage() {
         <section className="border-b border-gray-200 py-5">
           <h2 className="text-[#0f2d6b] text-lg mb-3" style={{ fontWeight: 700 }}>1. Data Controller</h2>
           <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            The data controller for personal data processed through the Advanced Materials Letters website and
+            The data controller for personal data processed through the {JOURNAL_INFO.name} website and
             manuscript management system is the <strong>International Association of Advanced Materials (IAAM)</strong>,
             a non-profit scientific organisation headquartered in Sweden. IAAM is subject to the General Data
             Protection Regulation (GDPR) and Swedish data-protection law.

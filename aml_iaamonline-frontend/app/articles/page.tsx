@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
 import { BookOpen, Search, Filter } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function ArticlesPage() {
   return (
@@ -16,7 +17,7 @@ export default function ArticlesPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Articles</h1>
           <p className="text-lg text-gray-700">
-            Browse and search all published articles in Advanced Materials Letters
+            Browse and search all published articles in {JOURNAL_INFO.name}
           </p>
         </div>
       </div>
@@ -33,7 +34,7 @@ export default function ArticlesPage() {
                 <h3 className="text-xl font-semibold text-[#0f2d6b]">Current Issue</h3>
               </div>
               <p className="text-gray-600 mb-4">
-                Browse articles from the latest issue of Advanced Materials Letters
+                Browse articles from the latest issue of {JOURNAL_INFO.name}
               </p>
               <Link 
                 href="/browse/current"

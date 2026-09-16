@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const ON_THE_COVER_DEFAULTS = {
   title: 'Microwave-Assisted Synthesis of Platinum-Nickel Nanoalloys',
@@ -53,7 +54,7 @@ export function OnTheCover({ content = {} }: { content?: OnTheCoverContent } = {
               <div className="mx-auto w-full max-w-72 overflow-hidden rounded-lg border border-gray-200 bg-gradient-to-br from-[#2E8B57] to-[#1E5F3F] shadow-md">
                 <img
                   src={coverPage.imageUrl}
-                  alt={`Advanced Materials Letters Volume ${coverPage.volume}, Issue ${coverPage.issue} Cover Page`}
+                  alt={`${JOURNAL_INFO.name} Volume ${coverPage.volume}, Issue ${coverPage.issue} Cover Page`}
                   className="w-full h-auto object-cover"
                 />
               </div>

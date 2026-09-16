@@ -16,14 +16,14 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
           <div className="flex-1">
             <div className="flex items-start gap-4 mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-[#0f2d6b] to-[#0d2560] rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-lg">AML</span>
+                <span className="text-white font-bold text-lg">{JOURNAL_INFO.shortName}</span>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-black leading-tight">
-                  Advanced Materials Letters
+                  {JOURNAL_INFO.name}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1 uppercase tracking-wider">
-                  Functional Materials for Green Energy and Environment
+                  {JOURNAL_INFO.tagline}
                 </p>
               </div>
             </div>
@@ -53,7 +53,7 @@ export function JournalInfoHeader({ className = '' }: JournalInfoHeaderProps) {
             <div className="w-28 h-36 rounded shadow-lg overflow-hidden">
               <img 
                 src="https://aml.iaamonline.org/data/aml/coversheet/cover_en.jpg" 
-                alt={`Advanced Materials Letters Volume ${JOURNAL_INFO.currentVolume}, Issue ${JOURNAL_INFO.currentIssue} Cover`}
+                alt={`${JOURNAL_INFO.name} Volume ${JOURNAL_INFO.currentVolume}, Issue ${JOURNAL_INFO.currentIssue} Cover`}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   // Fallback to original design if image fails to load

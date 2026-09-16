@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { pickText, pickList } from '@/lib/page-layouts';
 import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 type Member = { name: string; affiliation: string; location: string; photo: string };
 type ExpertiseItem = { text: string };
@@ -54,7 +55,7 @@ const STAT_COLORS = ['bg-blue-50', 'bg-green-50', 'bg-yellow-50'];
 
 export default function AboutEditorsStatic({ content = {} }: { content?: PageContentData }) {
   const title = pickText(content, 'title', 'About the Editors');
-  const subtitle = pickText(content, 'subtitle', 'Distinguished experts leading Advanced Materials Letters editorial excellence');
+  const subtitle = pickText(content, 'subtitle', `Distinguished experts leading ${JOURNAL_INFO.name} editorial excellence`);
 
   const eicName = pickText(content, 'eic_name', 'Prof. Dr. Ashutosh Tiwari');
   const eicTitle = pickText(content, 'eic_title', 'Editor-in-Chief');
@@ -76,7 +77,7 @@ export default function AboutEditorsStatic({ content = {} }: { content?: PageCon
     .filter((m) => (m.name ?? '').trim() !== '');
 
   const philosophyTitle = pickText(content, 'philosophy_title', 'Editorial Philosophy');
-  const philosophyIntro = pickText(content, 'philosophy_intro', 'The editorial team of Advanced Materials Letters is committed to maintaining the highest standards of scientific rigor, ethical conduct, and editorial excellence. Our approach is built on several core principles that guide every aspect of our publication process.');
+  const philosophyIntro = pickText(content, 'philosophy_intro', `The editorial team of ${JOURNAL_INFO.name} is committed to maintaining the highest standards of scientific rigor, ethical conduct, and editorial excellence. Our approach is built on several core principles that guide every aspect of our publication process.`);
   const principles = pickList<PrincipleItem>(content, 'philosophy_principles', DEFAULT_PRINCIPLES)
     .filter((p) => (p.title ?? '').trim() !== '');
   const col1 = principles.slice(0, Math.ceil(principles.length / 2));

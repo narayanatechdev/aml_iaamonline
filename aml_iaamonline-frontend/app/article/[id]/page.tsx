@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { FEATURED_ARTICLES } from '@/lib/realData';
+import { FEATURED_ARTICLES, JOURNAL_INFO } from '@/lib/realData';
 import { richTextToPlain } from '@/lib/rich-text';
 import ArticleClient from './article-client';
 
@@ -109,8 +109,8 @@ export async function generateMetadata({
   // Build Google Scholar citation_* meta tags — omit any whose value is unknown.
   const other: Record<string, string | number | (string | number)[]> = {};
   if (title) other['citation_title'] = title;
-  other['citation_journal_title'] = 'Advanced Materials Letters';
-  other['citation_issn'] = '0976-397X';
+  other['citation_journal_title'] = JOURNAL_INFO.name;
+  other['citation_issn'] = JOURNAL_INFO.eISSN;
   if (volume) other['citation_volume'] = volume;
   if (issue) other['citation_issue'] = issue;
   if (firstPage) other['citation_firstpage'] = firstPage;
@@ -191,8 +191,8 @@ export default async function ArticlePage({
     },
     isPartOf: {
       '@type': 'PublicationVolume',
-      name: 'Advanced Materials Letters',
-      issn: '0976-397X',
+      name: JOURNAL_INFO.name,
+      issn: JOURNAL_INFO.eISSN,
       ...(volume ? { volumeNumber: volume } : {}),
       ...(issue ? { issueNumber: issue } : {}),
     },

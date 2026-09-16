@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Calendar, ExternalLink } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function NewsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -70,7 +71,7 @@ export default function NewsPage() {
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-3xl font-bold mb-4">News & Events</h1>
           <p className="text-lg text-gray-700">
-            Stay updated with the latest news, announcements, and events from Advanced Materials Letters
+            Stay updated with the latest news, announcements, and events from {JOURNAL_INFO.name}
           </p>
         </div>
       </div>

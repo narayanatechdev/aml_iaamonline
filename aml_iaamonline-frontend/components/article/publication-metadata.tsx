@@ -1,6 +1,7 @@
 'use client';
 
 import { BookOpen, FileText, Link as LinkIcon, Calendar } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface PublicationMetadataProps {
   volume?: string | number | null;
@@ -152,7 +153,7 @@ export function PublicationMetadata({
           <div className="font-mono text-xs text-gray-700 leading-relaxed bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto">
             {volume && issue && pages ? (
               <>
-                Advanced Materials Letters, {volume}({issue}), {pages}
+                {JOURNAL_INFO.name}, {volume}({issue}), {pages}
                 {publishYear && ` ({publishYear})`}
                 {doi && <br />}
                 {doi && `DOI: ${doi}`}

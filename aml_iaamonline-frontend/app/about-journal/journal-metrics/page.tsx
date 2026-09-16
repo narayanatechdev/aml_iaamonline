@@ -3,6 +3,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { BarChart, TrendingUp, Globe, Users, Award, Target } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function JournalMetricsPage() {
   return (
@@ -18,7 +19,7 @@ export default function JournalMetricsPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Journal Metrics</h1>
           <p className="text-lg text-gray-700">
-            Performance indicators and impact metrics for Advanced Materials Letters
+            Performance indicators and impact metrics for {JOURNAL_INFO.name}
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { ChevronDown, ChevronRight, Eye, Quote } from 'lucide-react';
 import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { FEATURED_ARTICLES, ARCHIVE_VOLUMES } from '@/lib/realData';
+import { FEATURED_ARTICLES, ARCHIVE_VOLUMES, JOURNAL_INFO } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import type { FeaturedArticle } from '@/lib/realData';
 
@@ -294,7 +294,7 @@ export default function ArchivePage() {
                         Volume {selectedVolume}, Issue {selectedIssue} Articles
                       </h1>
                       <p className="text-[#5a6a8a] text-base">
-                        Advanced Materials Letters Archive
+                        {JOURNAL_INFO.name} Archive
                       </p>
                     </div>
                     <div className="text-right">

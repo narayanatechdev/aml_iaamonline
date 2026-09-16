@@ -3,6 +3,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Info, Calendar, Globe, BookOpen, Award, FileText } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function JournalInformationPage() {
   return (
@@ -18,7 +19,7 @@ export default function JournalInformationPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Journal Information</h1>
           <p className="text-lg text-gray-700">
-            Essential information about Advanced Materials Letters
+            Essential information about {JOURNAL_INFO.name}
           </p>
         </div>
       </div>
@@ -36,7 +37,7 @@ export default function JournalInformationPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Journal Title</h3>
-                  <p className="text-gray-700">Advanced Materials Letters</p>
+                  <p className="text-gray-700">{JOURNAL_INFO.name}</p>
                 </div>
                 
                 <div>

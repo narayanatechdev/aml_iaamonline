@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function EditorLoginPage() {
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function EditorLoginPage() {
               <BookOpen className="w-7 h-7 text-white" />
             </div>
             <div>
-              <div className="text-white" style={{ fontSize: "1.1rem", fontWeight: 700 }}>Advanced Materials Letters</div>
+              <div className="text-white" style={{ fontSize: "1.1rem", fontWeight: 700 }}>{JOURNAL_INFO.name}</div>
               <div className="text-white/60 text-sm mt-0.5">IAAM Journal Management System</div>
             </div>
           </Link>

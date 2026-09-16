@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { EditorShell } from '@/components/editor/EditorShell';
 import { authFetch, API_BASE } from '@/lib/adminAuth';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface Stats {
   new_triage?: number; under_review?: number; pending_decision?: number; in_revision?: number; accepted?: number;
@@ -115,7 +116,7 @@ export default function EditorDashboardPage() {
         <div className="flex items-start justify-between mb-8 gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Editorial dashboard</h1>
-            <p className="text-gray-500 text-sm mt-0.5">Advanced Materials Letters · manuscript workflow overview</p>
+            <p className="text-gray-500 text-sm mt-0.5">{JOURNAL_INFO.name} · manuscript workflow overview</p>
           </div>
           <button onClick={fetchData} disabled={isLoading} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0f2d6b] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50">
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} /> Refresh

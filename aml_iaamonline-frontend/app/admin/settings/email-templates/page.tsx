@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Save, Info, Mail } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const STORAGE_KEY = 'admin_settings_email_templates';
 
@@ -16,7 +17,7 @@ interface Template {
 
 const DEFAULT_TEMPLATES: Template[] = [
   { key: 'submission_received', name: 'Submission Received', subject: 'Your manuscript {{title}} has been received', body: 'Dear {{author}},\n\nThank you for submitting your manuscript. Your submission ID is {{submission_id}}.\n\nRegards,\nEditorial Office' },
-  { key: 'review_invitation', name: 'Reviewer Invitation', subject: 'Invitation to review {{title}}', body: 'Dear {{reviewer}},\n\nYou have been invited to review a manuscript for Advanced Materials Letters. Please respond by {{due_date}}.\n\nRegards,\nEditorial Office' },
+  { key: 'review_invitation', name: 'Reviewer Invitation', subject: 'Invitation to review {{title}}', body: `Dear {{reviewer}},\n\nYou have been invited to review a manuscript for ${JOURNAL_INFO.name}. Please respond by {{due_date}}.\n\nRegards,\nEditorial Office` },
   { key: 'decision_accept', name: 'Decision — Accept', subject: 'Decision on {{title}}: Accepted', body: 'Dear {{author}},\n\nWe are pleased to inform you that your manuscript has been accepted for publication.\n\nRegards,\nEditorial Office' },
   { key: 'decision_revisions', name: 'Decision — Revisions', subject: 'Decision on {{title}}: Revisions required', body: 'Dear {{author}},\n\nYour manuscript requires revisions before it can be accepted. Please see the reviewer comments.\n\nRegards,\nEditorial Office' },
 ];

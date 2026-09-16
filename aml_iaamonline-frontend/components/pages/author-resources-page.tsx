@@ -4,6 +4,7 @@ import { FileText, CheckCircle, Shield, DollarSign, HelpCircle, ChevronDown, Che
 import Link from "next/link";
 import { useState } from "react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const FAQ_ITEMS = [
   {
@@ -53,7 +54,7 @@ export default function AuthorResourcesPage() {
 
       <div className="mb-10 border-b border-border pb-8">
         <h1 className="text-black mb-6" style={{ fontSize: "2.5rem", fontWeight: 700 }}>Author Resources</h1>
-        <p className="text-[#5a6a8a] text-xl leading-relaxed">Everything you need to submit and publish in Advanced Materials Letters</p>
+        <p className="text-[#5a6a8a] text-xl leading-relaxed">Everything you need to submit and publish in {JOURNAL_INFO.name}</p>
       </div>
 
       {/* Quick actions */}

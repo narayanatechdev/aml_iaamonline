@@ -55,7 +55,7 @@ export function JournalMetricsSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-black mb-4">
-            Why Choose Advanced Materials Letters?
+            Why Choose {JOURNAL_INFO.name}?
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             A leading international journal committed to advancing materials science research
@@ -142,7 +142,7 @@ export function JournalMetricsSection() {
           <div className="bg-gradient-to-r from-[#0f2d6b] to-[#1e3a8a] rounded-xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">Ready to Submit Your Research?</h3>
             <p className="text-lg opacity-90 mb-6 max-w-2xl mx-auto">
-              Join thousands of researchers worldwide who have chosen Advanced Materials Letters 
+              Join thousands of researchers worldwide who have chosen {JOURNAL_INFO.name} 
               for their groundbreaking research publications.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

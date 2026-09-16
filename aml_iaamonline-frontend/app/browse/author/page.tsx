@@ -15,7 +15,7 @@ import {
   sortAuthors,
   AUTHOR_COUNTS
 } from '@/lib/authorsData';
-import { FEATURED_ARTICLES } from '@/lib/realData';
+import { FEATURED_ARTICLES, JOURNAL_INFO } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
 import type { FeaturedArticle } from '@/lib/realData';
 
@@ -233,7 +233,7 @@ export default function AuthorPage() {
         
         <div className="mb-8">
           <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: "2rem", fontWeight: 700 }}>Browse Authors</h1>
-          <p className="text-[#5a6a8a] text-base">Discover researchers and their contributions to Advanced Materials Letters</p>
+          <p className="text-[#5a6a8a] text-base">Discover researchers and their contributions to {JOURNAL_INFO.name}</p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">

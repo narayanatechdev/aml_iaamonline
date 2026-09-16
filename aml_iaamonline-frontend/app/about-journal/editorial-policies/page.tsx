@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import EditorialPoliciesStatic from './editorial-policies-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Editorial Policies',
   description:
-    'Comprehensive policies governing the editorial process and publication standards of Advanced Materials Letters.',
+    `Comprehensive policies governing the editorial process and publication standards of ${JOURNAL_INFO.name}.`,
 };
 
 /**

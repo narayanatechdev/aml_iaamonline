@@ -1,4 +1,5 @@
 'use client';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface Announcement {
   id: string | number;
@@ -15,7 +16,7 @@ interface Announcement {
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'relaunch',
-    title: 'A new home for Advanced Materials Letters',
+    title: `A new home for ${JOURNAL_INFO.name}`,
     description:
       'The journal is moving to a new platform with a redesigned reading experience, challenge-based divisions, and improved article discovery. The complete archive from 2010 onwards is being migrated and verified issue by issue.',
   },

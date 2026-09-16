@@ -1,4 +1,5 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function TermsOfUsePage() {
   return (
@@ -16,7 +17,7 @@ export default function TermsOfUsePage() {
         <section className="border-b border-gray-200 py-5">
           <h2 className="text-[#0f2d6b] text-lg mb-3" style={{ fontWeight: 700 }}>1. Acceptance of Terms</h2>
           <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            By accessing or using the Advanced Materials Letters website and any associated services (collectively,
+            By accessing or using the {JOURNAL_INFO.name} website and any associated services (collectively,
             the "Platform"), you agree to be bound by these Terms of Use. The Platform is operated by the
             International Association of Advanced Materials (IAAM), Sweden. If you do not agree to these terms, you
             must not use the Platform.

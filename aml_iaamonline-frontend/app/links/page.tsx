@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Users, Database, BookOpen, Globe, School, Building2, Award, Microscope } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function Links() {
   const organizationLinks = [
@@ -263,7 +264,7 @@ export default function Links() {
               <div>
                 <h3 className="text-[#0f2d6b] text-sm mb-2" style={{ fontWeight: 600 }}>Disclaimer</h3>
                 <p className="text-[#5a6a8a] text-xs leading-relaxed">
-                  The external links provided on this page are for informational purposes only. Advanced Materials Letters and IAAM do not endorse or take responsibility for the content, accuracy, or availability of external websites. These links are provided as a service to our research community and may be updated periodically. If you notice any broken links or have suggestions for additional resources, please contact our editorial office.
+                  The external links provided on this page are for informational purposes only. {JOURNAL_INFO.name} and IAAM do not endorse or take responsibility for the content, accuracy, or availability of external websites. These links are provided as a service to our research community and may be updated periodically. If you notice any broken links or have suggestions for additional resources, please contact our editorial office.
                 </p>
               </div>
             </div>

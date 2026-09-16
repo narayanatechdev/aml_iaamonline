@@ -6,6 +6,7 @@ import { Clock, Milestone, TrendingUp, Globe } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
 import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 type TimelineItem = { year: string; title: string; description: string };
 type AchievementItem = { value: string; label: string };
@@ -53,7 +54,7 @@ const FORWARD_ICONS = [Globe, Milestone, TrendingUp];
 
 export default function HistoryStatic({ content = {} }: { content?: PageContentData }) {
   const title = pickText(content, 'title', 'History & Milestones');
-  const subtitle = pickText(content, 'subtitle', 'A journey through the evolution of Advanced Materials Letters');
+  const subtitle = pickText(content, 'subtitle', `A journey through the evolution of ${JOURNAL_INFO.name}`);
 
   const timelineTitle = pickText(content, 'timeline_title', 'Our Journey');
   const timelineItems = pickList<TimelineItem>(content, 'timeline_items', DEFAULT_TIMELINE)
@@ -63,7 +64,7 @@ export default function HistoryStatic({ content = {} }: { content?: PageContentD
   const achievementItems = pickList<AchievementItem>(content, 'achievements_items', DEFAULT_ACHIEVEMENTS, 4);
 
   const forwardTitle = pickText(content, 'forward_title', 'Looking Forward');
-  const forwardBody = pickText(content, 'forward_body', 'As we continue our journey, Advanced Materials Letters remains committed to advancing materials science through high-quality publishing, fostering global collaboration, and supporting breakthrough research that shapes the future.');
+  const forwardBody = pickText(content, 'forward_body', `As we continue our journey, ${JOURNAL_INFO.name} remains committed to advancing materials science through high-quality publishing, fostering global collaboration, and supporting breakthrough research that shapes the future.`);
   const forwardItems = pickList<ForwardItem>(content, 'forward_items', DEFAULT_FORWARD_ITEMS, 3);
 
   return (

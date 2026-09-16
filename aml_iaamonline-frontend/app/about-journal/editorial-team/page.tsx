@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import EditorialTeamStatic from './editorial-team-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Research Cross-Journal Editorial Team',
   description:
-    'Collaborative editorial excellence across the IAAM journal portfolio — Advanced Materials Letters.',
+    `Collaborative editorial excellence across the IAAM journal portfolio — ${JOURNAL_INFO.name}.`,
 };
 
 /**

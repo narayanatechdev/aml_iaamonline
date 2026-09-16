@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import EthicsProcessStatic from '../about-journal/ethics-process/ethics-process-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Ethics & Process',
   description:
-    'Publication ethics and peer review process for Advanced Materials Letters — COPE guidelines, review workflow, and research misconduct handling.',
+    `Publication ethics and peer review process for ${JOURNAL_INFO.name} — COPE guidelines, review workflow, and research misconduct handling.`,
 };
 
 export default async function EthicsProcessPage() {

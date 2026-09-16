@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import AboutJournalStatic from './about-journal-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'About the Journal',
   description:
-    'About Advanced Materials Letters — aims and scope, editorial information, history, and indexing of the IAAM journal.',
+    `About ${JOURNAL_INFO.name} — aims and scope, editorial information, history, and indexing of the IAAM journal.`,
 };
 
 /**

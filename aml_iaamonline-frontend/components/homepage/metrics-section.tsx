@@ -1,6 +1,7 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface Metric {
   label: string;
@@ -38,7 +39,7 @@ export function MetricsSection() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Journal Metrics</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            IAAM Advanced Materials Letters is a leading publication in materials science research
+            IAAM {JOURNAL_INFO.name} is a leading publication in materials science research
           </p>
         </div>
 

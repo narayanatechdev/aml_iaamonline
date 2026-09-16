@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import EditorialValuesStatic from './editorial-values-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Editorial Values Statement',
   description:
-    'Our commitment to integrity, excellence, and open science in Advanced Materials Letters.',
+    `Our commitment to integrity, excellence, and open science in ${JOURNAL_INFO.name}.`,
 };
 
 /**

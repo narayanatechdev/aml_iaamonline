@@ -4,10 +4,11 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import ContactStatic from './contact-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
-  description: 'Get in touch with the Advanced Materials Letters editorial team',
+  description: `Get in touch with the ${JOURNAL_INFO.name} editorial team`,
 };
 
 /**

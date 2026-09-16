@@ -91,7 +91,7 @@ export function BrowsePage() {
           Browse Content
         </h1>
         <p className="text-[#5a6a8a] text-sm">
-          Advanced Materials Letters · Vol. {JOURNAL_INFO.currentVolume}
+          {JOURNAL_INFO.name} · Vol. {JOURNAL_INFO.currentVolume}
         </p>
       </div>
 

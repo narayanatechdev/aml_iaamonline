@@ -5,6 +5,7 @@ import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const DEFAULT_OFFICE_HOURS = [
   { day: 'Monday - Friday', hours: '9:00 AM - 5:00 PM (EST)' },
@@ -23,7 +24,7 @@ export default function ContactStatic({ content = {} }: { content?: PageContentD
   const subtitle = pickText(
     content,
     'subtitle',
-    'Get in touch with the Advanced Materials Letters editorial team',
+    `Get in touch with the ${JOURNAL_INFO.name} editorial team`,
   );
   const emailHeading = pickText(content, 'email_heading', 'Email');
   const emailDesc = pickText(content, 'email_desc', 'For editorial inquiries and submissions');
@@ -36,7 +37,7 @@ export default function ContactStatic({ content = {} }: { content?: PageContentD
   const addressText = pickText(
     content,
     'address_text',
-    'Advanced Materials Letters\nEditorial Office\nInternational Association of Advanced Materials',
+    `${JOURNAL_INFO.name}\nEditorial Office\nInternational Association of Advanced Materials`,
   );
   const formHeading = pickText(content, 'form_heading', 'Send us a Message');
   const officeHoursHeading = pickText(content, 'office_hours_heading', 'Office Hours');

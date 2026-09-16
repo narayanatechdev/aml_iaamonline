@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from '@/lib/cover-image-validation';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export function SubmissionForm() {
   const [formData, setFormData] = useState({
@@ -142,7 +143,7 @@ export function SubmissionForm() {
         <CardContent className="pt-6">
           <div className="space-y-4">
             <p className="text-foreground">
-              Thank you for submitting your manuscript to Advanced Materials Letters.
+              Thank you for submitting your manuscript to {JOURNAL_INFO.name}.
             </p>
             <div className="bg-muted p-4 rounded-lg">
               <p className="text-sm text-muted-foreground mb-2">Submission ID:</p>

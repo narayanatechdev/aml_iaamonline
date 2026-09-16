@@ -6,6 +6,7 @@ import { Heart, Shield, Globe, CheckCircle, Users, Target } from 'lucide-react';
 import { pickText, pickList } from '@/lib/page-layouts';
 import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const DEFAULT_VALUES = [
   {
@@ -115,7 +116,7 @@ export default function EditorialValuesStatic({ content = {} }: { content?: Page
   const quoteAuthor = pickText(
     content,
     'quote_author',
-    '— Advanced Materials Letters Editorial Team',
+    `— ${JOURNAL_INFO.name} Editorial Team`,
   );
 
   const values = pickList<{ title: string; description: string }>(

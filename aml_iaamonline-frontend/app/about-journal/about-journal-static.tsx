@@ -9,6 +9,7 @@ import { pickText, pickList } from '@/lib/page-layouts';
 import { SectionBody } from '@/components/shared/section-body';
 import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 type CardItem = { title: string; description: string };
 type FeatureItem = { title: string; description: string };
@@ -42,7 +43,7 @@ const DEFAULT_FEATURES: FeatureItem[] = [
 
 export default function AboutJournalPage({ content = {} }: { content?: PageContentData }) {
   const title = pickText(content, 'title', 'About Journal');
-  const subtitle = pickText(content, 'subtitle', 'Learn more about Advanced Materials Letters and our commitment to materials science research');
+  const subtitle = pickText(content, 'subtitle', `Learn more about ${JOURNAL_INFO.name} and our commitment to materials science research`);
   const overviewTitle = pickText(content, 'overview_title', 'Journal Overview');
   const featuresTitle = pickText(content, 'features_title', 'Key Features');
   const overviewBody = typeof content['overview_body'] === 'string' ? (content['overview_body'] as string) : '';

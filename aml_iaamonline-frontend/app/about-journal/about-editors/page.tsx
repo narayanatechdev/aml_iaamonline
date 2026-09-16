@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import AboutEditorsStatic from './about-editors-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'About the Editors',
   description:
-    'Meet the editorial leadership of Advanced Materials Letters — Editor-in-Chief, Managing Editor, and Academic Editorial Board members from institutions worldwide.',
+    `Meet the editorial leadership of ${JOURNAL_INFO.name} — Editor-in-Chief, Managing Editor, and Academic Editorial Board members from institutions worldwide.`,
 };
 
 /**

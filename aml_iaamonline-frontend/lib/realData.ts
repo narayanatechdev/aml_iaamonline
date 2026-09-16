@@ -38,6 +38,11 @@ export interface ArchiveVolume {
 }
 
 export const JOURNAL_INFO = {
+  name: process.env.NEXT_PUBLIC_JOURNAL_NAME || 'Advanced Materials Letters',
+  shortName: process.env.NEXT_PUBLIC_JOURNAL_SHORT_NAME || 'AML',
+  // A factual scope statement, not a generic label — don't guess this per
+  // journal; override via env once someone writes the real one.
+  tagline: process.env.NEXT_PUBLIC_JOURNAL_TAGLINE || 'Functional Materials for Green Energy and Environment',
   currentVolume: '17',
   currentIssue: '1',
   currentYear: '2026',

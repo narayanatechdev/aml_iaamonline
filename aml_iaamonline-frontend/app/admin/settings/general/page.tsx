@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Save, Info } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
 import { SimpleToast, ToastType } from '@/components/ui/Toast';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const STORAGE_KEY = 'admin_settings_general';
 
@@ -16,8 +17,8 @@ interface GeneralSettings {
 }
 
 const DEFAULTS: GeneralSettings = {
-  journalName: 'Advanced Materials Letters',
-  issn: '0976-3961',
+  journalName: JOURNAL_INFO.name,
+  issn: JOURNAL_INFO.issn,
   contactEmail: 'editor@iaamonline.org',
   articlesPerPage: 20,
   maintenanceMode: false,

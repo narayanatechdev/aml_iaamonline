@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import AimsScopeStatic from '../about-journal/aims-scope/aims-scope-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Aims & Scope',
   description:
-    'The aims and scope of Advanced Materials Letters — journal mission, core research areas, submission criteria, and material categories.',
+    `The aims and scope of ${JOURNAL_INFO.name} — journal mission, core research areas, submission criteria, and material categories.`,
 };
 
 export default async function AimsScopePage() {

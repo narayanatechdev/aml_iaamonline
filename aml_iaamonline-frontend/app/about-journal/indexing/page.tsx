@@ -4,11 +4,12 @@ import { fetchCmsPage } from '@/lib/cms-pages';
 import { CmsPageContent } from '@/components/shared/cms-page-content';
 import { parsePageContent } from '@/lib/page-layouts';
 import IndexingStatic from './indexing-static';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
   title: 'Indexing & Abstracting',
   description:
-    'Indexing and abstracting information for Advanced Materials Letters — scientific databases, citation metrics, and impact data.',
+    `Indexing and abstracting information for ${JOURNAL_INFO.name} — scientific databases, citation metrics, and impact data.`,
 };
 
 export default async function AboutJournalIndexingPage() {

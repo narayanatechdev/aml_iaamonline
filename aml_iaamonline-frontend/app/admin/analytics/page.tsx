@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminBreadcrumb } from '@/components/admin';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -526,7 +527,7 @@ export default function AnalyticsPage() {
                   {stats.total.toLocaleString()} Articles · {stats.total_views.toLocaleString()} Views · {stats.total_downloads.toLocaleString()} Downloads
                 </div>
                 <div className="text-white/70 text-sm mt-0.5">
-                  Advanced Materials Letters — {Object.keys(stats.by_subject).length} research areas · {Object.keys(stats.by_year).length} years of publication
+                  {JOURNAL_INFO.name} — {Object.keys(stats.by_subject).length} research areas · {Object.keys(stats.by_year).length} years of publication
                 </div>
               </div>
             </div>

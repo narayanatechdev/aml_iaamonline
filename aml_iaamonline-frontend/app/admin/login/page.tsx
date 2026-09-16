@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 import { saveAuth, isAuthenticated, API_BASE } from '@/lib/adminAuth';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -64,7 +65,7 @@ export default function AdminLoginPage() {
               <BookOpen className="w-8 h-8 text-white" />
             </div>
             <div>
-              <p className="text-white font-bold text-lg leading-tight">Advanced Materials Letters</p>
+              <p className="text-white font-bold text-lg leading-tight">{JOURNAL_INFO.name}</p>
               <p className="text-white/50 text-sm">Admin Panel</p>
             </div>
           </Link>

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { getUser, clearAuth, isAuthenticated, authFetch, API_BASE, type AuthUser } from '@/lib/userAuth';
 import { NotificationBell } from '@/components/shared/NotificationBell';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const NAV = [
   { label: 'My Submissions', icon: <LayoutDashboard className="w-5 h-5" />, href: '/dashboard' },
@@ -140,7 +141,7 @@ export function UserDashboardLayout({ children }: { children: React.ReactNode })
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
           <h1 className="text-lg font-bold text-[#0f2d6b]" style={{ fontFamily: "'Linux Libertine', Georgia, serif" }}>
-            Advanced Materials Letters
+            {JOURNAL_INFO.name}
           </h1>
           <div className="flex-1" />
           <NotificationBell authFetch={authFetch} apiBase={API_BASE} />

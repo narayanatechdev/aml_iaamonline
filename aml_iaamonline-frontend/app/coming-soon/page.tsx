@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
-  title: 'Advanced Materials Letters — Coming Soon',
+  title: `${JOURNAL_INFO.name} — Coming Soon`,
   description:
-    'The new home of Advanced Materials Letters is under construction. The full journal platform will be available here soon.',
+    `The new home of ${JOURNAL_INFO.name} is under construction. The full journal platform will be available here soon.`,
   robots: { index: false, follow: false },
 };
 
@@ -25,7 +26,7 @@ export default function ComingSoonPage() {
             className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[#0f2d6b] mb-6"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            Advanced Materials Letters
+            {JOURNAL_INFO.name}
           </h1>
 
           <div className="w-16 h-[3px] bg-[#c9a227] mx-auto mb-6" />

@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Users, Mail, Phone, MapPin, Star, Globe, Award, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function JournalStaffPage() {
   const editorInChief = {
@@ -112,7 +113,7 @@ export default function JournalStaffPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Journal Staff</h1>
           <p className="text-lg text-gray-700">
-            Meet the dedicated team behind Advanced Materials Letters
+            Meet the dedicated team behind {JOURNAL_INFO.name}
           </p>
         </div>
       </div>
@@ -234,7 +235,7 @@ export default function JournalStaffPage() {
                     <MapPin className="w-5 h-5 text-[#0f2d6b] mt-0.5" />
                     <div>
                       <p className="text-gray-900 font-medium">IAAM Headquarters</p>
-                      <p className="text-sm text-gray-600">Advanced Materials Letters<br />Editorial Office<br />International Association of Advanced Materials</p>
+                      <p className="text-sm text-gray-600">{JOURNAL_INFO.name}<br />Editorial Office<br />International Association of Advanced Materials</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

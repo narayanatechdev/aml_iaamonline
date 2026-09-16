@@ -10,6 +10,7 @@ import { RichText } from "@/components/shared/rich-text";
 import { richTextToPlain } from "@/lib/rich-text";
 import { isAuthenticated as isUserAuthenticated, getToken as getUserToken } from "@/lib/userAuth";
 import { isAuthenticated as isAdminAuthenticated, getToken as getAdminToken } from "@/lib/adminAuth";
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface AccessModel {
   enabled: boolean;
@@ -695,7 +696,7 @@ export default function ArticleClient() {
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               {!citeFormat ? (
                 <p className="text-[#3a4a6a] text-sm leading-relaxed font-mono">
-                  {authorNames} ({article.year}). <RichText html={article.title} />. <em>Advanced Materials Letters</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
+                  {authorNames} ({article.year}). <RichText html={article.title} />. <em>{JOURNAL_INFO.name}</em>, <strong>{article.volume}</strong>({article.issue}), {article.pages}.{' '}
                   <a
                     href={`https://doi.org/${article.doi}`}
                     target="_blank"

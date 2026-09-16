@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { getUser, API_BASE } from '@/lib/userAuth';
 import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from '@/lib/cover-image-validation';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 /* ----------------------------- config ----------------------------- */
 const MANUSCRIPT_TYPES = ['Research Article', 'Review Article', 'Letter / Short Communication', 'Perspective', 'Case Study'];
@@ -79,7 +80,7 @@ const QUESTIONS: Question[] = [
 const CONSENTS = [
   'This manuscript has not been published previously and is not under consideration elsewhere.',
   'All authors have approved the final version and agree to the submission (per ICMJE guidelines).',
-  'I have read and agree to the publication ethics and editorial policies of Advanced Materials Letters.',
+  `I have read and agree to the publication ethics and editorial policies of ${JOURNAL_INFO.name}.`,
 ];
 
 const STORAGE_KEY = 'aml_typeform_submission';
@@ -360,7 +361,7 @@ export function TypeformSubmission() {
             {/* WELCOME */}
             {index === -1 && (
               <div>
-                <p className="text-[#c9a227] font-semibold mb-3">Advanced Materials Letters</p>
+                <p className="text-[#c9a227] font-semibold mb-3">{JOURNAL_INFO.name}</p>
                 <h1 className="text-4xl md:text-5xl font-bold text-[#0f1a2e] mb-4 leading-tight">Submit your manuscript</h1>
                 <p className="text-lg text-[#5a6a8a] mb-8">A few quick questions — it takes about 3 minutes. Your progress saves automatically.</p>
                 <button onClick={() => setPage([0, 1])} className="inline-flex items-center gap-2 px-6 py-3 bg-[#0f2d6b] text-white rounded-xl font-semibold hover:bg-[#0d2560] transition-all hover:scale-[1.02]">

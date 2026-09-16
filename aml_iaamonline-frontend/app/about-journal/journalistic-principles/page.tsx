@@ -3,6 +3,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Scale, Eye, Heart, Shield } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function JournalisticPrinciplesPage() {
   return (
@@ -142,11 +143,11 @@ export default function JournalisticPrinciplesPage() {
             
             <div className="mt-8 p-6 bg-[#0f2d6b] text-white rounded-lg">
               <blockquote className="text-white/90 italic text-lg leading-relaxed mb-4">
-                "Our commitment to these principles ensures that Advanced Materials Letters 
+                "Our commitment to these principles ensures that {JOURNAL_INFO.name} 
                 remains a trusted platform for scientific communication, fostering innovation 
                 and collaboration in the global materials science community."
               </blockquote>
-              <div className="text-white font-medium">— Editorial Board, Advanced Materials Letters</div>
+              <div className="text-white font-medium">— Editorial Board, {JOURNAL_INFO.name}</div>
             </div>
           </div>
         </div>

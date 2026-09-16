@@ -3,11 +3,12 @@ import type { Metadata } from 'next';
 import { MainLayout } from '@/components/layout/main-layout';
 import { getHomeSections } from '@/lib/homeSections';
 import { divisionHref, resolveChallengeDivisions } from '@/components/homepage/challenge-divisions-data';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata: Metadata = {
-  title: 'Challenge Divisions | Advanced Materials Letters',
+  title: `Challenge Divisions | ${JOURNAL_INFO.name}`,
   description:
-    'The grand-challenge streams that organise content in Advanced Materials Letters.',
+    `The grand-challenge streams that organise content in ${JOURNAL_INFO.name}.`,
 };
 
 /**

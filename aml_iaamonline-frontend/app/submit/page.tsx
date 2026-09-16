@@ -1,9 +1,10 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { SubmissionWizard } from '@/components/forms/submission-wizard';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata = {
-  title: 'Submit Manuscript - IAAM Advanced Materials Letters',
-  description: 'Submit your research manuscript to Advanced Materials Letters for peer review',
+  title: `Submit Manuscript - IAAM ${JOURNAL_INFO.name}`,
+  description: `Submit your research manuscript to ${JOURNAL_INFO.name} for peer review`,
 };
 
 export default function SubmitPage() {

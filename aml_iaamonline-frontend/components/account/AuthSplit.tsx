@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { BookOpen, Check } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const FEATURES = [
   { title: 'Quick, frictionless submission', desc: 'Submit your manuscript in minutes with a guided, conversational form.' },
@@ -24,7 +25,7 @@ export function AuthSplit({ children }: { children: React.ReactNode }) {
             <div className="w-9 h-9 rounded-lg bg-[#c9a227] flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold">Advanced Materials Letters</span>
+            <span className="text-lg font-bold">{JOURNAL_INFO.name}</span>
           </Link>
         </div>
 
@@ -46,7 +47,7 @@ export function AuthSplit({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="relative z-10 text-xs text-white/50">
-          © {new Date().getFullYear()} Advanced Materials Letters · IAAM
+          © {new Date().getFullYear()} {JOURNAL_INFO.name} · IAAM
         </div>
       </div>
 

@@ -1,9 +1,10 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { TrackingForm } from '@/components/forms/tracking-form';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export const metadata = {
-  title: 'Track Manuscript - IAAM Advanced Materials Letters',
-  description: 'Track the status of your manuscript submission to Advanced Materials Letters',
+  title: `Track Manuscript - IAAM ${JOURNAL_INFO.name}`,
+  description: `Track the status of your manuscript submission to ${JOURNAL_INFO.name}`,
 };
 
 export default function TrackPage() {

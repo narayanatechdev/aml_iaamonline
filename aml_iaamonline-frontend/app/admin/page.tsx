@@ -14,6 +14,7 @@ import {
   TrendingUp, ChevronRight,
 } from 'lucide-react';
 import { AdminBreadcrumb } from '@/components/admin';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -276,7 +277,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Advanced Materials Letters — Journal Analytics
+            {JOURNAL_INFO.name} — Journal Analytics
             {lastUpdated && (
               <span className="ml-2 text-gray-400">
                 · Updated {lastUpdated.toLocaleTimeString()}

@@ -9,6 +9,7 @@ import { pickText, pickList } from '@/lib/page-layouts';
 import { SectionBody } from '@/components/shared/section-body';
 import { CmsRichText } from '@/components/shared/cms-rich-text';
 import type { PageContentData } from '@/lib/page-layouts';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 type OverviewParagraph = { text: string };
 type PublicationType = { title: string; description: string };
@@ -68,7 +69,7 @@ const DEFAULT_RECOGNITION: RecognitionItem[] = [
 ];
 
 export default function About({ content = {} }: { content?: PageContentData }) {
-  const title = pickText(content, 'title', 'About Advanced Materials Letters');
+  const title = pickText(content, 'title', `About ${JOURNAL_INFO.name}`);
   const subtitle = pickText(content, 'subtitle', 'A premier international, peer-reviewed journal dedicated to advancing the field of materials science and engineering through high-quality research publications.');
   const overviewTitle = pickText(content, 'overview_title', 'Journal Overview');
   const publicationTypesTitle = pickText(content, 'publication_types_title', 'Publication Types');

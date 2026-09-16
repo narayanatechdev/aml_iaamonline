@@ -7,6 +7,7 @@ import { MetadataForm } from "./metadata-form";
 import { SDGSelector } from "./sdg-selector";
 import { getUser, API_BASE } from "@/lib/userAuth";
 import { COVER_IMAGE_ACCEPT, COVER_IMAGE_HELP_TEXT, GRAPHICAL_ABSTRACT_ACCEPT, GRAPHICAL_ABSTRACT_HELP_TEXT, validateCoverImageFile, validateGraphicalAbstractFile } from "@/lib/cover-image-validation";
+import { JOURNAL_INFO } from '@/lib/realData';
 
 // Research areas accepted by the backend (category enum)
 const RESEARCH_AREAS: { value: string; label: string }[] = [
@@ -728,7 +729,7 @@ export function SubmissionWizard() {
                 <span className="text-xs text-[#3a4a6a] leading-relaxed">
                   I have read and agree to the{" "}
                   <Link href="/author-resources#ethics" className="text-[#0f2d6b] hover:underline">publication ethics</Link>{" "}
-                  and confirm compliance with all editorial policies of Advanced Materials Letters.
+                  and confirm compliance with all editorial policies of {JOURNAL_INFO.name}.
                 </span>
               </label>
             </div>

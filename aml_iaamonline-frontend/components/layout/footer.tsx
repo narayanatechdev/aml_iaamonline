@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BookOpen, MailIcon, Rss } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 interface FooterPage {
   id: number;
@@ -56,7 +57,7 @@ export function Footer() {
                 <BookOpen className="w-4 h-4 text-white" />
               </div>
               <div>
-                <div className="text-sm leading-tight font-bold text-black">Advanced Materials Letters</div>
+                <div className="text-sm leading-tight font-bold text-black">{JOURNAL_INFO.name}</div>
                 <div className="text-xs text-gray-700 leading-tight">An IAAM Journal</div>
               </div>
             </div>

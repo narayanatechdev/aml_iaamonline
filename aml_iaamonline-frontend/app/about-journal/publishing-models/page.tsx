@@ -3,6 +3,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Globe, CheckCircle, Users, BookOpen } from 'lucide-react';
+import { JOURNAL_INFO } from '@/lib/realData';
 
 export default function PublishingModelsPage() {
   return (
@@ -18,7 +19,7 @@ export default function PublishingModelsPage() {
           />
           <h1 className="text-3xl font-bold mb-4">Access &amp; Publishing Model</h1>
           <p className="text-lg text-gray-700">
-            How readers access Advanced Materials Letters and how the journal is sustained
+            How readers access {JOURNAL_INFO.name} and how the journal is sustained
           </p>
         </div>
       </div>
