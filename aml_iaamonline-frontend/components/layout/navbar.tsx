@@ -183,7 +183,7 @@ export function Navbar() {
       <div className="border-b border-gray-200 px-4 py-4" style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
           <a href="/" className="flex items-center gap-4 flex-shrink-0">
-            <img src="/logo.jpg" alt="Advanced Materials Letters Logo" className="h-14 w-auto object-contain rounded-md" />
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/logo.jpg`} alt="Advanced Materials Letters Logo" className="h-14 w-auto object-contain rounded-md" />
             <div>
               <div className="text-lg font-semibold text-black">Advanced Materials Letters</div>
               <div className="text-xs text-gray-600">Published by International Association of Advanced Materials</div>
