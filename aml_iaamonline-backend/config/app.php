@@ -54,6 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Where this journal's website lives (including any base path, e.g.
+    // https://pubs.iaamonline.org/advanced-materials-proceedings) — used for
+    // links in emails such as password setup and reviewer reminders.
+    'frontend_url' => env('FRONTEND_URL', 'https://amljournal.iaamonline.org'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

@@ -23,13 +23,30 @@ class ManuscriptSubmissionService
     public const AWAITING_REVISION = 'revision_required';
 
     /**
+     * AML's admin and managing-editor screens write hyphenated statuses; the
+     * editor workflow and author revisions use these underscored ones.
+     *
+     * @var array<string, string>
+     */
+    public const STATUS_ALIASES = [
+        'editor-review' => 'with_editor',
+        'under-review' => 'under_review',
+        'revision-requested' => self::AWAITING_REVISION,
+    ];
+
+    public static function normalizeStatus(?string $status): ?string
+    {
+        return self::STATUS_ALIASES[$status] ?? $status;
+    }
+
+    /**
      * Statuses grouped for the author dashboard summary cards.
      *
      * @var array<string, list<string>>
      */
     public const STATUS_GROUPS = [
-        'in_progress' => ['submitted', 'with_editor', 'under_review', 'decision'],
-        'awaiting_revision' => [self::AWAITING_REVISION],
+        'in_progress' => ['submitted', 'with_editor', 'under_review', 'decision', 'editor-review', 'under-review'],
+        'awaiting_revision' => [self::AWAITING_REVISION, 'revision-requested'],
         'decided' => ['accepted', 'rejected', 'published'],
     ];
 

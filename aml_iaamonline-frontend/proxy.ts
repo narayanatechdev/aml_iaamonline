@@ -16,6 +16,7 @@ export function proxy(request: NextRequest) {
   if (
     pathname.startsWith('/admin') ||
     pathname.startsWith('/account') ||
+    pathname === '/editor/login' ||
     pathname === '/coming-soon'
   ) {
     return NextResponse.next();

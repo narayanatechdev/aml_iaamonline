@@ -20,10 +20,12 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OaiController;
 use App\Http\Controllers\Api\OrcidController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReviewerController;
 use App\Http\Controllers\Api\ReviewerPortalController;
+use App\Http\Controllers\Api\ServiceAdminController;
 use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\ServiceManuscriptController;
 use App\Http\Controllers\Api\SubjectController;
@@ -42,6 +44,7 @@ Route::get('/health', function () {
 // Authentication Routes
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/password/reset', [PasswordResetController::class, 'reset'])->middleware('throttle:10,1')->name('password.update');
 
 // Author Submission Routes
 Route::post('/submit', [SubmissionController::class, 'store'])->name('submit');
@@ -109,6 +112,20 @@ Route::prefix('service')->name('service.')->middleware('auth.service')->group(fu
     Route::middleware('service.ability:manuscripts.write')->group(function () {
         Route::post('/users/{iaamId}/manuscripts', [ServiceManuscriptController::class, 'store'])->name('manuscripts.store');
         Route::post('/users/{iaamId}/manuscripts/{submissionId}/revise', [ServiceManuscriptController::class, 'revise'])->name('manuscripts.revise');
+    });
+
+    // Journal administration from the Portal's admin panel.
+    Route::prefix('admin')->name('admin.')->middleware('service.ability:journal.admin')->group(function () {
+        Route::get('/manuscripts', [ServiceAdminController::class, 'manuscripts'])->name('manuscripts.index');
+        Route::get('/manuscripts/{submissionId}', [ServiceAdminController::class, 'manuscript'])->name('manuscripts.show');
+        Route::post('/manuscripts/{submissionId}/assign-editor', [ServiceAdminController::class, 'assignEditor'])->name('manuscripts.assign-editor');
+        Route::post('/manuscripts/{submissionId}/status', [ServiceAdminController::class, 'updateStatus'])->name('manuscripts.status');
+        Route::get('/editors', [ServiceAdminController::class, 'editors'])->name('editors');
+        Route::get('/roles', [ServiceAdminController::class, 'roles'])->name('roles.index');
+        Route::post('/roles', [ServiceAdminController::class, 'createRole'])->name('roles.store');
+        Route::get('/staff', [ServiceAdminController::class, 'staff'])->name('staff');
+        Route::get('/users/{iaamId}/roles', [ServiceAdminController::class, 'userRoles'])->name('users.roles');
+        Route::put('/users/{iaamId}/roles', [ServiceAdminController::class, 'syncUserRoles'])->name('users.roles.sync');
     });
 });
 

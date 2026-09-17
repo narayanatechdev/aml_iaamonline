@@ -79,6 +79,11 @@ class Manuscript extends Model
         return $this->hasMany(ManuscriptFile::class);
     }
 
+    public function assignedEditor()
+    {
+        return $this->belongsTo(User::class, 'assigned_editor_id');
+    }
+
     public function reviewAssignments()
     {
         return $this->hasMany(ReviewAssignment::class);

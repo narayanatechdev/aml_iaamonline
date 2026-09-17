@@ -105,7 +105,7 @@ class AccountController extends Controller
     {
         $manuscript = Manuscript::where('author_email', $request->user()->email)->findOrFail($id);
 
-        if ($manuscript->status !== ManuscriptSubmissionService::AWAITING_REVISION) {
+        if (ManuscriptSubmissionService::normalizeStatus($manuscript->status) !== ManuscriptSubmissionService::AWAITING_REVISION) {
             return response()->json(['success' => false, 'message' => 'This manuscript is not awaiting a revision.'], 422);
         }
 
