@@ -16,6 +16,23 @@ const nextConfig = {
     NEXT_PUBLIC_JOURNAL_TAGLINE: process.env.NEXT_PUBLIC_JOURNAL_TAGLINE || '',
     NEXT_PUBLIC_JOURNAL_ISSN: process.env.NEXT_PUBLIC_JOURNAL_ISSN || '',
     NEXT_PUBLIC_JOURNAL_EISSN: process.env.NEXT_PUBLIC_JOURNAL_EISSN || '',
+    NEXT_PUBLIC_PORTAL_LOGIN_URL: process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || '',
+  },
+  // Set NEXT_PUBLIC_PORTAL_LOGIN_URL (e.g. the IAAM Member Portal's login)
+  // to hand sign-in and sign-up to the Portal, where members submit and
+  // track papers with one account. Unset keeps this app's own pages.
+  async redirects() {
+    const portalLogin = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL;
+
+    if (!portalLogin) {
+      return [];
+    }
+
+    return ['/account/login', '/account/register'].map((source) => ({
+      source,
+      destination: portalLogin,
+      permanent: false,
+    }));
   },
 };
 
