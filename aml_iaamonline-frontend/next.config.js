@@ -17,10 +17,14 @@ const nextConfig = {
     NEXT_PUBLIC_JOURNAL_ISSN: process.env.NEXT_PUBLIC_JOURNAL_ISSN || '',
     NEXT_PUBLIC_JOURNAL_EISSN: process.env.NEXT_PUBLIC_JOURNAL_EISSN || '',
     NEXT_PUBLIC_PORTAL_LOGIN_URL: process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || '',
+    NEXT_PUBLIC_PORTAL_REGISTER_URL: process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || '',
   },
   // Set NEXT_PUBLIC_PORTAL_LOGIN_URL (e.g. the IAAM Member Portal's login)
   // to hand sign-in and sign-up to the Portal, where members submit and
   // track papers with one account. Unset keeps this app's own pages.
+  // NEXT_PUBLIC_PORTAL_REGISTER_URL sends /account/register to the Portal's
+  // own sign-up page specifically; falls back to the login URL (which links
+  // to sign-up itself) if unset, so setting only the login URL still works.
   async redirects() {
     const portalLogin = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL;
 
@@ -28,11 +32,12 @@ const nextConfig = {
       return [];
     }
 
-    return ['/account/login', '/account/register'].map((source) => ({
-      source,
-      destination: portalLogin,
-      permanent: false,
-    }));
+    const portalRegister = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || portalLogin;
+
+    return [
+      { source: '/account/login', destination: portalLogin, permanent: false },
+      { source: '/account/register', destination: portalRegister, permanent: false },
+    ];
   },
 };
 
