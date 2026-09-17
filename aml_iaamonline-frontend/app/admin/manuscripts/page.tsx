@@ -30,6 +30,8 @@ interface Manuscript {
   division?: string;
   reviewers_total?: number;
   reviews_completed?: number;
+  submitted_via?: string;
+  iaam_id?: string | null;
 }
 
 // Statuses that require the editor's attention on the dashboard queue
@@ -94,6 +96,17 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cfg.color}`}>
       {cfg.label}
+    </span>
+  );
+}
+
+function PortalBadge({ iaamId }: { iaamId?: string | null }) {
+  return (
+    <span
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100"
+      title={iaamId ? `Submitted via the IAAM Portal — ${iaamId}` : 'Submitted via the IAAM Portal'}
+    >
+      via Portal
     </span>
   );
 }
@@ -303,9 +316,12 @@ export default function ManuscriptsPage() {
                       className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors group"
                     >
                       <td className="px-6 py-3.5">
-                        <p className="text-xs font-mono text-[#c9a227] font-semibold mb-0.5">
-                          {`MS-${String(ms.id).padStart(4, '0')}`}
-                        </p>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="text-xs font-mono text-[#c9a227] font-semibold">
+                            {`MS-${String(ms.id).padStart(4, '0')}`}
+                          </p>
+                          {ms.submitted_via === 'portal' && <PortalBadge iaamId={ms.iaam_id} />}
+                        </div>
                         <p className="text-sm font-medium text-gray-900 line-clamp-1 max-w-md group-hover:text-[#0f2d6b] transition-colors">
                           {ms.title}
                         </p>
