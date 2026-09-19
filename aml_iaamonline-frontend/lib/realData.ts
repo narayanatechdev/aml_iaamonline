@@ -1,4 +1,9 @@
-import articlesData from './articles_data.json';
+import amlArticles from './articles_data.json';
+import ampArticles from './journal-data/amp-articles.json';
+
+// Each journal ships its own article set — set NEXT_PUBLIC_JOURNAL_DATA=amp on
+// the AMP build. Regenerate a set with scripts/export-articles-snapshot.mjs.
+const articlesData: any[] = process.env.NEXT_PUBLIC_JOURNAL_DATA === 'amp' ? ampArticles : amlArticles;
 
 export interface FeaturedArticle {
   id: string;
@@ -44,9 +49,9 @@ export const JOURNAL_INFO = {
   // Every deployment states its own via NEXT_PUBLIC_JOURNAL_TAGLINE, or
   // shows none rather than silently inheriting another journal's claim.
   tagline: process.env.NEXT_PUBLIC_JOURNAL_TAGLINE || '',
-  currentVolume: '17',
-  currentIssue: '1',
-  currentYear: '2026',
+  currentVolume: process.env.NEXT_PUBLIC_JOURNAL_CURRENT_VOLUME || '17',
+  currentIssue: process.env.NEXT_PUBLIC_JOURNAL_CURRENT_ISSUE || '1',
+  currentYear: process.env.NEXT_PUBLIC_JOURNAL_CURRENT_YEAR || '2026',
   issn: process.env.NEXT_PUBLIC_JOURNAL_ISSN || '0976-3961',
   eISSN: process.env.NEXT_PUBLIC_JOURNAL_EISSN || '0976-397X',
 };

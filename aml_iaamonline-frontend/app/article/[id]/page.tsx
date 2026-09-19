@@ -3,7 +3,7 @@ import { FEATURED_ARTICLES, JOURNAL_INFO } from '@/lib/realData';
 import { richTextToPlain } from '@/lib/rich-text';
 import ArticleClient from './article-client';
 
-const BASE_URL = 'https://amljournal.iaamonline.org';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://amljournal.iaamonline.org';
 
 async function fetchArticleData(id: string): Promise<any> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
