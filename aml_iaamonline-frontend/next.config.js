@@ -22,6 +22,15 @@ const nextConfig = {
     NEXT_PUBLIC_JOURNAL_CURRENT_YEAR: process.env.NEXT_PUBLIC_JOURNAL_CURRENT_YEAR || '',
     NEXT_PUBLIC_PORTAL_LOGIN_URL: process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || '',
     NEXT_PUBLIC_PORTAL_REGISTER_URL: process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || '',
+    // 'hub' renders the pubs.iaamonline.org publications hub (app/page.tsx
+    // and app/layout.tsx branch on this); unset keeps a journal deployment
+    // completely unchanged.
+    NEXT_PUBLIC_SITE_KIND: process.env.NEXT_PUBLIC_SITE_KIND || '',
+    NEXT_PUBLIC_AML_API_URL: process.env.NEXT_PUBLIC_AML_API_URL || 'https://amljournal.iaamonline.org/api',
+    NEXT_PUBLIC_AMP_API_URL: process.env.NEXT_PUBLIC_AMP_API_URL || 'https://ampjournal.iaamonline.org/api',
+    // The hub's own endpoints (currently just /hub/contact) live in the same
+    // shared backend as AML/AMP, so this defaults to AML's API origin.
+    NEXT_PUBLIC_HUB_API_URL: process.env.NEXT_PUBLIC_HUB_API_URL || process.env.NEXT_PUBLIC_AML_API_URL || 'https://amljournal.iaamonline.org/api',
   },
   // Set NEXT_PUBLIC_PORTAL_LOGIN_URL (e.g. the IAAM Member Portal's login)
   // to hand sign-in and sign-up to the Portal, where members submit and

@@ -320,6 +320,12 @@
   }
 }
 
+/* pubs.iaamonline.org hub only (NEXT_PUBLIC_SITE_KIND=hub) — Source Serif 4 /
+   Figtree per the design brief, isolated from the journal --font-sans /
+   --font-serif tokens above so AML/AMP builds are unaffected. */
+.font-hub-body { font-family: 'Figtree', system-ui, sans-serif; }
+.font-hub-display { font-family: 'Source Serif 4', Georgia, serif; }
+
 /* Rich-text CMS fields (components/shared/rich-text.tsx) */
 .cms-rich p { margin: 0 0 0.9em; }
 .cms-rich p:last-child { margin-bottom: 0; }
