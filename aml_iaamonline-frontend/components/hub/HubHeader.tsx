@@ -121,7 +121,7 @@ export function HubHeader() {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 ml-4">
+          <nav className="hidden xl:flex items-center gap-1 ml-4">
             {MENU_ITEMS.map((item) => {
               const hasDropdown = item in DROPDOWNS;
               const jumpHref = item === 'Impact' ? '/#article-impact' : item === 'Collaboration' ? '/#collaboration' : undefined;
@@ -166,7 +166,7 @@ export function HubHeader() {
             })}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3 ml-auto">
+          <div className="hidden xl:flex items-center gap-3 ml-auto">
             <a
               href="/for-authors/submit"
               className="px-4 py-2.5 rounded-md bg-[#1546E0] text-white text-[14px] font-semibold hover:bg-[#1139b8] transition-colors"
@@ -184,7 +184,7 @@ export function HubHeader() {
           </div>
 
           <button
-            className="lg:hidden ml-auto p-2 text-[#0B1F4D]"
+            className="xl:hidden ml-auto p-2 text-[#0B1F4D]"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
@@ -193,7 +193,7 @@ export function HubHeader() {
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden border-t border-[#DCE3F0] px-6 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
+          <div className="xl:hidden border-t border-[#DCE3F0] px-6 py-4 space-y-1 max-h-[70vh] overflow-y-auto">
             {MENU_ITEMS.map((item) => (
               <div key={item} className="py-1">
                 <div className="text-[14px] font-semibold text-[#0B1F4D] py-1.5">{item}</div>
