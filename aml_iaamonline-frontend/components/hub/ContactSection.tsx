@@ -3,7 +3,7 @@ import { ContactForm } from './ContactForm';
 export function ContactSection() {
   return (
     <section id="contact" className="font-hub-body bg-[#F6F8FC]">
-      <div className="max-w-[1200px] mx-auto px-6 py-14">
+      <div className="max-w-[1400px] mx-auto px-6 py-14">
         <h2 className="font-hub-display font-bold text-[28px] text-[#0B1F4D]">Contact Us</h2>
         <div className="w-14 h-1 rounded-full bg-[#10B981] mt-2 mb-2" />
         <p className="text-[15px] text-[#5a6a8a] mb-8">We are here to help</p>

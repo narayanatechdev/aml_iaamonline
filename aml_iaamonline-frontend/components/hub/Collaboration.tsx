@@ -8,7 +8,7 @@ const ROUTES = [
 export function Collaboration() {
   return (
     <section id="collaboration" className="font-hub-body bg-[#F6F8FC]">
-      <div className="max-w-[1200px] mx-auto px-6 py-14">
+      <div className="max-w-[1400px] mx-auto px-6 py-14">
         <div className="rounded-2xl bg-[#0A1A45] text-white p-8 md:p-10">
           <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[#A7F3D0] mb-3">
             Open invitation · Collaboration

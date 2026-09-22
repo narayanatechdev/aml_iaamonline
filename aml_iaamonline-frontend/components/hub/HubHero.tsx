@@ -10,7 +10,7 @@ const PILLARS = [
 export function HubHero() {
   return (
     <section className="font-hub-body bg-[#0A1A45] text-white">
-      <div className="max-w-[1200px] mx-auto px-6 py-14 md:py-16">
+      <div className="max-w-[1400px] mx-auto px-6 py-14 md:py-16">
         <p className="text-[12px] font-semibold tracking-[0.14em] uppercase text-[#A7F3D0] mb-4">
           Not-for-profit publisher · Science for a sustainable tomorrow
         </p>

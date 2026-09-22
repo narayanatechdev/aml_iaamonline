@@ -76,7 +76,7 @@ export function HubHeader() {
     <header className="font-hub-body sticky top-0 z-50">
       {/* IAAM global header */}
       <div className="bg-[#0A1330] text-[#C5CEE3] text-[13px]">
-        <div className="max-w-[1200px] mx-auto px-6 h-10 flex items-center justify-between gap-6">
+        <div className="max-w-[1400px] mx-auto px-6 h-10 flex items-center justify-between gap-6">
           <nav className="hidden lg:flex items-center gap-5">
             {GLOBAL_LINKS.map((l) => (
               <a
@@ -113,7 +113,7 @@ export function HubHeader() {
 
       {/* Publications menu bar */}
       <div className="bg-white border-b border-[#DCE3F0]">
-        <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center gap-6">
+        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0" aria-label="IAAM Publications, home">
             <div className="w-9 h-9 rounded-lg bg-[#0A1A45] flex items-center justify-center text-white font-hub-display font-bold text-sm">
               IA

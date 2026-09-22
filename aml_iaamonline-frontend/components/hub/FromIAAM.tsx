@@ -3,7 +3,7 @@ const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'http
 export function FromIAAM() {
   return (
     <section className="font-hub-body bg-[#F6F8FC]">
-      <div className="max-w-[1200px] mx-auto px-6 py-14">
+      <div className="max-w-[1400px] mx-auto px-6 py-14">
         <p className="text-[12px] font-bold tracking-[0.12em] uppercase text-[#5a6a8a] mb-6">From IAAM</p>
 
         <div className="grid md:grid-cols-3 gap-5">

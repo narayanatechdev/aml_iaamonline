@@ -6,7 +6,7 @@ export async function LatestArticles() {
 
   return (
     <section id="latest-articles" className="font-hub-body bg-white">
-      <div className="max-w-[1200px] mx-auto px-6 py-14">
+      <div className="max-w-[1400px] mx-auto px-6 py-14">
         <h2 className="font-hub-display font-bold text-[28px] text-[#0B1F4D]">Latest Articles</h2>
         <div className="w-14 h-1 rounded-full bg-[#10B981] mt-2 mb-6" />
         <LatestArticlesTabs recent={recent} mostCited={mostCited} />

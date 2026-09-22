@@ -15,7 +15,7 @@ const RECOGNITION = [
 export function ArticleImpact() {
   return (
     <section id="article-impact" className="font-hub-body bg-[#F6F8FC]">
-      <div className="max-w-[1200px] mx-auto px-6 py-14">
+      <div className="max-w-[1400px] mx-auto px-6 py-14">
         <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
           <div>
             <h2 className="font-hub-display font-bold text-[25px] text-[#0B1F4D]">About IAAM Article Impact (AII)</h2>

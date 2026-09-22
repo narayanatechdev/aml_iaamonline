@@ -126,7 +126,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 export function HubFooter() {
   return (
     <footer className="font-hub-body bg-[#0A1330] text-[#C5CEE3]">
-      <div className="max-w-[1200px] mx-auto px-6 py-12">
+      <div className="max-w-[1400px] mx-auto px-6 py-12">
         <p className="text-[12.5px] leading-relaxed max-w-[80ch] mb-10 pb-8 border-b border-[#26325A]">
           IAAM Publications is the publishing arm of the International Association of Advanced Materials, a
           non-profit international scientific organization and an Observer Organization accredited to the United
