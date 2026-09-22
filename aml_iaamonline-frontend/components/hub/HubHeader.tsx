@@ -114,10 +114,8 @@ export function HubHeader() {
       {/* Publications menu bar */}
       <div className="bg-white border-b border-[#DCE3F0]">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0" aria-label="IAAM Publications, home">
-            <div className="w-9 h-9 rounded-lg bg-[#0A1A45] flex items-center justify-center text-white font-hub-display font-bold text-sm">
-              IA
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="IAAM Publications, home">
+            <img src="/iaam-logo.svg" alt="" width={38} height={39} className="w-[38px] h-[39px]" />
             <span className="font-hub-display font-semibold text-[15px] text-[#0B1F4D] hidden sm:inline">
               IAAM Publications
             </span>

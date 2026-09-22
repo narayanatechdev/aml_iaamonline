@@ -127,6 +127,12 @@ export function HubFooter() {
   return (
     <footer className="font-hub-body bg-[#0A1330] text-[#C5CEE3]">
       <div className="max-w-[1400px] mx-auto px-6 py-12">
+        <div className="inline-flex items-center gap-3 mb-5">
+          <span className="w-12 h-12 rounded-lg bg-white flex items-center justify-center">
+            <img src="/iaam-logo.svg" alt="" width={36} height={37} className="w-9 h-[37px]" />
+          </span>
+          <span className="font-hub-display font-semibold text-[16px] text-white">IAAM Publications</span>
+        </div>
         <p className="text-[12.5px] leading-relaxed max-w-[80ch] mb-10 pb-8 border-b border-[#26325A]">
           IAAM Publications is the publishing arm of the International Association of Advanced Materials, a
           non-profit international scientific organization and an Observer Organization accredited to the United

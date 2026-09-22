@@ -16,6 +16,14 @@ interface AccessTier {
   monthly_limit: number;
 }
 
+interface AccessModel {
+  tiers: AccessTier[];
+  free_until_volume: number;
+  free_until_year: number;
+  article_price: number;
+  currency: string;
+}
+
 const FALLBACK_TIERS: AccessTier[] = [
   { key: 'regular', label: 'Regular Member', daily_limit: 5, monthly_limit: 100 },
   { key: 'fellow', label: 'Fellow Member', daily_limit: 10, monthly_limit: 200 },
@@ -24,22 +32,30 @@ const FALLBACK_TIERS: AccessTier[] = [
   { key: 'institutional', label: 'Institutional Member', daily_limit: 25, monthly_limit: 500 },
 ];
 
-async function fetchTiers(): Promise<AccessTier[]> {
+async function fetchAccessModel(): Promise<AccessModel | null> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/access-model`, {
       next: { revalidate: 60 },
     });
-    if (!res.ok) return FALLBACK_TIERS;
-    const json = await res.json();
-    const tiers = json?.data?.tiers;
-    return Array.isArray(tiers) && tiers.length > 0 ? tiers : FALLBACK_TIERS;
+    if (!res.ok) return null;
+    return (await res.json())?.data as AccessModel;
   } catch {
-    return FALLBACK_TIERS;
+    return null;
   }
 }
 
 export default async function AccessModelPage() {
-  const tiers = await fetchTiers();
+  const model = await fetchAccessModel();
+  const tiers = model?.tiers?.length ? model.tiers : FALLBACK_TIERS;
+  const freeUntilVolume = model?.free_until_volume ?? 17;
+  const freeUntilYear = model?.free_until_year ?? 2026;
+  const articlePrice = model
+    ? new Intl.NumberFormat('en-IE', {
+        style: 'currency',
+        currency: model.currency || 'EUR',
+        maximumFractionDigits: model.article_price % 1 === 0 ? 0 : 2,
+      }).format(model.article_price)
+    : null;
 
   return (
     <MainLayout>
@@ -66,13 +82,13 @@ export default async function AccessModelPage() {
           {[
             {
               icon: <BookOpen className="w-5 h-5" />,
-              title: 'Free to publish',
-              text: 'The journal has never charged authors a fee — no article processing charges, no submission charges.',
+              title: `Volumes 1–${freeUntilVolume} stay free`,
+              text: `Everything published from 2010 to ${freeUntilYear} was free open access and remains free to read — no sign-in, no subscription, no purchase.`,
             },
             {
               icon: <ShieldCheck className="w-5 h-5" />,
               title: 'Selective by invitation',
-              text: 'Articles are invited from IAAM Fellows, awardees and collaborating institutions, and peer reviewed.',
+              text: 'Articles are invited from IAAM Fellows, awardees and collaborating institutions, and peer reviewed. Invited authors pay nothing.',
             },
             {
               icon: <Users className="w-5 h-5" />,
@@ -81,8 +97,8 @@ export default async function AccessModelPage() {
             },
             {
               icon: <CreditCard className="w-5 h-5" />,
-              title: 'Or subscribe',
-              text: 'Readers who are not IAAM members can subscribe, or purchase access to individual articles.',
+              title: 'Subscribe or buy one article',
+              text: `Readers who are not IAAM members can subscribe, or buy permanent access to a single article${articlePrice ? ` for ${articlePrice}` : ''}.`,
             },
           ].map((item) => (
             <div key={item.title} className="bg-white rounded-lg border border-gray-200 p-5">
@@ -122,8 +138,10 @@ export default async function AccessModelPage() {
           </table>
         </div>
         <p className="text-xs text-[#5a6a8a] mb-10">
-          Allowances count distinct articles; re-reading an article you opened the same day does not
-          use your allowance. Abstracts, metadata and citation details are always free to view.
+          Allowances count distinct articles from Volume {freeUntilVolume + 1} onwards; articles in
+          Volumes 1&ndash;{freeUntilVolume} and any article published open access never use your
+          allowance. Re-reading an article you opened the same day does not use it either. Abstracts,
+          metadata and citation details are always free to view.
         </p>
 
         {/* CTAs */}

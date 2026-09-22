@@ -63,6 +63,9 @@ export function SubmissionWizard() {
   const [graphicalAbstractPreview, setGraphicalAbstractPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // During the invited-only window a manuscript needs a code from its editor.
+  const [invitationCode, setInvitationCode] = useState("");
+  const [gate, setGate] = useState<{ invited_only: boolean; message: string } | null>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -84,6 +87,17 @@ export function SubmissionWizard() {
     if (u?.email) {
       setForm((f) => ({ ...f, authorEmail: u.email, authorName: f.authorName || u.name }));
     }
+
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/submission-gate`);
+        if (!res.ok) return;
+        const json = await res.json();
+        setGate(json.data);
+      } catch {
+        // the form still submits; the server has the final say on the gate
+      }
+    })();
   }, []);
 
   const [metadata, setMetadata] = useState<MetadataFormData>({
@@ -220,6 +234,9 @@ export function SubmissionWizard() {
       fd.append("pdf", pdfFile);
       fd.append("image", coverImageFile);
       fd.append("graphical_abstract", graphicalAbstractFile);
+      if (invitationCode.trim()) {
+        fd.append("invitation_code", invitationCode.trim());
+      }
 
       const res = await fetch(`${API_BASE}/submit`, {
         method: "POST",
@@ -733,6 +750,30 @@ export function SubmissionWizard() {
                 </span>
               </label>
             </div>
+
+            {gate?.invited_only && (
+              <div className="p-4 rounded-lg bg-[#f0f4fb] border border-[#0f2d6b]/15">
+                <label htmlFor="invitation_code" className="block text-sm font-semibold text-[#0f2d6b] mb-1">
+                  Invitation code
+                </label>
+                <p className="text-xs text-[#3a4a6a] mb-2 leading-relaxed">{gate.message}</p>
+                <input
+                  id="invitation_code"
+                  name="invitation_code"
+                  value={invitationCode}
+                  onChange={(e) => setInvitationCode(e.target.value.toUpperCase())}
+                  placeholder="AML-XXXXXXXXXX"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0f2d6b]/20 focus:border-[#0f2d6b]"
+                />
+                <p className="text-xs text-[#5a6a8a] mt-2">
+                  Not invited yet?{" "}
+                  <Link href="/dashboard/proposals/new" className="text-[#0f2d6b] hover:underline">
+                    Send a manuscript proposal
+                  </Link>{" "}
+                  and an editor will reply.
+                </p>
+              </div>
+            )}
 
             {submitError && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200">

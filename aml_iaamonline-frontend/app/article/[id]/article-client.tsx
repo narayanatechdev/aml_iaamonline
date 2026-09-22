@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FEATURED_ARTICLES, FeaturedArticle } from "@/lib/realData";
-import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock, Copy, Check, Loader2 } from "lucide-react";
+import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock, Copy, Check, Loader2, CreditCard, Unlock } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { RichText } from "@/components/shared/rich-text";
 import { richTextToPlain } from "@/lib/rich-text";
@@ -20,8 +20,19 @@ interface AccessModel {
 interface AccessCheck {
   allowed: boolean;
   unlimited?: boolean;
+  reason?: string;
   remaining_today?: number;
   remaining_month?: number;
+}
+
+/** Whether this particular article sits behind the paywall at all. */
+interface AccessState {
+  free: boolean;
+  gated: boolean;
+  is_open_access: boolean;
+  is_invited: boolean;
+  price: number;
+  currency: string;
 }
 
 interface AuthorAffiliation {
@@ -95,13 +106,17 @@ export default function ArticleClient() {
   const [accessModel, setAccessModel] = useState<AccessModel | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [accessCheck, setAccessCheck] = useState<AccessCheck | null>(null);
+  const [accessState, setAccessState] = useState<AccessState | null>(null);
+  const [buying, setBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
   const [citeFormat, setCiteFormat] = useState<string | null>(null);
   const [citeText, setCiteText] = useState<Record<string, string>>({});
   const [citeLoading, setCiteLoading] = useState(false);
   const [citeError, setCiteError] = useState<string | null>(null);
   const [citeCopied, setCiteCopied] = useState(false);
 
-  // Subscription gate: anonymous visitors see the preview with a
+  // Subscription gate: articles published before the free-access cut-off stay
+  // free for everyone. Beyond it, anonymous visitors see the preview with a
   // subscribe/membership prompt; signed-in members consume their tier's
   // daily/monthly allowance, checked and recorded server-side.
   useEffect(() => {
@@ -118,6 +133,19 @@ export default function ArticleClient() {
         // gate stays open if the access model can't be loaded
       }
     })();
+
+    if (id) {
+      (async () => {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}/access-state`);
+          if (!res.ok) return;
+          const json = await res.json();
+          setAccessState(json.data);
+        } catch {
+          // fail open
+        }
+      })();
+    }
 
     if (signedIn && id) {
       (async () => {
@@ -136,9 +164,52 @@ export default function ArticleClient() {
     }
   }, [id]);
 
+  // An article outside the paywall is free for everyone, signed in or not.
+  const isFreeArticle = accessState?.free ?? false;
   const overLimit = isSignedIn && accessCheck !== null && !accessCheck.allowed;
-  const hasFullAccess = (!accessModel?.enabled || isSignedIn) && !overLimit;
+  const hasFullAccess = isFreeArticle || ((!accessModel?.enabled || isSignedIn) && !overLimit);
   const showAbstract = hasFullAccess || (accessModel?.preview ?? 'abstract') === 'abstract';
+  const articlePrice = accessState
+    ? new Intl.NumberFormat('en-IE', {
+        style: 'currency',
+        currency: accessState.currency || 'EUR',
+        maximumFractionDigits: accessState.price % 1 === 0 ? 0 : 2,
+      }).format(accessState.price)
+    : null;
+
+  const buyArticle = async () => {
+    setBuyError(null);
+
+    if (!isSignedIn) {
+      window.location.href = `/account/login?next=/article/${id}`;
+      return;
+    }
+
+    setBuying(true);
+    try {
+      const token = getUserToken() || getAdminToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout/article/${id}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const json = await res.json();
+
+      if (!res.ok || !json?.data?.checkout_url) {
+        setBuyError(json?.message || 'We could not start the purchase. Please try again.');
+        return;
+      }
+
+      window.location.href = json.data.checkout_url;
+    } catch {
+      setBuyError('We could not reach the payment service. Please try again.');
+    } finally {
+      setBuying(false);
+    }
+  };
 
   // Fetch the live article record so admin edits (graphical abstract, PDF, metadata)
   // show up without a rebuild of the static articles_data.json snapshot.
@@ -329,7 +400,8 @@ export default function ArticleClient() {
                 <div className="text-center">
                   <Lock className="w-5 h-5 text-[#c9a227] mx-auto mb-2" />
                   <p className="text-sm text-[#3a4a6a] mb-3">
-                    Full text is available to IAAM members and subscribers.
+                    Read this article with IAAM membership, a subscription, or a single-article
+                    purchase.
                   </p>
                   <Link
                     href="/account/login"
@@ -337,10 +409,25 @@ export default function ArticleClient() {
                   >
                     Sign in for access
                   </Link>
+                  {articlePrice && (
+                    <button
+                      onClick={buyArticle}
+                      disabled={buying}
+                      className="flex items-center gap-2 px-4 py-3 mt-2 border border-[#0f2d6b] text-[#0f2d6b] rounded-lg text-sm hover:bg-[#f0f4fb] disabled:opacity-60 transition-colors font-semibold w-full justify-center"
+                    >
+                      {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+                      Buy this article — {articlePrice}
+                    </button>
+                  )}
+                  {buyError && <p className="text-xs text-red-600 mt-2">{buyError}</p>}
                   <p className="text-xs text-[#5a6a8a] mt-2">
                     Not a member?{' '}
                     <Link href="/account/register" className="text-[#0f2d6b] underline underline-offset-2 hover:text-[#c9a227]">
                       Join IAAM
+                    </Link>{' '}
+                    ·{' '}
+                    <Link href="/subscribe" className="text-[#0f2d6b] underline underline-offset-2 hover:text-[#c9a227]">
+                      Subscribe
                     </Link>
                   </p>
                 </div>
@@ -417,6 +504,20 @@ export default function ArticleClient() {
               <span className="px-2.5 py-0.5 bg-[#f0f4fb] text-[#0f2d6b] text-xs rounded border border-[#0f2d6b]/10">
                 {article.subject}
               </span>
+              {accessState?.is_invited && (
+                <span className="px-2.5 py-0.5 bg-[#FDF0DC] text-[#7A3E00] text-xs rounded border border-[#7A3E00]/15" style={{ fontWeight: 600 }}>
+                  Invited article
+                </span>
+              )}
+              {accessState?.is_open_access ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-800 text-xs rounded border border-emerald-200" style={{ fontWeight: 600 }}>
+                  <Unlock className="w-3 h-3" /> Open access
+                </span>
+              ) : accessState?.free ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-800 text-xs rounded border border-emerald-200" style={{ fontWeight: 600 }}>
+                  <Unlock className="w-3 h-3" /> Free to read
+                </span>
+              ) : null}
             </div>
 
             <RichText
@@ -586,13 +687,26 @@ export default function ArticleClient() {
                   <Lock className="w-4 h-4" /> Article allowance reached
                 </span>
               ) : (
-                <Link
-                  href="/account/login"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors"
-                  style={{ fontWeight: 600 }}
-                >
-                  <Lock className="w-4 h-4" /> Sign in for full text
-                </Link>
+                <>
+                  <Link
+                    href="/account/login"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors"
+                    style={{ fontWeight: 600 }}
+                  >
+                    <Lock className="w-4 h-4" /> Sign in for full text
+                  </Link>
+                  {articlePrice && (
+                    <button
+                      onClick={buyArticle}
+                      disabled={buying}
+                      className="flex items-center gap-2 px-4 py-2 border border-[#0f2d6b] text-[#0f2d6b] rounded-lg text-base hover:bg-[#f0f4fb] disabled:opacity-60 transition-colors"
+                      style={{ fontWeight: 600 }}
+                    >
+                      {buying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+                      Buy — {articlePrice}
+                    </button>
+                  )}
+                </>
               )}
               {hasFullAccess && ((article.pdf_url || article.original_pdf_url) ? (
                 <a
@@ -658,13 +772,17 @@ export default function ArticleClient() {
                     <Lock className="w-5 h-5 text-[#c9a227] mx-auto mb-2" />
                     <p className="text-sm text-[#3a4a6a]">
                       The abstract and full text of this article are available to IAAM members and
-                      subscribers.{' '}
+                      subscribers, or with a single-article purchase.{' '}
                       <Link href="/account/login" className="text-[#0f2d6b] underline underline-offset-2">
                         Sign in
-                      </Link>{' '}
-                      or{' '}
+                      </Link>
+                      ,{' '}
                       <Link href="/account/register" className="text-[#0f2d6b] underline underline-offset-2">
                         join IAAM
+                      </Link>{' '}
+                      or{' '}
+                      <Link href="/subscribe" className="text-[#0f2d6b] underline underline-offset-2">
+                        subscribe
                       </Link>
                       .
                     </p>

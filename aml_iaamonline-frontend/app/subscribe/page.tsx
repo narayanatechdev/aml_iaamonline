@@ -2,25 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { CheckCircle, FileText, Users, Mail } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
+import { SubscribePlans, type Plan } from './subscribe-plans';
 
 export const metadata: Metadata = {
   title: 'Subscriptions & Fees',
   description:
     'Subscription plans and per-article fees for Advanced Materials Letters. Authors are never charged — reading access is funded through IAAM membership and subscriptions.',
 };
-
-interface Plan {
-  key: string;
-  name: string;
-  audience: 'individual' | 'institutional';
-  price: number;
-  currency: string;
-  period: 'year' | 'month';
-  description: string;
-  benefits: string[];
-  featured: boolean;
-}
 
 interface Tier {
   key: string;
@@ -35,6 +24,9 @@ interface AccessModel {
   article_price: number;
   currency: string;
   contact_email: string;
+  free_until_volume: number;
+  free_until_year: number;
+  apc?: { enabled: boolean; research: number; review: number };
 }
 
 async function fetchAccessModel(): Promise<AccessModel | null> {
@@ -51,7 +43,7 @@ async function fetchAccessModel(): Promise<AccessModel | null> {
 
 function money(amount: number, currency: string): string {
   try {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IE', {
       style: 'currency',
       currency,
       maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
@@ -64,7 +56,14 @@ function money(amount: number, currency: string): string {
 export default async function SubscribePage() {
   const model = await fetchAccessModel();
   const plans = model?.plans ?? [];
-  const contact = model?.contact_email || 'aml@iaamonline.org';
+  const contact = model?.contact_email || 'publishers@iaamonline.org';
+  const freeUntilVolume = model?.free_until_volume ?? 17;
+  const freeUntilYear = model?.free_until_year ?? 2026;
+  const currency = model?.currency ?? 'EUR';
+  const apcNote =
+    model?.apc?.enabled && model.apc.research > 0
+      ? ` (${money(model.apc.research, currency)} for a research article, ${money(model.apc.review, currency)} for a review)`
+      : '';
 
   return (
     <MainLayout>
@@ -81,74 +80,31 @@ export default async function SubscribePage() {
 
       <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          {/* No author fees banner */}
+          {/* Author charges */}
           <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-10 flex items-start gap-3">
             <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h2 className="font-semibold text-emerald-900">Authors are never charged</h2>
+              <h2 className="font-semibold text-emerald-900">Invited authors pay nothing</h2>
               <p className="text-sm text-emerald-800">
-                No article processing charges, no submission fees, no publication fees — publishing
-                in AML is free for authors.
+                There are no submission fees and no publication fees. Authors who want their article
+                free for every reader from the day it appears may take the optional open-access
+                route{apcNote}. Waivers and discounts are available — ask the editorial office.
               </p>
             </div>
           </div>
 
+          {/* The free archive */}
+          <div className="bg-white border border-gray-200 rounded-xl p-5 mb-10 max-w-4xl mx-auto">
+            <h2 className="font-semibold text-[#0f2d6b] mb-1">The archive stays free</h2>
+            <p className="text-sm text-gray-700">
+              Volumes 1 to {freeUntilVolume} (2010&ndash;{freeUntilYear}) were published as free open
+              access and remain free to read, with no membership, subscription or purchase needed.
+              Only articles from Volume {freeUntilVolume + 1} onwards use the access routes below.
+            </p>
+          </div>
+
           {/* Subscription plans */}
-          {plans.length > 0 && (
-            <div className="grid md:grid-cols-2 gap-6 mb-10 max-w-4xl mx-auto">
-              {plans.map((plan) => (
-                <div
-                  key={plan.key}
-                  className={`bg-white rounded-xl p-8 flex flex-col ${
-                    plan.featured
-                      ? 'border-2 border-[#0f2d6b] shadow-lg relative'
-                      : 'border border-gray-200'
-                  }`}
-                >
-                  {plan.featured && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#c9a227] text-white text-xs font-bold px-3 py-1 rounded-full">
-                      Recommended
-                    </span>
-                  )}
-                  <div className="flex items-center gap-2 mb-1">
-                    {plan.audience === 'institutional' ? (
-                      <Users className="w-5 h-5 text-[#0f2d6b]" />
-                    ) : (
-                      <FileText className="w-5 h-5 text-[#0f2d6b]" />
-                    )}
-                    <h3 className="text-lg font-bold text-[#0f2d6b]">{plan.name}</h3>
-                  </div>
-                  {plan.description && (
-                    <p className="text-sm text-gray-600 mb-4">{plan.description}</p>
-                  )}
-                  <div className="mb-5">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {money(plan.price, plan.currency)}
-                    </span>
-                    <span className="text-gray-500 text-sm"> / {plan.period}</span>
-                  </div>
-                  <ul className="space-y-2 mb-6 flex-1">
-                    {plan.benefits.map((benefit, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                        {benefit}
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    href={`mailto:${contact}?subject=${encodeURIComponent(`AML subscription enquiry: ${plan.name}`)}`}
-                    className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      plan.featured
-                        ? 'bg-[#0f2d6b] text-white hover:bg-[#0d2560]'
-                        : 'border border-[#0f2d6b] text-[#0f2d6b] hover:bg-[#0f2d6b]/5'
-                    }`}
-                  >
-                    <Mail className="w-4 h-4" /> Subscribe — contact us
-                  </a>
-                </div>
-              ))}
-            </div>
-          )}
+          {plans.length > 0 && <SubscribePlans plans={plans} contact={contact} />}
 
           {/* Per-article + membership routes */}
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">

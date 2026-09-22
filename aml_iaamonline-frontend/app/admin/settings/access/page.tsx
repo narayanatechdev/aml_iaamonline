@@ -28,10 +28,13 @@ interface SubscriptionPlan {
 interface AccessModel {
   enabled: boolean;
   preview: 'abstract' | 'none';
+  free_until_volume: number;
+  free_until_year: number;
   tiers: AccessTier[];
   plans: SubscriptionPlan[];
   article_price: number;
   currency: string;
+  apc: { enabled: boolean; research: number; review: number };
   contact_email: string;
 }
 
@@ -186,6 +189,44 @@ export default function AccessSettingsPage() {
                 <option value="abstract">Abstract and article details (recommended)</option>
                 <option value="none">Title and metadata only</option>
               </select>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <h2 className="text-sm font-semibold text-gray-900 mb-1">Free archive cut-off</h2>
+              <p className="text-xs text-gray-500 mb-3">
+                Everything up to and including this volume and year stays free to read forever,
+                whatever the settings above say. Volumes past it are gated.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    Free up to and including volume
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={model.free_until_volume ?? 0}
+                    onChange={(e) =>
+                      setModel({ ...model, free_until_volume: Math.max(0, parseInt(e.target.value, 10) || 0) })
+                    }
+                    className={input}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    Free up to and including year
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={model.free_until_year ?? 0}
+                    onChange={(e) =>
+                      setModel({ ...model, free_until_year: Math.max(0, parseInt(e.target.value, 10) || 0) })
+                    }
+                    className={input}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -350,6 +391,54 @@ export default function AccessSettingsPage() {
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Subscription contact email</label>
                 <input value={model.contact_email ?? ''} onChange={(e) => setModel({ ...model, contact_email: e.target.value })} className={input} />
+              </div>
+            </div>
+
+            {/* Optional open-access route for authors */}
+            <div className="pt-4 border-t border-gray-100">
+              <label className="flex items-center justify-between mb-3">
+                <span>
+                  <span className="block text-sm font-medium text-gray-700">
+                    Optional open-access route (APC)
+                  </span>
+                  <span className="block text-xs text-gray-500 mt-0.5">
+                    Lets authors pay to make their own article free for every reader.
+                  </span>
+                </span>
+                <input
+                  type="checkbox"
+                  checked={model.apc?.enabled ?? false}
+                  onChange={(e) =>
+                    setModel({ ...model, apc: { ...(model.apc ?? { research: 0, review: 0 }), enabled: e.target.checked } })
+                  }
+                  className="w-5 h-5 accent-[#0f2d6b]"
+                />
+              </label>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Research article</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={model.apc?.research ?? 0}
+                    onChange={(e) =>
+                      setModel({ ...model, apc: { ...(model.apc ?? { enabled: false, review: 0 }), research: Math.max(0, Number(e.target.value) || 0) } })
+                    }
+                    className={input}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Review article</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={model.apc?.review ?? 0}
+                    onChange={(e) =>
+                      setModel({ ...model, apc: { ...(model.apc ?? { enabled: false, research: 0 }), review: Math.max(0, Number(e.target.value) || 0) } })
+                    }
+                    className={input}
+                  />
+                </div>
               </div>
             </div>
           </div>
