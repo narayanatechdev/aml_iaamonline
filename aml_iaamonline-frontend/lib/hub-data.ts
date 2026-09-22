@@ -13,6 +13,8 @@ export interface HubArticle {
   views: number;
   citations: number;
   accessLabel: 'Free to read';
+  /** The article's graphical abstract; about a third of the archive has one. */
+  image: string | null;
 }
 
 interface RawArticle {
@@ -25,6 +27,7 @@ interface RawArticle {
   total_views?: number | null;
   cited_count?: number | null;
   total_citations?: number | null;
+  graphical_abstract_url?: string | null;
 }
 
 async function fetchJournalArticles(
@@ -55,6 +58,7 @@ async function fetchJournalArticles(
       views: a.total_views ?? a.views_count ?? 0,
       citations: a.total_citations ?? a.cited_count ?? 0,
       accessLabel: 'Free to read',
+      image: a.graphical_abstract_url || null,
     }));
   } catch {
     return [];
@@ -186,6 +190,7 @@ function toHubArticle(row: RawArticle, journal: HubJournal): HubArticle {
     views: row.total_views ?? row.views_count ?? 0,
     citations: row.total_citations ?? row.cited_count ?? 0,
     accessLabel: 'Free to read',
+    image: row.graphical_abstract_url || null,
   };
 }
 

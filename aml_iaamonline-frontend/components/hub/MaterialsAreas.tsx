@@ -20,13 +20,15 @@ export function MaterialsAreas() {
             <a
               key={t.slug}
               href={`/topics/${t.slug}`}
-              title={t.text}
               className="group rounded-[10px] border border-[#DCE3F0] bg-white p-4 hover:shadow-md transition-shadow flex flex-col items-start gap-3"
             >
               <span className="w-9 h-9 rounded-lg bg-[#EAF1FD] text-[#1546E0] flex items-center justify-center group-hover:bg-[#1546E0] group-hover:text-white transition-colors">
                 <t.icon className="w-[18px] h-[18px]" strokeWidth={1.75} aria-hidden="true" />
               </span>
-              <span className="text-[13px] font-semibold text-[#14213D] leading-snug">{t.label}</span>
+              <span>
+                <span className="block text-[13px] font-semibold text-[#14213D] leading-snug">{t.label}</span>
+                <span className="block text-[12px] text-[#5a6a8a] leading-snug mt-1">{t.blurb}</span>
+              </span>
             </a>
           ))}
         </div>
