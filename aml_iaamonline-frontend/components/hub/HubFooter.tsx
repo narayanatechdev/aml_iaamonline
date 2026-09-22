@@ -2,11 +2,9 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
   {
     heading: 'News',
     links: [
-      { label: 'All news', href: '/about/news' },
-      { label: 'Features', href: '/about/news' },
-      { label: 'Podcasts', href: '/podcasts' },
-      { label: 'News & announcements', href: '/about/news' },
-      { label: 'Subscribe to news', href: '/#footer-newsletter' },
+      { label: 'IAAM news', href: 'https://iaamonline.org/news' },
+      { label: 'Announcements', href: 'https://iaamonline.org/news' },
+      { label: 'Subscribe to alerts', href: '/#footer-newsletter' },
     ],
   },
   {
@@ -14,8 +12,8 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: 'Congresses', href: 'https://iaamonline.org/events' },
       { label: 'Symposia', href: 'https://iaamonline.org/events' },
-      { label: 'WebTalks', href: '/advanced-materials-webtalks' },
-      { label: 'Lecture series', href: '/advanced-materials-lecture-series' },
+      { label: 'WebTalks', href: '/publications' },
+      { label: 'Lecture series', href: '/publications' },
     ],
   },
   {
@@ -31,41 +29,38 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: 'Advanced Materials Letters', href: '/advanced-materials-letters' },
       { label: 'Advanced Materials Proceedings', href: '/advanced-materials-proceedings' },
-      { label: 'Advanced Materials Lecture Series', href: '/advanced-materials-lecture-series' },
-      { label: 'Advanced Materials Video Proceedings', href: '/advanced-materials-video-proceedings' },
-      { label: 'Advanced Materials WebTalks', href: '/advanced-materials-webtalks' },
+      { label: 'Advanced Materials Lecture Series', href: '/publications' },
+      { label: 'Advanced Materials Video Proceedings', href: '/publications' },
+      { label: 'Advanced Materials WebTalks', href: '/publications' },
       { label: 'All publications', href: '/publications' },
     ],
   },
   {
     heading: 'Books & Reports',
     links: [
-      { label: 'All books', href: '/books-reports' },
-      { label: 'Book series', href: '/books-reports' },
-      { label: 'IAAM reports', href: '/books-reports' },
+      { label: 'Books & reports status', href: '/publications' },
       { label: 'Propose a book', href: '/#contact' },
+      { label: 'Publish jointly with IAAM', href: '/collaboration' },
     ],
   },
   {
     heading: 'Authors & Reviewers',
     links: [
       { label: 'Information for authors', href: '/for-authors/guidelines' },
-      { label: 'Information for reviewers', href: '/for-reviewers' },
+      { label: 'Information for reviewers', href: '/for-authors/peer-review' },
       { label: 'Publication ethics', href: '/for-authors/ethics' },
       { label: 'Peer-review process', href: '/for-authors/peer-review' },
       { label: 'Invited article programme', href: '/for-authors/invited-articles' },
       { label: 'Open access options & APCs', href: '/for-authors/open-access' },
-      { label: 'Self-archiving policy', href: '/for-authors/self-archiving' },
       { label: 'Submit & publish', href: '/for-authors/submit' },
     ],
   },
   {
     heading: 'Librarians',
     links: [
-      { label: 'Institutional subscriptions', href: '/librarians' },
+      { label: 'Institutional subscriptions', href: '/for-authors/open-access' },
+      { label: 'Access & charges', href: '/for-authors/open-access' },
       { label: 'Request a quote', href: '/#contact' },
-      { label: 'Librarian portal', href: '/librarians' },
-      { label: 'Librarian FAQs', href: '/librarians#faq' },
     ],
   },
   {
@@ -92,8 +87,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: 'Mission & vision', href: '/about#mission' },
       { label: 'Not-for-profit commitment', href: '/about#not-for-profit' },
       { label: 'IAAM Article Impact (AII)', href: '/about/article-impact' },
-      { label: 'Scholarly recognition', href: '/about#recognition' },
-      { label: 'Editorial leadership', href: '/about/editorial-leadership' },
+      { label: 'Publishing with IAAM', href: '/for-authors' },
       { label: 'Collaboration & joint publication', href: '/collaboration' },
       { label: 'Contact us', href: '/#contact' },
     ],
@@ -101,14 +95,12 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
   {
     heading: 'Help',
     links: [
-      { label: 'FAQs', href: '/help' },
       { label: 'Browse by topic', href: '/topics' },
-      { label: 'Archive & special issues', href: '/archive' },
-      { label: 'Featured collections', href: '/archive/collections' },
-      { label: 'Advanced search', href: '/search/advanced' },
-      { label: 'Subscribe & purchase articles', href: '/subscribe' },
-      { label: 'Reprints and permissions', href: '/help#permissions' },
-      { label: 'Alerts and RSS feeds', href: '/alerts' },
+      { label: 'Archive by volume', href: '/archive' },
+      { label: 'Search all publications', href: '/search' },
+      { label: 'Access & charges', href: '/for-authors/open-access' },
+      { label: 'Email alerts', href: '/#footer-newsletter' },
+      { label: 'Reprints and permissions', href: '/#contact' },
     ],
   },
   {
@@ -172,11 +164,16 @@ export function HubFooter() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-[#26325A] flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px]">
+          {/*
+            IAAM Publications has no policies of its own published yet. These
+            point at the journal's real, live GDPR policies rather than at hub
+            pages that do not exist — see the note in the deployment brief
+            about giving the publisher its own publisher-level policies.
+          */}
           <div className="flex gap-4">
-            <a href="/terms" className="hover:text-white">Terms</a>
-            <a href="/privacy" className="hover:text-white">Privacy</a>
-            <a href="/cookies" className="hover:text-white">Cookies</a>
-            <a href="/accessibility" className="hover:text-white">Accessibility</a>
+            <a href="/advanced-materials-letters/terms-of-use" className="hover:text-white">Terms</a>
+            <a href="/advanced-materials-letters/privacy-policy" className="hover:text-white">Privacy</a>
+            <a href="/advanced-materials-letters/cookie-policy" className="hover:text-white">Cookies</a>
           </div>
           <p>© 2026 International Association of Advanced Materials · www.pubs.iaamonline.org</p>
         </div>

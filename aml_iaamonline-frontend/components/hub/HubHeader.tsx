@@ -21,10 +21,10 @@ const DROPDOWNS: Record<string, { label: string; href: string }[]> = {
   Publications: [
     { label: 'Advanced Materials Letters', href: '/advanced-materials-letters' },
     { label: 'Advanced Materials Proceedings', href: '/advanced-materials-proceedings' },
-    { label: 'Advanced Materials Lecture Series', href: '/advanced-materials-lecture-series' },
-    { label: 'Advanced Materials Video Proceedings', href: '/advanced-materials-video-proceedings' },
-    { label: 'Advanced Materials WebTalks', href: '/advanced-materials-webtalks' },
-    { label: 'Books & Reports', href: '/books-reports' },
+    { label: 'Advanced Materials Lecture Series', href: '/publications' },
+    { label: 'Advanced Materials Video Proceedings', href: '/publications' },
+    { label: 'Advanced Materials WebTalks', href: '/publications' },
+    { label: 'Books & Reports', href: '/publications' },
     { label: 'All publications', href: '/publications' },
   ],
   'For Authors': [
@@ -52,16 +52,14 @@ const DROPDOWNS: Record<string, { label: string; href: string }[]> = {
     { label: 'By publication', href: '/archive' },
     { label: 'By year', href: '/archive?view=year' },
     { label: 'By volume / issue', href: '/archive?view=volume' },
-    { label: 'Featured collections', href: '/archive/collections' },
-    { label: 'Special issues', href: '/archive/special-issues' },
-    { label: 'Search results', href: '/search' },
+    { label: 'Search all publications', href: '/search' },
   ],
   About: [
     { label: 'Mission & vision', href: '/about#mission' },
     { label: 'Not-for-profit commitment', href: '/about#not-for-profit' },
     { label: 'IAAM Article Impact (AII)', href: '/about/article-impact' },
-    { label: 'Editorial leadership', href: '/about/editorial-leadership' },
-    { label: 'News & announcements', href: '/about/news' },
+    { label: 'For authors', href: '/for-authors' },
+    { label: 'Publish jointly with IAAM', href: '/collaboration' },
     { label: 'Contact', href: '/#contact' },
   ],
 };
@@ -174,8 +172,8 @@ export function HubHeader() {
               Submit &amp; Publish
             </a>
             <a
-              href="/alerts"
-              title="New issues, articles and lectures in your inbox. Choose your topics."
+              href="/#footer-newsletter"
+              title="New issues, articles and lectures in your inbox."
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[#1546E0] text-[#1546E0] text-[14px] font-semibold hover:bg-[#EAF1FD] transition-colors"
             >
               <Bell className="w-3.5 h-3.5" />

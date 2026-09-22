@@ -159,7 +159,7 @@ export function ContactForm() {
       <p className="text-[11.5px] text-[#8B98B8] mb-4">Fields marked * are required.</p>
       <p className="text-[11.5px] text-[#8B98B8] mb-5">
         We use your details only to answer this message. See our{' '}
-        <a href="/privacy" className="underline">privacy policy</a>.
+        <a href="/advanced-materials-letters/privacy-policy" className="underline">privacy policy</a>.
       </p>
 
       <button

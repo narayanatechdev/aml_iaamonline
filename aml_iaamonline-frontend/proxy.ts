@@ -7,26 +7,67 @@ import { NextRequest, NextResponse } from 'next/server';
 const COMING_SOON_ENABLED = process.env.COMING_SOON !== 'false';
 const PREVIEW_COOKIES = ['aml_admin_preview', 'aml_user_preview'];
 
-export function proxy(request: NextRequest) {
-  if (!COMING_SOON_ENABLED) return NextResponse.next();
+const IS_HUB = process.env.NEXT_PUBLIC_SITE_KIND === 'hub';
 
+/**
+ * pubs.iaamonline.org builds from the same app/ directory as the AML and AMP
+ * journal sites, so every journal route — /submit, /subscribe, /faq, /news,
+ * /editorial-board and the rest — also compiled into the hub's build and
+ * answered 200 there wrapped in the journal's own header and footer. Readers
+ * following the hub's own nav landed on AML-branded pages.
+ *
+ * These are the routes the hub owns. On the hub everything else 404s; on a
+ * journal deployment NEXT_PUBLIC_SITE_KIND is unset and none of this runs.
+ */
+const HUB_ROUTES = new Set([
+  '/',
+  '/about',
+  '/about/article-impact',
+  '/archive',
+  '/collaboration',
+  '/coming-soon',
+  '/for-authors',
+  '/publications',
+  '/search',
+  '/search/advanced',
+  '/topics',
+]);
+
+const HUB_PREFIXES = ['/topics/', '/for-authors/'];
+
+function isHubRoute(pathname: string): boolean {
+  const path = pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  if (HUB_ROUTES.has(path)) return true;
+  return HUB_PREFIXES.some((prefix) => path.startsWith(prefix) && path.length > prefix.length);
+}
+
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Login/register areas stay reachable so people can sign in; the gate page itself too.
-  if (
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/account') ||
-    pathname === '/editor/login' ||
-    pathname === '/coming-soon'
-  ) {
-    return NextResponse.next();
+  if (COMING_SOON_ENABLED) {
+    // Login/register areas stay reachable so people can sign in; the gate page itself too.
+    const gateExempt =
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/account') ||
+      pathname === '/editor/login' ||
+      pathname === '/coming-soon';
+
+    if (!gateExempt && !PREVIEW_COOKIES.some((c) => request.cookies.has(c))) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/coming-soon';
+      return NextResponse.rewrite(url);
+    }
   }
 
-  if (PREVIEW_COOKIES.some((c) => request.cookies.has(c))) return NextResponse.next();
+  if (IS_HUB && !isHubRoute(pathname)) {
+    // Rewriting rather than redirecting keeps the URL the reader typed, and
+    // the rewritten route calls notFound() so this carries a real 404.
+    const url = request.nextUrl.clone();
+    url.pathname = '/hub-not-found';
+    return NextResponse.rewrite(url, { status: 404 });
+  }
 
-  const url = request.nextUrl.clone();
-  url.pathname = '/coming-soon';
-  return NextResponse.rewrite(url);
+  return NextResponse.next();
 }
 
 export const config = {
