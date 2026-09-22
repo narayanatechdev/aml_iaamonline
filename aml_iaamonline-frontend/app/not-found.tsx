@@ -64,11 +64,11 @@ export default function NotFound() {
                 name="q"
                 type="search"
                 placeholder="Title, author, keyword, topic or DOI"
-                className="flex-1 rounded-md border border-[#DCE3F0] px-4 py-3 text-[14px] text-[#14213D] focus:outline-none focus:border-[#1546E0]"
+                className="flex-1 rounded-md border border-[#DCE3F0] px-4 py-3 text-[14px] text-[#14213D] focus:outline-none focus:border-[var(--brand)]"
               />
               <button
                 type="submit"
-                className="px-6 rounded-md bg-[#1546E0] text-white text-[14px] font-semibold hover:bg-[#1139b8] transition-colors"
+                className="px-6 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
               >
                 Search
               </button>

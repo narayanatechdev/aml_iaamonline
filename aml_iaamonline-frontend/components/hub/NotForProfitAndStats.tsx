@@ -22,7 +22,7 @@ export async function NotForProfitAndStats() {
         </div>
       </section>
 
-      <section className="font-hub-body bg-[#1546E0] text-white">
+      <section className="font-hub-body bg-[var(--brand)] text-white">
         <div className="max-w-[1400px] mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
           <div>
             <p className="font-hub-display font-bold text-[26px] [font-variant-numeric:tabular-nums]">

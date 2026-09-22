@@ -334,3 +334,12 @@
 .cms-rich ol { list-style-type: decimal; }
 .cms-rich li { margin-bottom: 0.25em; }
 .cms-rich a { text-decoration: underline; }
+
+/*
+ * IAAM Publications hub brand. Defined once here so a palette change is a
+ * two-line edit rather than a sweep through every hub component.
+ */
+:root {
+  --brand: #1c3f9d;
+  --brand-deep: #142e75;
+}

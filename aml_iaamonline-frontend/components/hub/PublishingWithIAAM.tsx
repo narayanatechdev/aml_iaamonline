@@ -17,7 +17,7 @@ export function PublishingWithIAAM() {
             <div className="w-14 h-1 rounded-full bg-[#10B981] mt-2 mb-3" />
             <p className="text-[15px] text-[#5a6a8a]">From first draft to published paper, here is everything an author needs.</p>
           </div>
-          <a href="/for-authors" className="hidden sm:inline text-[14px] font-semibold text-[#1546E0] hover:underline">
+          <a href="/for-authors" className="hidden sm:inline text-[14px] font-semibold text-[var(--brand)] hover:underline">
             For authors
           </a>
         </div>

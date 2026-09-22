@@ -88,7 +88,7 @@ export default function PeerReviewPage() {
               We are always looking for referees across materials science. If you would like to review, write to
               the editorial office with your area of expertise and a link to your publication record.
             </p>
-            <a href="/#contact" className="inline-block mt-3 text-[13px] font-semibold text-[#1546E0] hover:underline">
+            <a href="/#contact" className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)] hover:underline">
               Offer to review →
             </a>
           </div>

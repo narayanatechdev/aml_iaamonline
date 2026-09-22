@@ -31,7 +31,7 @@ export interface HubTopic {
   slug: string;
   label: string;
   text: string;
-  /** Tailwind background + foreground for the tile's icon chip. */
+  /** Icon chip colours. One brand colour across every topic. */
   accent: string;
   /** Tile photograph. Absent until artwork is supplied; the tile falls back to its icon. */
   photo?: string;
@@ -45,7 +45,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'advanced-materials',
     label: 'Advanced Materials',
-    accent: 'bg-[#EAF1FD] text-[#1546E0]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Functional, smart and hybrid materials, composites, coatings and thin films.',
     icon: Layers,
     subjects: ['Materials Science', 'Surface Science', 'Functional Materials', 'Thin Films'],
@@ -53,7 +53,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'energy-materials',
     label: 'Energy Materials',
-    accent: 'bg-[#E3F5EA] text-[#0E7A45]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Batteries, solar cells, fuel cells, hydrogen storage, supercapacitors and thermoelectrics.',
     icon: Zap,
     subjects: ['Energy Materials'],
@@ -61,7 +61,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'biomaterials',
     label: 'Biomaterials',
-    accent: 'bg-[#E0F3F1] text-[#0F766E]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Tissue scaffolds, implants, drug delivery, biosensors and bioinspired design.',
     icon: Dna,
     subjects: ['Biomaterials', 'Biosensors'],
@@ -69,7 +69,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'nanomaterials',
     label: 'Nanomaterials',
-    accent: 'bg-[#EAF1FD] text-[#1546E0]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Nanoparticles, nanotubes, two-dimensional layers, quantum dots and nanocomposites.',
     icon: Atom,
     subjects: ['Nanomaterials', 'Nanotechnology', '2D Materials'],
@@ -77,7 +77,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'sustainable-circular-materials',
     label: 'Sustainable & Circular Materials',
-    accent: 'bg-[#E3F5EA] text-[#0E7A45]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Bio-based and recyclable materials, life-cycle design, waste recovery and green chemistry.',
     icon: Recycle,
     subjects: ['Green Materials', 'Sustainable'],
@@ -85,7 +85,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'electronic-materials',
     label: 'Electronic Materials',
-    accent: 'bg-[#EAF1FD] text-[#1546E0]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Semiconductors, dielectrics, flexible and printed electronics, photonics and sensors.',
     icon: CircuitBoard,
     subjects: ['Electronic Materials', 'Bioelectronics'],
@@ -93,7 +93,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'metallurgy-rare-earth-materials',
     label: 'Metallurgy & Rare-Earth Materials',
-    accent: 'bg-[#FBF0DC] text-[#B45309]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Alloys, magnets, critical minerals, extraction, corrosion and high-temperature behaviour.',
     icon: Magnet,
     subjects: [],
@@ -101,7 +101,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'structural-engineering-materials',
     label: 'Structural & Engineering Materials',
-    accent: 'bg-[#EAF1FD] text-[#1546E0]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Ceramics, polymers, concrete, lightweight structures, fatigue and fracture.',
     icon: Building2,
     subjects: ['Composites', 'Polymer Science', 'Polymers'],
@@ -109,7 +109,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'ai-materials-discovery',
     label: 'AI & Materials Discovery',
-    accent: 'bg-[#EFE9FD] text-[#6D28D9]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Machine learning, materials informatics, high-throughput screening and autonomous laboratories.',
     icon: BrainCircuit,
     subjects: [],
@@ -117,7 +117,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'quantum-materials',
     label: 'Quantum Materials',
-    accent: 'bg-[#EFE9FD] text-[#6D28D9]',
+    accent: 'bg-[#EAF1FD] text-[var(--brand)]',
     text: 'Superconductors, topological phases, spintronics and materials for quantum devices.',
     icon: Orbit,
     subjects: [],

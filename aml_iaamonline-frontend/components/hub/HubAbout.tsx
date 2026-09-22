@@ -78,7 +78,7 @@ export async function HubAbout() {
                 </div>
               ))}
             </dl>
-            <a href="/publications" className="inline-block mt-5 text-[13.5px] font-semibold text-[#1546E0] hover:underline">
+            <a href="/publications" className="inline-block mt-5 text-[13.5px] font-semibold text-[var(--brand)] hover:underline">
               See the full portfolio →
             </a>
           </div>
@@ -119,14 +119,14 @@ export async function HubAbout() {
               How we score the reach of an individual article, across citations, engagement, translation and
               attention.
             </p>
-            <span className="inline-block mt-3 text-[13px] font-semibold text-[#1546E0]">How AII works →</span>
+            <span className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)]">How AII works →</span>
           </a>
           <a href="/for-authors" className="rounded-[10px] border border-[#DCE3F0] bg-white p-6 hover:shadow-md transition-shadow">
             <h3 className="font-hub-display font-bold text-[16px] text-[#0B1F4D] mb-2">Publishing with us</h3>
             <p className="text-[13px] text-[#3D4A66] leading-relaxed">
               Author guidelines, publication ethics, the peer-review process and how access works from 2027.
             </p>
-            <span className="inline-block mt-3 text-[13px] font-semibold text-[#1546E0]">For authors →</span>
+            <span className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)]">For authors →</span>
           </a>
           <div className="rounded-[10px] border border-[#DCE3F0] bg-white p-6">
             <h3 className="font-hub-display font-bold text-[16px] text-[#0B1F4D] mb-2">Our office</h3>
@@ -137,7 +137,7 @@ export async function HubAbout() {
               <br />
               Gammalkilsvägen 18, Ulrika 590 53, Sweden
             </p>
-            <a href="/#contact" className="inline-block mt-3 text-[13px] font-semibold text-[#1546E0] hover:underline">
+            <a href="/#contact" className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)] hover:underline">
               Contact us →
             </a>
           </div>

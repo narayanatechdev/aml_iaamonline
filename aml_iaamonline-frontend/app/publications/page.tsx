@@ -65,7 +65,7 @@ export default async function PublicationsPage() {
             return (
               <div key={journal.key} className="rounded-xl border border-[#DCE3F0] bg-white p-6 flex flex-col">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="w-12 h-12 rounded-lg bg-[#EAF1FD] text-[#1546E0] font-hub-display font-bold text-[14px] flex items-center justify-center">
+                  <span className="w-12 h-12 rounded-lg bg-[#EAF1FD] text-[var(--brand)] font-hub-display font-bold text-[14px] flex items-center justify-center">
                     {journal.short}
                   </span>
                   <div>
@@ -107,7 +107,7 @@ export default async function PublicationsPage() {
                     {topTypes.map(([type, count]) => (
                       <span
                         key={type}
-                        className="text-[11.5px] font-semibold px-2.5 py-1 rounded-full bg-[#EAF1FD] text-[#1546E0]"
+                        className="text-[11.5px] font-semibold px-2.5 py-1 rounded-full bg-[#EAF1FD] text-[var(--brand)]"
                       >
                         {type} · {count.toLocaleString()}
                       </span>
@@ -116,12 +116,12 @@ export default async function PublicationsPage() {
                 )}
 
                 <div className="mt-auto flex flex-wrap gap-4">
-                  <a href={`/${journal.path}`} className="text-[13.5px] font-semibold text-[#1546E0] hover:underline">
+                  <a href={`/${journal.path}`} className="text-[13.5px] font-semibold text-[var(--brand)] hover:underline">
                     Explore the journal →
                   </a>
                   <a
                     href={`/archive?view=volume&journal=${journal.key}`}
-                    className="text-[13.5px] font-semibold text-[#1546E0] hover:underline"
+                    className="text-[13.5px] font-semibold text-[var(--brand)] hover:underline"
                   >
                     Browse volumes →
                   </a>

@@ -46,13 +46,13 @@ export default function FellowContributionsPage() {
             <div className="flex flex-wrap gap-3 mt-6">
               <a
                 href="/for-authors/submit-proposal"
-                className="px-5 py-2.5 rounded-md bg-[#1546E0] text-white text-[13.5px] font-semibold hover:bg-[#1139b8] transition-colors"
+                className="px-5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[13.5px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
               >
                 Propose a contribution
               </a>
               <a
                 href="https://iaamonline.org/awards"
-                className="px-5 py-2.5 rounded-md border border-[#DCE3F0] text-[#2B3853] text-[13.5px] font-semibold hover:border-[#1546E0] hover:text-[#1546E0] transition-colors"
+                className="px-5 py-2.5 rounded-md border border-[#DCE3F0] text-[#2B3853] text-[13.5px] font-semibold hover:border-[var(--brand)] hover:text-[var(--brand)] transition-colors"
               >
                 About IAAM fellowships
               </a>

@@ -26,7 +26,7 @@ const COMPONENTS = [
     text: 'Views, downloads and saves by researchers',
     detail:
       'Reading precedes citing, and much of it never turns into a citation. Engagement captures the readers who used the work without publishing a paper of their own about it.',
-    color: '#1546E0',
+    color: 'var(--brand)',
   },
   {
     key: 'T',
@@ -66,7 +66,7 @@ export default function ArticleImpactPage() {
         <div className="grid lg:grid-cols-[1fr_360px] gap-10 items-start">
           <div>
             <h2 className="font-hub-display font-bold text-[22px] text-[#0B1F4D] mb-3">How the score is built</h2>
-            <p className="inline-block font-mono text-[14px] font-semibold text-[#1546E0] bg-[#EAF1FD] rounded-md px-3.5 py-2 mb-5">
+            <p className="inline-block font-mono text-[14px] font-semibold text-[var(--brand)] bg-[#EAF1FD] rounded-md px-3.5 py-2 mb-5">
               AII = 0.60C + 0.15E + 0.15T + 0.10A
             </p>
             <p className="text-[15px] text-[#2B3853] leading-relaxed max-w-[64ch] mb-8">
@@ -114,7 +114,7 @@ export default function ArticleImpactPage() {
             </p>
             <a
               href="/#contact"
-              className="inline-block mt-5 text-[13.5px] font-semibold text-[#1546E0] hover:underline"
+              className="inline-block mt-5 text-[13.5px] font-semibold text-[var(--brand)] hover:underline"
             >
               Ask us about AII →
             </a>

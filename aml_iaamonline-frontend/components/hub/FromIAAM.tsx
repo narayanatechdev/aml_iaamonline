@@ -13,7 +13,7 @@ export function FromIAAM() {
               Join a global network of 250,000+ members from over 150 countries, and read every IAAM title as part
               of your membership.
             </p>
-            <p className="mt-4 text-[10.5px] font-bold tracking-[0.08em] text-[#1546E0]">
+            <p className="mt-4 text-[10.5px] font-bold tracking-[0.08em] text-[var(--brand)]">
               NETWORK · COLLABORATE · GROW · MAKE AN IMPACT
             </p>
           </a>

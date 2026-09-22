@@ -17,7 +17,7 @@ export function ContactSection() {
             <dl className="space-y-3 text-[13.5px]">
               <div>
                 <dt className="font-semibold text-[#0B1F4D]">Email</dt>
-                <dd><a href="mailto:publications@iaamonline.org" className="text-[#1546E0] hover:underline">publications@iaamonline.org</a></dd>
+                <dd><a href="mailto:publications@iaamonline.org" className="text-[var(--brand)] hover:underline">publications@iaamonline.org</a></dd>
               </div>
               <div>
                 <dt className="font-semibold text-[#0B1F4D]">Phone</dt>
@@ -43,7 +43,7 @@ export function ContactSection() {
             </p>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Gammalkilsv%C3%A4gen+18%2C+Ulrika+590+53%2C+Sweden"
-              className="text-[13px] font-semibold text-[#1546E0] hover:underline"
+              className="text-[13px] font-semibold text-[var(--brand)] hover:underline"
             >
               View on Google Maps →
             </a>

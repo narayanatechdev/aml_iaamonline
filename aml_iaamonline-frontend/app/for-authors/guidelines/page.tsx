@@ -84,18 +84,18 @@ export default function GuidelinesPage() {
           <p className="text-[13.5px] text-[#3D4A66] leading-relaxed max-w-[74ch] mb-4">
             Check your manuscript against the four sections above, confirm that every co-author has approved the
             submission, and read our{' '}
-            <a href="/for-authors/ethics" className="text-[#1546E0] font-semibold hover:underline">
+            <a href="/for-authors/ethics" className="text-[var(--brand)] font-semibold hover:underline">
               publication ethics
             </a>{' '}
             and{' '}
-            <a href="/for-authors/peer-review" className="text-[#1546E0] font-semibold hover:underline">
+            <a href="/for-authors/peer-review" className="text-[var(--brand)] font-semibold hover:underline">
               peer-review process
             </a>
             .
           </p>
           <a
             href="/for-authors/submit"
-            className="inline-block px-5 py-2.5 rounded-md bg-[#1546E0] text-white text-[13.5px] font-semibold hover:bg-[#1139b8] transition-colors"
+            className="inline-block px-5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[13.5px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
           >
             Submit your manuscript
           </a>

@@ -49,7 +49,7 @@ export default async function InvitedArticlesPage() {
             </p>
             <a
               href="/for-authors/submit"
-              className="inline-block px-5 py-2.5 rounded-md bg-[#1546E0] text-white text-[13.5px] font-semibold hover:bg-[#1139b8] transition-colors"
+              className="inline-block px-5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[13.5px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Submit with your code
             </a>
@@ -63,7 +63,7 @@ export default async function InvitedArticlesPage() {
             </p>
             <a
               href="/for-authors/submit-proposal"
-              className="inline-block px-5 py-2.5 rounded-md border border-[#1546E0] text-[#1546E0] text-[13.5px] font-semibold hover:bg-[#EAF1FD] transition-colors"
+              className="inline-block px-5 py-2.5 rounded-md border border-[var(--brand)] text-[var(--brand)] text-[13.5px] font-semibold hover:bg-[#EAF1FD] transition-colors"
             >
               Send a proposal
             </a>

@@ -89,7 +89,7 @@ export function ContactForm() {
             type="text"
             required
             placeholder="Your name"
-            className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#1546E0]/30 focus:border-[#1546E0]"
+            className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
           />
           {errors.name && <p className="text-[12px] text-[#B42318] mt-1">{errors.name}</p>}
         </div>
@@ -103,7 +103,7 @@ export function ContactForm() {
             type="email"
             required
             placeholder="you@example.com"
-            className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#1546E0]/30 focus:border-[#1546E0]"
+            className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
           />
           {errors.email && <p className="text-[12px] text-[#B42318] mt-1">{errors.email}</p>}
         </div>
@@ -118,7 +118,7 @@ export function ContactForm() {
           name="organisation"
           type="text"
           placeholder="University, institute or company"
-          className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#1546E0]/30 focus:border-[#1546E0]"
+          className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
         />
       </div>
 
@@ -131,7 +131,7 @@ export function ContactForm() {
           name="subject"
           required
           defaultValue=""
-          className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] bg-white focus:outline-none focus:ring-2 focus:ring-[#1546E0]/30 focus:border-[#1546E0]"
+          className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
         >
           <option value="" disabled>Select a subject</option>
           {SUBJECTS.map((s) => (
@@ -151,7 +151,7 @@ export function ContactForm() {
           required
           rows={5}
           placeholder="How can we help?"
-          className="w-full px-3 py-2.5 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#1546E0]/30 focus:border-[#1546E0]"
+          className="w-full px-3 py-2.5 rounded-md border border-[#DCE3F0] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
         />
         {errors.message && <p className="text-[12px] text-[#B42318] mt-1">{errors.message}</p>}
       </div>
@@ -165,7 +165,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="w-full h-12 rounded-md bg-[#1546E0] text-white text-[14.5px] font-bold hover:bg-[#1139b8] transition-colors disabled:opacity-60"
+        className="w-full h-12 rounded-md bg-[var(--brand)] text-white text-[14.5px] font-bold hover:bg-[var(--brand-deep)] transition-colors disabled:opacity-60"
       >
         {status === 'sending' ? 'Sending…' : 'Send message'}
       </button>

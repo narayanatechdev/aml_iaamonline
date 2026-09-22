@@ -58,7 +58,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           </p>
           <a
             href={`/search?q=${encodeURIComponent(topic.label)}`}
-            className="text-[13.5px] font-semibold text-[#1546E0] hover:underline"
+            className="text-[13.5px] font-semibold text-[var(--brand)] hover:underline"
           >
             Search within this area →
           </a>
@@ -72,11 +72,11 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
               <p>
                 {topic.label} is within our scope, but no article in Advanced Materials Letters or Advanced
                 Materials Proceedings carries this subject so far. If you work in this area,{' '}
-                <a href="/for-authors/submit-proposal" className="text-[#1546E0] font-semibold hover:underline">
+                <a href="/for-authors/submit-proposal" className="text-[var(--brand)] font-semibold hover:underline">
                   propose an article
                 </a>{' '}
                 — or{' '}
-                <a href="/topics" className="text-[#1546E0] font-semibold hover:underline">
+                <a href="/topics" className="text-[var(--brand)] font-semibold hover:underline">
                   browse the areas that are active
                 </a>
                 .

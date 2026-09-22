@@ -38,7 +38,7 @@ function ArticleCard({ article }: { article: HubArticle }) {
 
       <div className="flex flex-col flex-1 p-4">
       <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-[11px] font-bold tracking-wide text-[#1546E0]">{article.journal}</span>
+        <span className="text-[11px] font-bold tracking-wide text-[var(--brand)]">{article.journal}</span>
         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F3E8] text-[#14532D]">{article.accessLabel}</span>
       </div>
       <h3 className="font-hub-display font-bold text-[15px] text-[#14213D] leading-snug line-clamp-2 mb-1.5">
@@ -67,7 +67,7 @@ export function LatestArticlesTabs({ recent, mostCited }: { recent: HubArticle[]
           aria-selected={tab === 'recent'}
           onClick={() => setTab('recent')}
           className={`px-4 py-2 rounded-full text-[13.5px] font-semibold transition-colors ${
-            tab === 'recent' ? 'bg-[#1546E0] text-white' : 'bg-[#F6F8FC] text-[#2B3853] hover:bg-[#EAF1FD]'
+            tab === 'recent' ? 'bg-[var(--brand)] text-white' : 'bg-[#F6F8FC] text-[#2B3853] hover:bg-[#EAF1FD]'
           }`}
         >
           Most recent
@@ -77,7 +77,7 @@ export function LatestArticlesTabs({ recent, mostCited }: { recent: HubArticle[]
           aria-selected={tab === 'cited'}
           onClick={() => setTab('cited')}
           className={`px-4 py-2 rounded-full text-[13.5px] font-semibold transition-colors ${
-            tab === 'cited' ? 'bg-[#1546E0] text-white' : 'bg-[#F6F8FC] text-[#2B3853] hover:bg-[#EAF1FD]'
+            tab === 'cited' ? 'bg-[var(--brand)] text-white' : 'bg-[#F6F8FC] text-[#2B3853] hover:bg-[#EAF1FD]'
           }`}
         >
           Most cited
@@ -96,7 +96,7 @@ export function LatestArticlesTabs({ recent, mostCited }: { recent: HubArticle[]
         </div>
       )}
 
-      <a href="/archive" className="inline-block mt-6 text-[14px] font-semibold text-[#1546E0] hover:underline">
+      <a href="/archive" className="inline-block mt-6 text-[14px] font-semibold text-[var(--brand)] hover:underline">
         View all articles
       </a>
     </div>

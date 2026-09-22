@@ -44,7 +44,7 @@ export default async function SubmitPage() {
           {hubJournals().map((journal) => (
             <div key={journal.key} className="rounded-xl border border-[#DCE3F0] bg-white p-6 flex flex-col">
               <div className="flex items-center gap-3 mb-3">
-                <span className="w-11 h-11 rounded-lg bg-[#EAF1FD] text-[#1546E0] font-hub-display font-bold text-[13px] flex items-center justify-center">
+                <span className="w-11 h-11 rounded-lg bg-[#EAF1FD] text-[var(--brand)] font-hub-display font-bold text-[13px] flex items-center justify-center">
                   {journal.short}
                 </span>
                 <h2 className="font-hub-display font-bold text-[16.5px] text-[#0B1F4D] leading-snug">
@@ -54,7 +54,7 @@ export default async function SubmitPage() {
               <p className="text-[13.5px] text-[#3D4A66] leading-relaxed flex-1 mb-5">{BLURB[journal.key]}</p>
               <a
                 href={`/${journal.path}/submit`}
-                className="inline-block text-center px-5 py-2.5 rounded-md bg-[#1546E0] text-white text-[13.5px] font-semibold hover:bg-[#1139b8] transition-colors"
+                className="inline-block text-center px-5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[13.5px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
               >
                 Submit to {journal.short}
               </a>
@@ -66,11 +66,11 @@ export default async function SubmitPage() {
           <h2 className="font-hub-display font-bold text-[16px] text-[#0B1F4D] mb-2">Not sure yet?</h2>
           <p className="text-[13.5px] text-[#3D4A66] leading-relaxed max-w-[74ch] mb-4">
             Read the{' '}
-            <a href="/for-authors/guidelines" className="text-[#1546E0] font-semibold hover:underline">
+            <a href="/for-authors/guidelines" className="text-[var(--brand)] font-semibold hover:underline">
               author guidelines
             </a>{' '}
             first, or send a{' '}
-            <a href="/for-authors/submit-proposal" className="text-[#1546E0] font-semibold hover:underline">
+            <a href="/for-authors/submit-proposal" className="text-[var(--brand)] font-semibold hover:underline">
               manuscript proposal
             </a>{' '}
             and let an editor tell you where the work fits.

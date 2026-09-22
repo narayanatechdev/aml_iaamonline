@@ -95,7 +95,7 @@ export function HubHeader() {
             </a>
             <a
               href={PORTAL_REGISTER_URL}
-              className="px-3 py-1.5 rounded-md bg-[#1546E0] text-white font-semibold hover:bg-[#1139b8] transition-colors"
+              className="px-3 py-1.5 rounded-md bg-[var(--brand)] text-white font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Join IAAM
             </a>
@@ -133,13 +133,13 @@ export function HubHeader() {
                   {jumpHref ? (
                     <a
                       href={jumpHref}
-                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[#1546E0] transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
                     >
                       {item}
                     </a>
                   ) : (
                     <button
-                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[#1546E0] transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
                       aria-expanded={openMenu === item}
                     >
                       {item}
@@ -152,7 +152,7 @@ export function HubHeader() {
                         <a
                           key={sub.label}
                           href={sub.href}
-                          className="block px-4 py-2 text-[13.5px] text-[#2B3853] hover:bg-[#F6F8FC] hover:text-[#1546E0] transition-colors"
+                          className="block px-4 py-2 text-[13.5px] text-[#2B3853] hover:bg-[#F6F8FC] hover:text-[var(--brand)] transition-colors"
                         >
                           {sub.label}
                         </a>
@@ -167,14 +167,14 @@ export function HubHeader() {
           <div className="hidden xl:flex items-center gap-3 ml-auto">
             <a
               href="/for-authors/submit"
-              className="px-4 py-2.5 rounded-md bg-[#1546E0] text-white text-[14px] font-semibold hover:bg-[#1139b8] transition-colors"
+              className="px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Submit &amp; Publish
             </a>
             <a
               href="/#footer-newsletter"
               title="New issues, articles and lectures in your inbox."
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[#1546E0] text-[#1546E0] text-[14px] font-semibold hover:bg-[#EAF1FD] transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[var(--brand)] text-[var(--brand)] text-[14px] font-semibold hover:bg-[#EAF1FD] transition-colors"
             >
               <Bell className="w-3.5 h-3.5" />
               Get Alerts
@@ -202,7 +202,7 @@ export function HubHeader() {
                 ))}
               </div>
             ))}
-            <a href="/for-authors/submit" className="block mt-3 px-4 py-2.5 rounded-md bg-[#1546E0] text-white text-center text-[14px] font-semibold">
+            <a href="/for-authors/submit" className="block mt-3 px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-center text-[14px] font-semibold">
               Submit &amp; Publish
             </a>
           </div>

@@ -100,7 +100,7 @@ export default async function ForAuthorsPage() {
             </p>
             <a
               href="/for-authors/submit-proposal"
-              className="inline-block px-5 py-2.5 rounded-md bg-[#1546E0] text-white text-[13.5px] font-semibold hover:bg-[#1139b8] transition-colors"
+              className="inline-block px-5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[13.5px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Submit a proposal
             </a>

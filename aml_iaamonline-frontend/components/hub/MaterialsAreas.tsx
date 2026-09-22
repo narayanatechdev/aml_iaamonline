@@ -28,7 +28,7 @@ export function MaterialsAreas() {
 
           <a
             href="/topics"
-            className="self-start md:self-auto inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-[#DCE3F0] text-[14px] font-semibold text-[#1546E0] hover:border-[#1546E0] hover:shadow-md transition-all whitespace-nowrap"
+            className="self-start md:self-auto inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-[#DCE3F0] text-[14px] font-semibold text-[var(--brand)] hover:border-[var(--brand)] hover:shadow-md transition-all whitespace-nowrap"
           >
             View all topics <ArrowRight className="w-4 h-4" />
           </a>
@@ -62,7 +62,7 @@ export function MaterialsAreas() {
                   <t.icon className="w-[18px] h-[18px]" strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <span className="text-[13px] font-semibold text-[#14213D] leading-snug flex-1">{t.label}</span>
-                <ArrowRight className="w-4 h-4 text-[#8B98B8] flex-shrink-0 group-hover:text-[#1546E0] transition-colors" />
+                <ArrowRight className="w-4 h-4 text-[#8B98B8] flex-shrink-0 group-hover:text-[var(--brand)] transition-colors" />
               </div>
             </a>
           ))}

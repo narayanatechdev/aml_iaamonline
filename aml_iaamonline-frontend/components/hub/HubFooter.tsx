@@ -140,7 +140,7 @@ export function HubFooter() {
           </p>
           <a
             href="/#footer-newsletter"
-            className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-[#1546E0] text-white text-[12.5px] font-bold tracking-wide hover:bg-[#1139b8] transition-colors whitespace-nowrap"
+            className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-[var(--brand)] text-white text-[12.5px] font-bold tracking-wide hover:bg-[var(--brand-deep)] transition-colors whitespace-nowrap"
           >
             GET OUR NEWSLETTER
           </a>

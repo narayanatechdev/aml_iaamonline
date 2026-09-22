@@ -66,7 +66,7 @@ export default function EthicsPage() {
             description of the problem. Concerns are handled under COPE guidance, and we contact the authors and
             their institution where an investigation is warranted.
           </p>
-          <a href="/#contact" className="inline-block mt-4 text-[13.5px] font-semibold text-[#1546E0] hover:underline">
+          <a href="/#contact" className="inline-block mt-4 text-[13.5px] font-semibold text-[var(--brand)] hover:underline">
             Contact the editorial office →
           </a>
         </div>

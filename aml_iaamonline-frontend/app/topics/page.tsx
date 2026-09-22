@@ -48,15 +48,15 @@ export default async function TopicsPage() {
               href={`/topics/${topic.slug}`}
               className="group rounded-[10px] border border-[#DCE3F0] bg-white p-5 hover:shadow-md transition-shadow flex gap-4"
             >
-              <span className="w-11 h-11 rounded-lg bg-[#EAF1FD] text-[#1546E0] flex items-center justify-center flex-shrink-0 group-hover:bg-[#1546E0] group-hover:text-white transition-colors">
+              <span className="w-11 h-11 rounded-lg bg-[#EAF1FD] text-[var(--brand)] flex items-center justify-center flex-shrink-0 group-hover:bg-[var(--brand)] group-hover:text-white transition-colors">
                 <topic.icon className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <h2 className="font-hub-display font-bold text-[15.5px] text-[#0B1F4D] leading-snug group-hover:text-[#1546E0] transition-colors">
+                <h2 className="font-hub-display font-bold text-[15.5px] text-[#0B1F4D] leading-snug group-hover:text-[var(--brand)] transition-colors">
                   {topic.label}
                 </h2>
                 <p className="text-[12.5px] text-[#3D4A66] leading-relaxed mt-1.5">{topic.text}</p>
-                <p className="text-[12.5px] font-semibold text-[#1546E0] mt-2.5">
+                <p className="text-[12.5px] font-semibold text-[var(--brand)] mt-2.5">
                   {count.toLocaleString()} {count === 1 ? 'article' : 'articles'} →
                 </p>
               </div>
@@ -78,7 +78,7 @@ export default async function TopicsPage() {
                   <p className="text-[12.5px] text-[#3D4A66] leading-relaxed mt-1.5">{topic.text}</p>
                   <a
                     href="/for-authors/submit-proposal"
-                    className="inline-block text-[12.5px] font-semibold text-[#1546E0] hover:underline mt-2.5"
+                    className="inline-block text-[12.5px] font-semibold text-[var(--brand)] hover:underline mt-2.5"
                   >
                     Propose an article →
                   </a>

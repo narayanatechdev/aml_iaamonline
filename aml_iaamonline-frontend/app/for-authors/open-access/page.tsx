@@ -32,7 +32,7 @@ export default async function OpenAccessPage() {
           <div className="rounded-[10px] border border-dashed border-[#C7D2E8] bg-[#F6F8FC] px-6 py-10 text-center">
             <p className="text-[14px] text-[#3D4A66] max-w-[56ch] mx-auto">
               Access settings are temporarily unavailable. Write to{' '}
-              <a href="mailto:publishers@iaamonline.org" className="text-[#1546E0] font-semibold hover:underline">
+              <a href="mailto:publishers@iaamonline.org" className="text-[var(--brand)] font-semibold hover:underline">
                 publishers@iaamonline.org
               </a>{' '}
               and we will confirm the current charges.
@@ -134,7 +134,7 @@ export default async function OpenAccessPage() {
               </p>
               <a
                 href={`mailto:${model.contactEmail}`}
-                className="text-[13.5px] font-semibold text-[#1546E0] hover:underline"
+                className="text-[13.5px] font-semibold text-[var(--brand)] hover:underline"
               >
                 Questions about charges or waivers? {model.contactEmail} →
               </a>

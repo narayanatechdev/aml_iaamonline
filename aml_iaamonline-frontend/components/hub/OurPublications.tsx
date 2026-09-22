@@ -158,7 +158,7 @@ function PublicationCard({ publication }: { publication: Publication }) {
       className="group rounded-[10px] border border-[#DCE3F0] bg-white overflow-hidden flex flex-col hover:shadow-md transition-shadow"
     >
       <div className={`relative h-[120px] bg-gradient-to-br ${publication.art}`}>
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 text-[#1546E0] text-[11.5px] font-bold tracking-wide">
+        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 text-[var(--brand)] text-[11.5px] font-bold tracking-wide">
           {publication.short}
         </span>
         <span className="absolute -bottom-4 right-4 w-9 h-9 rounded-full bg-white border border-[#DCE3F0] flex items-center justify-center text-[#0B1F4D]">
@@ -172,7 +172,7 @@ function PublicationCard({ publication }: { publication: Publication }) {
         </h3>
         <p className="text-[12.5px] text-[#3D4A66] leading-relaxed flex-1">{publication.text}</p>
         {publication.href ? (
-          <span className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#1546E0]">
+          <span className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--brand)]">
             {publication.link} <ArrowRight className="w-3.5 h-3.5" />
           </span>
         ) : (
@@ -219,12 +219,12 @@ export function OurPublications() {
                 name="q"
                 type="search"
                 placeholder="Search publications, authors, keywords…"
-                className="w-full h-14 pl-11 pr-14 rounded-xl border border-[#DCE3F0] bg-white text-[14px] text-[#14213D] placeholder:text-[#8B98B8] focus:outline-none focus:ring-2 focus:ring-[#1546E0]/20 focus:border-[#1546E0]"
+                className="w-full h-14 pl-11 pr-14 rounded-xl border border-[#DCE3F0] bg-white text-[14px] text-[#14213D] placeholder:text-[#8B98B8] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/20 focus:border-[var(--brand)]"
               />
               <button
                 type="submit"
                 aria-label="Search"
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#0B1F4D] text-white flex items-center justify-center hover:bg-[#1546E0] transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#0B1F4D] text-white flex items-center justify-center hover:bg-[var(--brand)] transition-colors"
               >
                 <ArrowRight className="w-4 h-4" />
               </button>

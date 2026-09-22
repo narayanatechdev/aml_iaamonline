@@ -38,7 +38,7 @@ export default async function SearchPage({
   const corpus = allStats.reduce((sum, { stats }) => sum + (stats?.total ?? 0), 0);
 
   const field =
-    'w-full rounded-md border border-[#DCE3F0] bg-white px-3 py-2.5 text-[13.5px] text-[#14213D] focus:outline-none focus:border-[#1546E0]';
+    'w-full rounded-md border border-[#DCE3F0] bg-white px-3 py-2.5 text-[13.5px] text-[#14213D] focus:outline-none focus:border-[var(--brand)]';
 
   return (
     <HubPageLayout
@@ -63,7 +63,7 @@ export default async function SearchPage({
             />
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-md bg-[#1546E0] text-white text-[14px] font-semibold hover:bg-[#1139b8] transition-colors"
+              className="px-6 py-2.5 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Search
             </button>
@@ -116,11 +116,11 @@ export default async function SearchPage({
           <div className="rounded-[10px] border border-dashed border-[#C7D2E8] bg-[#F6F8FC] px-6 py-10 text-center">
             <p className="text-[14px] text-[#3D4A66] max-w-[56ch] mx-auto">
               Enter a keyword above, or{' '}
-              <a href="/topics" className="text-[#1546E0] font-semibold hover:underline">
+              <a href="/topics" className="text-[var(--brand)] font-semibold hover:underline">
                 browse by topic
               </a>{' '}
               and{' '}
-              <a href="/archive" className="text-[#1546E0] font-semibold hover:underline">
+              <a href="/archive" className="text-[var(--brand)] font-semibold hover:underline">
                 by volume
               </a>
               .
