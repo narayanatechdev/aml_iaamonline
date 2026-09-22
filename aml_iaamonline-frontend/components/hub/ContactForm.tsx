@@ -126,24 +126,33 @@ export function ContactForm() {
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="hub-contact-subject" className="block text-[12.5px] font-semibold text-[#14213D] mb-1.5">
+      {/*
+        A radio group rather than a select: six fixed options are quicker to
+        pick from when they are all on screen. The values are unchanged, so
+        they still satisfy the API's allow-list.
+      */}
+      <fieldset className="mb-4">
+        <legend className="text-[12.5px] font-semibold text-[#14213D] mb-1.5">
           Subject <span className="text-[#B42318]">*</span>
-        </label>
-        <select
-          id="hub-contact-subject"
-          name="subject"
-          required
-          defaultValue=""
-          className="w-full h-11 px-3 rounded-md border border-[#DCE3F0] text-[14px] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 focus:border-[var(--brand)]"
-        >
-          <option value="" disabled>Select a subject</option>
+        </legend>
+        <div className="grid sm:grid-cols-2 gap-2.5">
           {SUBJECTS.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <label
+              key={s}
+              className="group flex items-center gap-2.5 rounded-lg border border-[#DCE3F0] bg-white px-3.5 py-3 cursor-pointer transition-colors hover:border-[var(--brand)] has-[:checked]:border-[var(--brand)] has-[:checked]:bg-[#EAF1FD] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--brand)]/30"
+            >
+              <input type="radio" name="subject" value={s} required className="sr-only" />
+              <span className="w-[18px] h-[18px] rounded-full border-2 border-[#C7D2E8] flex items-center justify-center flex-shrink-0 transition-colors group-has-[:checked]:border-[var(--brand)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--brand)] scale-0 transition-transform group-has-[:checked]:scale-100" />
+              </span>
+              <span className="text-[13.5px] leading-snug text-[#2B3853] group-has-[:checked]:text-[#0B1F4D] group-has-[:checked]:font-semibold">
+                {s}
+              </span>
+            </label>
           ))}
-        </select>
-        {errors.subject && <p className="text-[12px] text-[#B42318] mt-1">{errors.subject}</p>}
-      </div>
+        </div>
+        {errors.subject && <p className="text-[12px] text-[#B42318] mt-1.5">{errors.subject}</p>}
+      </fieldset>
 
       <div className="mb-2">
         <label htmlFor="hub-contact-message" className="block text-[12.5px] font-semibold text-[#14213D] mb-1.5">

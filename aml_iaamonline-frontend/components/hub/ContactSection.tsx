@@ -16,7 +16,13 @@ const DETAILS = [
 
 export function ContactSection() {
   return (
-    <section id="contact" className="font-hub-body bg-[#F6F8FC]">
+    <section id="contact" className="font-hub-body relative isolate bg-[#F6F8FC] overflow-hidden">
+      <img
+        src="/hub/contact-background.webp"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 w-full h-full object-cover"
+      />
       <div className="max-w-[1400px] mx-auto px-6 py-16">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-9">
           <div>
