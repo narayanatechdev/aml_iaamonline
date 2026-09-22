@@ -31,8 +31,10 @@ export interface HubTopic {
   slug: string;
   label: string;
   text: string;
-  /** One line for the home-page tiles; `text` is the fuller version. */
-  blurb: string;
+  /** Tailwind background + foreground for the tile's icon chip. */
+  accent: string;
+  /** Tile photograph. Absent until artwork is supplied; the tile falls back to its icon. */
+  photo?: string;
   /** The tile icon. One icon per topic, rendered in a single accent colour. */
   icon: LucideIcon;
   /** Real subject values from GET /api/subjects, matched with the `subject` LIKE filter. */
@@ -43,7 +45,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'advanced-materials',
     label: 'Advanced Materials',
-    blurb: 'Functional, smart and hybrid materials',
+    accent: 'bg-[#EAF1FD] text-[#1546E0]',
     text: 'Functional, smart and hybrid materials, composites, coatings and thin films.',
     icon: Layers,
     subjects: ['Materials Science', 'Surface Science', 'Functional Materials', 'Thin Films'],
@@ -51,7 +53,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'energy-materials',
     label: 'Energy Materials',
-    blurb: 'Batteries, solar cells and hydrogen',
+    accent: 'bg-[#E3F5EA] text-[#0E7A45]',
     text: 'Batteries, solar cells, fuel cells, hydrogen storage, supercapacitors and thermoelectrics.',
     icon: Zap,
     subjects: ['Energy Materials'],
@@ -59,7 +61,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'biomaterials',
     label: 'Biomaterials',
-    blurb: 'Scaffolds, implants and biosensors',
+    accent: 'bg-[#E0F3F1] text-[#0F766E]',
     text: 'Tissue scaffolds, implants, drug delivery, biosensors and bioinspired design.',
     icon: Dna,
     subjects: ['Biomaterials', 'Biosensors'],
@@ -67,7 +69,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'nanomaterials',
     label: 'Nanomaterials',
-    blurb: 'Nanoparticles, nanotubes and 2D layers',
+    accent: 'bg-[#EAF1FD] text-[#1546E0]',
     text: 'Nanoparticles, nanotubes, two-dimensional layers, quantum dots and nanocomposites.',
     icon: Atom,
     subjects: ['Nanomaterials', 'Nanotechnology', '2D Materials'],
@@ -75,7 +77,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'sustainable-circular-materials',
     label: 'Sustainable & Circular Materials',
-    blurb: 'Bio-based, recyclable and recovered',
+    accent: 'bg-[#E3F5EA] text-[#0E7A45]',
     text: 'Bio-based and recyclable materials, life-cycle design, waste recovery and green chemistry.',
     icon: Recycle,
     subjects: ['Green Materials', 'Sustainable'],
@@ -83,7 +85,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'electronic-materials',
     label: 'Electronic Materials',
-    blurb: 'Semiconductors, photonics and sensors',
+    accent: 'bg-[#EAF1FD] text-[#1546E0]',
     text: 'Semiconductors, dielectrics, flexible and printed electronics, photonics and sensors.',
     icon: CircuitBoard,
     subjects: ['Electronic Materials', 'Bioelectronics'],
@@ -91,7 +93,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'metallurgy-rare-earth-materials',
     label: 'Metallurgy & Rare-Earth Materials',
-    blurb: 'Alloys, magnets and critical minerals',
+    accent: 'bg-[#FBF0DC] text-[#B45309]',
     text: 'Alloys, magnets, critical minerals, extraction, corrosion and high-temperature behaviour.',
     icon: Magnet,
     subjects: [],
@@ -99,7 +101,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'structural-engineering-materials',
     label: 'Structural & Engineering Materials',
-    blurb: 'Ceramics, polymers and concrete',
+    accent: 'bg-[#EAF1FD] text-[#1546E0]',
     text: 'Ceramics, polymers, concrete, lightweight structures, fatigue and fracture.',
     icon: Building2,
     subjects: ['Composites', 'Polymer Science', 'Polymers'],
@@ -107,7 +109,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'ai-materials-discovery',
     label: 'AI & Materials Discovery',
-    blurb: 'Machine learning and high-throughput screening',
+    accent: 'bg-[#EFE9FD] text-[#6D28D9]',
     text: 'Machine learning, materials informatics, high-throughput screening and autonomous laboratories.',
     icon: BrainCircuit,
     subjects: [],
@@ -115,7 +117,7 @@ export const HUB_TOPICS: HubTopic[] = [
   {
     slug: 'quantum-materials',
     label: 'Quantum Materials',
-    blurb: 'Superconductors, spintronics and topological phases',
+    accent: 'bg-[#EFE9FD] text-[#6D28D9]',
     text: 'Superconductors, topological phases, spintronics and materials for quantum devices.',
     icon: Orbit,
     subjects: [],
