@@ -38,10 +38,10 @@ export function HubPageLayout({
               </nav>
             )}
             {kicker && (
-              <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[#A7F3D0] mb-2">{kicker}</p>
+              <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[var(--brand-tint)] mb-2">{kicker}</p>
             )}
             <h1 className="font-hub-display font-bold text-[32px] leading-tight">{title}</h1>
-            <div className="w-14 h-1 rounded-full bg-[#10B981] mt-3" />
+            <div className="w-14 h-1 rounded-full bg-[var(--brand)] mt-3" />
             {intro && <div className="text-[15px] text-[#C5CEE3] leading-relaxed max-w-[70ch] mt-4">{intro}</div>}
           </div>
         </div>

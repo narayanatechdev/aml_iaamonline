@@ -33,7 +33,7 @@ export function HubArticleCard({ article }: { article: HubArticle }) {
       <div className="flex flex-col flex-1 p-4">
       <div className="flex items-center justify-between gap-2 mb-2">
         <span className="text-[11px] font-bold tracking-wide text-[var(--brand)]">{article.journal}</span>
-        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F3E8] text-[#14532D] whitespace-nowrap">
+        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EAF1FD] text-[var(--brand-deep)] whitespace-nowrap">
           {article.accessLabel}
         </span>
       </div>

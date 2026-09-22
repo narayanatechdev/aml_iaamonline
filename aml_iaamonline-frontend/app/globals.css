@@ -343,3 +343,8 @@
   --brand: #1c3f9d;
   --brand-deep: #142e75;
 }
+
+/* Light accent for use on the deep navy backgrounds. */
+:root {
+  --brand-tint: #9fc0ff;
+}

@@ -10,7 +10,7 @@ export function Collaboration() {
     <section id="collaboration" className="font-hub-body bg-[#F6F8FC]">
       <div className="max-w-[1400px] mx-auto px-6 py-14">
         <div className="rounded-2xl bg-[#0A1A45] text-white p-8 md:p-10">
-          <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[#A7F3D0] mb-3">
+          <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[var(--brand-tint)] mb-3">
             Open invitation · Collaboration
           </p>
           <h2 className="font-hub-display font-bold text-[26px] mb-4">Publish jointly with IAAM</h2>
@@ -20,7 +20,7 @@ export function Collaboration() {
             editorial workflow, DOIs, article-level impact scores and an international readership.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a href="/#contact" className="px-5 py-2.5 rounded-md bg-[#34D399] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[#A7F3D0] transition-colors">
+            <a href="/#contact" className="px-5 py-2.5 rounded-md bg-[var(--brand-tint)] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[var(--brand-tint)] transition-colors">
               Propose a collaboration
             </a>
             <a href="/collaboration" className="px-5 py-2.5 rounded-md border border-white/40 text-white text-[13.5px] font-semibold hover:bg-white/10 transition-colors">

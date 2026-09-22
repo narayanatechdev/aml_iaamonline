@@ -66,7 +66,7 @@ export function ContactForm() {
   if (status === 'success') {
     return (
       <div className="rounded-2xl border border-[#DCE3F0] bg-white p-7">
-        <p className="text-[14.5px] text-[#14532D] font-semibold">{successMessage}</p>
+        <p className="text-[14.5px] text-[var(--brand-deep)] font-semibold">{successMessage}</p>
       </div>
     );
   }

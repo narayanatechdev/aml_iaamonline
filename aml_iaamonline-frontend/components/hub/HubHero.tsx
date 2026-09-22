@@ -30,13 +30,13 @@ export function HubHero() {
       />
 
       <div className="relative max-w-[1400px] mx-auto px-6 py-14 md:py-20">
-        <p className="text-[12px] font-semibold tracking-[0.14em] uppercase text-[#A7F3D0] mb-4">
+        <p className="text-[12px] font-semibold tracking-[0.14em] uppercase text-[var(--brand-tint)] mb-4">
           Not-for-profit publisher · Science for a sustainable tomorrow
         </p>
 
         <div className="max-w-[660px]">
           <h1 className="font-hub-display font-bold text-[42px] sm:text-[56px] leading-[1.1] text-white mb-2">
-            IAAM <span className="text-[#34D399]">Publications</span>
+            IAAM <span className="text-[var(--brand-tint)]">Publications</span>
           </h1>
           <p className="font-hub-display text-[22px] sm:text-[26px] font-semibold text-[#E4EEFC] mb-5">
             Knowledge. Discovery. Impact.
@@ -48,7 +48,7 @@ export function HubHero() {
           </p>
 
           <form action="/search" className="max-w-xl">
-            <label htmlFor="hub-search" className="block text-[13px] font-semibold text-[#A7F3D0] mb-2">
+            <label htmlFor="hub-search" className="block text-[13px] font-semibold text-[var(--brand-tint)] mb-2">
               Search across all IAAM publications
             </label>
             <div className="flex gap-2">
@@ -64,14 +64,14 @@ export function HubHero() {
               </div>
               <button
                 type="submit"
-                className="h-14 px-6 rounded-lg bg-[#34D399] text-[#0A1A45] text-[15px] font-bold hover:bg-[#A7F3D0] transition-colors flex-shrink-0"
+                className="h-14 px-6 rounded-lg bg-white text-[var(--brand-deep)] text-[15px] font-bold hover:bg-[#E4EEFC] transition-colors flex-shrink-0"
               >
                 Search
               </button>
             </div>
             <a
               href="/search/advanced"
-              className="inline-block mt-3 text-[13.5px] text-[#A7F3D0] hover:text-white underline underline-offset-4"
+              className="inline-block mt-3 text-[13.5px] text-[var(--brand-tint)] hover:text-white underline underline-offset-4"
             >
               Advanced search
             </a>
@@ -89,7 +89,7 @@ export function HubHero() {
               key={p.label}
               className="rounded-lg bg-[#0A1330]/55 backdrop-blur-sm border border-[#26325A] px-4 py-3"
             >
-              <p className="text-[12.5px] font-semibold text-[#A7F3D0]">{p.label}</p>
+              <p className="text-[12.5px] font-semibold text-[var(--brand-tint)]">{p.label}</p>
               <p className="text-[12px] text-[#C5CEE3] leading-snug mt-1">{p.text}</p>
             </li>
           ))}

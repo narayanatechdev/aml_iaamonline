@@ -17,7 +17,7 @@ const COMPONENTS = [
     text: 'How often the work is cited, adjusted for field and age',
     detail:
       'Citations remain the strongest signal that other researchers have built on a piece of work. Adjusting for field and age keeps a two-year-old paper in a small speciality comparable with an older one in a crowded field.',
-    color: '#15803D',
+    color: 'var(--brand)',
   },
   {
     key: 'E',

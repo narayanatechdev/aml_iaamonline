@@ -43,9 +43,9 @@ export default function NotFound() {
       <main className="font-hub-body bg-white">
         <div className="bg-[#0B1F4D] text-white">
           <div className="max-w-[1400px] mx-auto px-6 py-14">
-            <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[#A7F3D0] mb-2">Error 404</p>
+            <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[var(--brand-tint)] mb-2">Error 404</p>
             <h1 className="font-hub-display font-bold text-[32px] leading-tight">This page could not be found</h1>
-            <div className="w-14 h-1 rounded-full bg-[#10B981] mt-3" />
+            <div className="w-14 h-1 rounded-full bg-[var(--brand)] mt-3" />
             <p className="text-[15px] text-[#C5CEE3] leading-relaxed max-w-[64ch] mt-4">
               The address may be mistyped, or the page may have moved. Everything we publish is reachable from the
               links below.

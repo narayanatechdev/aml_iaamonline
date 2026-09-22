@@ -5,18 +5,18 @@ export async function NotForProfitAndStats() {
 
   return (
     <>
-      <section className="font-hub-body bg-[#0B5D3B] text-white">
+      <section className="font-hub-body bg-[#0B1F4D] text-white">
         <div className="max-w-[1400px] mx-auto px-6 py-14">
           <h2 className="font-hub-display font-bold text-[26px] mb-3">Our Not-for-Profit Commitment</h2>
-          <p className="text-[15px] text-[#D6F0E2] leading-relaxed max-w-[64ch] mb-4">
+          <p className="text-[15px] text-[#C5CEE3] leading-relaxed max-w-[64ch] mb-4">
             IAAM Publications has no shareholders. Every surplus krona goes back into science: fee waivers for
             authors who lack funding, travel grants for early-career researchers, free live talks, and
             initiatives that move materials science, engineering and technology towards net zero.
           </p>
-          <a href="/about#not-for-profit" className="text-[14px] font-semibold text-[#A7F3D0] hover:underline">
+          <a href="/about#not-for-profit" className="text-[14px] font-semibold text-[var(--brand-tint)] hover:underline">
             Read our commitment
           </a>
-          <p className="mt-6 text-[11.5px] font-bold tracking-[0.16em] uppercase text-[#A7F3D0]">
+          <p className="mt-6 text-[11.5px] font-bold tracking-[0.16em] uppercase text-[var(--brand-tint)]">
             A cleaner · greener · brighter · tomorrow
           </p>
         </div>

@@ -14,7 +14,7 @@ export function PublishingWithIAAM() {
         <div className="flex items-end justify-between gap-4 mb-2">
           <div>
             <h2 className="font-hub-display font-bold text-[28px] text-[#0B1F4D]">Publishing with IAAM</h2>
-            <div className="w-14 h-1 rounded-full bg-[#10B981] mt-2 mb-3" />
+            <div className="w-14 h-1 rounded-full bg-[var(--brand)] mt-2 mb-3" />
             <p className="text-[15px] text-[#5a6a8a]">From first draft to published paper, here is everything an author needs.</p>
           </div>
           <a href="/for-authors" className="hidden sm:inline text-[14px] font-semibold text-[var(--brand)] hover:underline">
@@ -39,7 +39,7 @@ export function PublishingWithIAAM() {
               short proposal and ask for an invitation.
             </p>
             <div className="mt-5 flex flex-col gap-2.5">
-              <a href="/for-authors/submit" className="text-center px-4 py-2.5 rounded-md bg-[#34D399] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[#A7F3D0] transition-colors">
+              <a href="/for-authors/submit" className="text-center px-4 py-2.5 rounded-md bg-[var(--brand-tint)] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[var(--brand-tint)] transition-colors">
                 Submit manuscript
               </a>
               <a href="/for-authors/submit-proposal" className="text-center px-4 py-2.5 rounded-md border border-white/40 text-white text-[13.5px] font-semibold hover:bg-white/10 transition-colors">

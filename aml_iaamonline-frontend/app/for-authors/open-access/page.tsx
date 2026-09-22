@@ -40,14 +40,14 @@ export default async function OpenAccessPage() {
           </div>
         ) : (
           <>
-            <div className="rounded-xl bg-[#0B5D3B] text-white p-6 md:p-8 mb-6">
-              <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[#A7F3D0] mb-2">
+            <div className="rounded-xl bg-[#0B1F4D] text-white p-6 md:p-8 mb-6">
+              <p className="text-[11.5px] font-bold tracking-[0.14em] uppercase text-[var(--brand-tint)] mb-2">
                 Free to read
               </p>
               <h2 className="font-hub-display font-bold text-[23px] mb-3">
                 Everything up to Volume {model.freeUntilVolume} stays free, permanently
               </h2>
-              <p className="text-[14.5px] text-[#D6F0E2] leading-relaxed max-w-[70ch]">
+              <p className="text-[14.5px] text-[#C5CEE3] leading-relaxed max-w-[70ch]">
                 Every article published through Volume {model.freeUntilVolume} ({model.freeUntilYear}) remains
                 free to read for everyone, with no account and no paywall — and it stays that way. The access
                 model below applies only to what we publish from Volume {model.freeUntilVolume + 1} onwards.

@@ -39,7 +39,7 @@ export async function HubAbout() {
         <div id="mission" className="scroll-mt-24 grid lg:grid-cols-[1fr_380px] gap-10 items-start">
           <div>
             <h2 className="font-hub-display font-bold text-[25px] text-[#0B1F4D]">Mission &amp; vision</h2>
-            <div className="w-14 h-1 rounded-full bg-[#10B981] mt-2 mb-4" />
+            <div className="w-14 h-1 rounded-full bg-[var(--brand)] mt-2 mb-4" />
             <p className="text-[15px] text-[#2B3853] leading-relaxed max-w-[64ch] mb-4">
               IAAM Publications is the publishing arm of the International Association of Advanced Materials. We
               publish the research of the materials community and put it where it can be used — by other
@@ -53,7 +53,7 @@ export async function HubAbout() {
             <div className="grid sm:grid-cols-2 gap-3">
               {PILLARS.map((p) => (
                 <div key={p.label} className="rounded-[10px] border border-[#DCE3F0] bg-white p-4">
-                  <p className="text-[13px] font-bold text-[#0B5D3B]">{p.label}</p>
+                  <p className="text-[13px] font-bold text-[var(--brand-deep)]">{p.label}</p>
                   <p className="text-[12.5px] text-[#3D4A66] leading-snug mt-1">{p.text}</p>
                 </div>
               ))}
@@ -85,10 +85,10 @@ export async function HubAbout() {
         </div>
       </HubSection>
 
-      <section id="not-for-profit" className="scroll-mt-24 bg-[#0B5D3B] text-white">
+      <section id="not-for-profit" className="scroll-mt-24 bg-[#0B1F4D] text-white">
         <div className="max-w-[1400px] mx-auto px-6 py-14">
           <h2 className="font-hub-display font-bold text-[26px] mb-3">Our not-for-profit commitment</h2>
-          <p className="text-[15px] text-[#D6F0E2] leading-relaxed max-w-[64ch] mb-5">
+          <p className="text-[15px] text-[#C5CEE3] leading-relaxed max-w-[64ch] mb-5">
             IAAM Publications has no shareholders. Every surplus krona goes back into science: fee waivers for
             authors who lack funding, travel grants for early-career researchers, free live talks, and initiatives
             that move materials science, engineering and technology towards net zero.
@@ -101,11 +101,11 @@ export async function HubAbout() {
             ].map(([title, text]) => (
               <div key={title} className="rounded-[10px] bg-white/10 p-4">
                 <p className="text-[13.5px] font-bold text-white">{title}</p>
-                <p className="text-[12.5px] text-[#D6F0E2] leading-snug mt-1.5">{text}</p>
+                <p className="text-[12.5px] text-[#C5CEE3] leading-snug mt-1.5">{text}</p>
               </div>
             ))}
           </div>
-          <p className="mt-8 text-[11.5px] font-bold tracking-[0.16em] uppercase text-[#A7F3D0]">
+          <p className="mt-8 text-[11.5px] font-bold tracking-[0.16em] uppercase text-[var(--brand-tint)]">
             A cleaner · greener · brighter · tomorrow
           </p>
         </div>

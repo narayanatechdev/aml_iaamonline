@@ -27,20 +27,20 @@ export function FromIAAM() {
             </p>
             <a
               href="https://iaamonline.org/events"
-              className="mt-4 inline-block self-start px-4 py-2 rounded-full bg-[#34D399] text-[#0A1A45] text-[13px] font-bold hover:bg-[#A7F3D0] transition-colors"
+              className="mt-4 inline-block self-start px-4 py-2 rounded-full bg-white text-[var(--brand-deep)] text-[13px] font-bold hover:bg-[var(--brand-tint)] transition-colors"
             >
               Learn more
             </a>
           </div>
 
           <a href="/about#not-for-profit" className="rounded-[10px] bg-[#DDF7E9] border border-[#DCE3F0] p-6 hover:shadow-md transition-shadow flex flex-col">
-            <h3 className="font-hub-display font-bold text-[19px] text-[#0B5D3B] mb-2">Not-for-Profit Publication</h3>
-            <p className="text-[15px] font-semibold text-[#0B5D3B] leading-snug flex-1">
+            <h3 className="font-hub-display font-bold text-[19px] text-[var(--brand-deep)] mb-2">Not-for-Profit Publication</h3>
+            <p className="text-[15px] font-semibold text-[var(--brand-deep)] leading-snug flex-1">
               Science for Society.
               <br />
               Knowledge without Barriers.
             </p>
-            <span className="mt-4 text-[13px] font-semibold text-[#15803D]">How we publish →</span>
+            <span className="mt-4 text-[13px] font-semibold text-[var(--brand)]">How we publish →</span>
           </a>
         </div>
       </div>

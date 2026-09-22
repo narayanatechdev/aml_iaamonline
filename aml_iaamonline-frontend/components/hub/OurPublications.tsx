@@ -115,7 +115,7 @@ function FeaturedCard({ publication }: { publication: Publication }) {
       <div className="flex flex-wrap gap-x-8 gap-y-4 mb-8">
         {FLAGSHIP_POINTS.map((point) => (
           <div key={point.label} className="flex items-center gap-2.5">
-            <point.icon className="w-5 h-5 text-[#A7F3D0] flex-shrink-0" strokeWidth={1.75} />
+            <point.icon className="w-5 h-5 text-[var(--brand-tint)] flex-shrink-0" strokeWidth={1.75} />
             <p className="text-[13px] leading-tight">
               <span className="block font-semibold text-white">{point.label}</span>
               <span className="block text-[#A9B6D6]">{point.text}</span>
@@ -127,7 +127,7 @@ function FeaturedCard({ publication }: { publication: Publication }) {
       <div className="mt-auto">
         <a
           href={publication.href}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#34D399] text-[#0A1A45] text-[14.5px] font-bold hover:bg-[#A7F3D0] transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[var(--brand-deep)] text-[14.5px] font-bold hover:bg-[#E4EEFC] transition-colors"
         >
           {publication.link} <ArrowRight className="w-4 h-4" />
         </a>

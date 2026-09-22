@@ -15,7 +15,7 @@ export function MaterialsAreas() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-9">
           <div>
             <p className="flex items-center gap-3 text-[12px] font-bold tracking-[0.18em] uppercase text-[#5a6a8a] mb-4">
-              <span className="w-7 h-[3px] rounded-full bg-[#10B981]" />
+              <span className="w-7 h-[3px] rounded-full bg-[var(--brand)]" />
               Explore
             </p>
             <h2 className="font-hub-display font-bold text-[38px] leading-[1.05] text-[#0B1F4D] mb-3">

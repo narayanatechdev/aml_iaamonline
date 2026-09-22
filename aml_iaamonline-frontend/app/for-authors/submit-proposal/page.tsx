@@ -46,7 +46,7 @@ export default async function SubmitProposalPage() {
                 'Whether any part of the work is already published or under review elsewhere',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-[#3D4A66] leading-relaxed">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-[7px] flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-[7px] flex-shrink-0" />
                   {item}
                 </li>
               ))}

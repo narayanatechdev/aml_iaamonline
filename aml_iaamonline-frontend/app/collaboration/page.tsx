@@ -86,7 +86,7 @@ export default function CollaborationPage() {
           <div className="flex flex-wrap gap-3">
             <a
               href="/#contact"
-              className="px-5 py-2.5 rounded-md bg-[#34D399] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[#A7F3D0] transition-colors"
+              className="px-5 py-2.5 rounded-md bg-[var(--brand-tint)] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[var(--brand-tint)] transition-colors"
             >
               Propose a collaboration
             </a>
