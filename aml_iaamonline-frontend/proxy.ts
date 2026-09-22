@@ -60,11 +60,12 @@ export function proxy(request: NextRequest) {
   }
 
   if (IS_HUB && !isHubRoute(pathname)) {
-    // Rewriting rather than redirecting keeps the URL the reader typed, and
-    // the rewritten route calls notFound() so this carries a real 404.
+    // Rewriting rather than redirecting keeps the URL the reader typed.
+    // /_not-found is Next's own not-found route, which renders
+    // app/not-found.tsx with a 404 status.
     const url = request.nextUrl.clone();
-    url.pathname = '/hub-not-found';
-    return NextResponse.rewrite(url, { status: 404 });
+    url.pathname = '/_not-found';
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();
