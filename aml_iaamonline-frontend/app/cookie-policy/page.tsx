@@ -1,17 +1,10 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import { HubPageLayout } from '@/components/hub/HubPageLayout';
+import { IS_HUB } from '@/lib/hub-guard';
 
 export default function CookiePolicyPage() {
-  return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
-            Cookie Policy
-          </h1>
-          <p className="text-[#5a6a8a] text-sm">
-            Last updated: 27 July 2026
-          </p>
-        </div>
+  const body = (
+    <>
 
         <section className="border-b border-gray-200 py-5">
           <h2 className="text-[#0f2d6b] text-lg mb-3" style={{ fontWeight: 700 }}>What Are Cookies?</h2>
@@ -120,6 +113,34 @@ export default function CookiePolicyPage() {
             <a href="mailto:info@iaamonline.org" className="text-[#0f2d6b] underline">info@iaamonline.org</a>.
           </p>
         </section>
+    </>
+  );
+
+  if (IS_HUB) {
+    return (
+      <HubPageLayout
+        kicker="Legal"
+        title="Cookie Policy"
+        intro="Last updated: 27 July 2026"
+        breadcrumb={[{ label: 'Home', href: '/' }]}
+      >
+        <div className="max-w-4xl">{body}</div>
+      </HubPageLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="mb-8 border-b border-gray-200 pb-6">
+          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
+            Cookie Policy
+          </h1>
+          <p className="text-[#5a6a8a] text-sm">
+            Last updated: 27 July 2026
+          </p>
+        </div>
+        {body}
       </div>
     </MainLayout>
   );

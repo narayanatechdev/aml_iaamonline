@@ -13,6 +13,12 @@ export const metadata: Metadata = isHub
       },
       description:
         'Not-for-profit publisher of peer-reviewed advanced materials research: journals, conference proceedings, lectures, videos, web talks, books and reports.',
+      // Without this the hub inherits app/favicon.ico, which is the journal's.
+      icons: {
+        icon: [{ url: '/iaam-logo.svg', type: 'image/svg+xml' }],
+        shortcut: [{ url: '/iaam-logo.svg', type: 'image/svg+xml' }],
+        apple: [{ url: '/iaam-logo.svg', type: 'image/svg+xml' }],
+      },
       openGraph: {
         title: 'IAAM Publications: Knowledge. Discovery. Impact.',
         description: 'Read, watch and publish advanced materials research with a not-for-profit scientific publisher.',

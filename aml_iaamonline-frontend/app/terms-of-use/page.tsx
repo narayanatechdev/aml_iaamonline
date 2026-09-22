@@ -1,23 +1,19 @@
 import { MainLayout } from '@/components/layout/main-layout';
+import { HubPageLayout } from '@/components/hub/HubPageLayout';
+import { IS_HUB } from '@/lib/hub-guard';
 import { JOURNAL_INFO } from '@/lib/realData';
 
+/** The hub's policies cover every IAAM Publications title, not one journal. */
+const PLATFORM = IS_HUB ? 'IAAM Publications' : JOURNAL_INFO.name;
+
 export default function TermsOfUsePage() {
-  return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
-            Terms of Use
-          </h1>
-          <p className="text-[#5a6a8a] text-sm">
-            Last updated: 27 July 2026
-          </p>
-        </div>
+  const body = (
+    <>
 
         <section className="border-b border-gray-200 py-5">
           <h2 className="text-[#0f2d6b] text-lg mb-3" style={{ fontWeight: 700 }}>1. Acceptance of Terms</h2>
           <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            By accessing or using the {JOURNAL_INFO.name} website and any associated services (collectively,
+            By accessing or using the {PLATFORM} website and any associated services (collectively,
             the "Platform"), you agree to be bound by these Terms of Use. The Platform is operated by the
             International Association of Advanced Materials (IAAM), Sweden. If you do not agree to these terms, you
             must not use the Platform.
@@ -143,6 +139,34 @@ export default function TermsOfUsePage() {
             <a href="mailto:info@iaamonline.org" className="text-[#0f2d6b] underline">info@iaamonline.org</a>.
           </p>
         </section>
+    </>
+  );
+
+  if (IS_HUB) {
+    return (
+      <HubPageLayout
+        kicker="Legal"
+        title="Terms of Use"
+        intro="Last updated: 27 July 2026"
+        breadcrumb={[{ label: 'Home', href: '/' }]}
+      >
+        <div className="max-w-4xl">{body}</div>
+      </HubPageLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="mb-8 border-b border-gray-200 pb-6">
+          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
+            Terms of Use
+          </h1>
+          <p className="text-[#5a6a8a] text-sm">
+            Last updated: 27 July 2026
+          </p>
+        </div>
+        {body}
       </div>
     </MainLayout>
   );

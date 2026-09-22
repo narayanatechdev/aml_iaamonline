@@ -1,24 +1,20 @@
 import Link from 'next/link';
 import { MainLayout } from '@/components/layout/main-layout';
+import { HubPageLayout } from '@/components/hub/HubPageLayout';
+import { IS_HUB } from '@/lib/hub-guard';
 import { JOURNAL_INFO } from '@/lib/realData';
 
+/** The hub's policies cover every IAAM Publications title, not one journal. */
+const PLATFORM = IS_HUB ? 'IAAM Publications' : JOURNAL_INFO.name;
+
 export default function PrivacyPolicyPage() {
-  return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
-            Privacy Policy
-          </h1>
-          <p className="text-[#5a6a8a] text-sm">
-            Last updated: 27 July 2026
-          </p>
-        </div>
+  const body = (
+    <>
 
         <section className="border-b border-gray-200 py-5">
           <h2 className="text-[#0f2d6b] text-lg mb-3" style={{ fontWeight: 700 }}>1. Data Controller</h2>
           <p className="text-[#3a4a6a] text-sm leading-relaxed">
-            The data controller for personal data processed through the {JOURNAL_INFO.name} website and
+            The data controller for personal data processed through the {PLATFORM} website and
             manuscript management system is the <strong>International Association of Advanced Materials (IAAM)</strong>,
             a non-profit scientific organisation headquartered in Sweden. IAAM is subject to the General Data
             Protection Regulation (GDPR) and Swedish data-protection law.
@@ -175,6 +171,34 @@ export default function PrivacyPolicyPage() {
             <a href="mailto:info@iaamonline.org" className="text-[#0f2d6b] underline">info@iaamonline.org</a>
           </p>
         </section>
+    </>
+  );
+
+  if (IS_HUB) {
+    return (
+      <HubPageLayout
+        kicker="Legal"
+        title="Privacy Policy"
+        intro="Last updated: 27 July 2026"
+        breadcrumb={[{ label: 'Home', href: '/' }]}
+      >
+        <div className="max-w-4xl">{body}</div>
+      </HubPageLayout>
+    );
+  }
+
+  return (
+    <MainLayout>
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="mb-8 border-b border-gray-200 pb-6">
+          <h1 className="text-[#0f2d6b] mb-2" style={{ fontSize: '2rem', fontWeight: 700 }}>
+            Privacy Policy
+          </h1>
+          <p className="text-[#5a6a8a] text-sm">
+            Last updated: 27 July 2026
+          </p>
+        </div>
+        {body}
       </div>
     </MainLayout>
   );

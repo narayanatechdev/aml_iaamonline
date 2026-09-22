@@ -164,16 +164,10 @@ export function HubFooter() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-[#26325A] flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px]">
-          {/*
-            IAAM Publications has no policies of its own published yet. These
-            point at the journal's real, live GDPR policies rather than at hub
-            pages that do not exist — see the note in the deployment brief
-            about giving the publisher its own publisher-level policies.
-          */}
           <div className="flex gap-4">
-            <a href="/advanced-materials-letters/terms-of-use" className="hover:text-white">Terms</a>
-            <a href="/advanced-materials-letters/privacy-policy" className="hover:text-white">Privacy</a>
-            <a href="/advanced-materials-letters/cookie-policy" className="hover:text-white">Cookies</a>
+            <a href="/terms-of-use" className="hover:text-white">Terms</a>
+            <a href="/privacy-policy" className="hover:text-white">Privacy</a>
+            <a href="/cookie-policy" className="hover:text-white">Cookies</a>
           </div>
           <p>© 2026 International Association of Advanced Materials · www.pubs.iaamonline.org</p>
         </div>

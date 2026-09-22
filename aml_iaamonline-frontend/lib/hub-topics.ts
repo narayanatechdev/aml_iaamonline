@@ -13,12 +13,26 @@
  * "metallurgy", "quantum" or "AI-designed", so those pages show an empty
  * state rather than borrowing articles from a neighbouring field.
  */
+import {
+  Atom,
+  Building2,
+  BrainCircuit,
+  CircuitBoard,
+  Dna,
+  Layers,
+  type LucideIcon,
+  Magnet,
+  Orbit,
+  Recycle,
+  Zap,
+} from 'lucide-react';
+
 export interface HubTopic {
   slug: string;
   label: string;
   text: string;
-  tint: string;
-  ink: string;
+  /** The tile icon. One icon per topic, rendered in a single accent colour. */
+  icon: LucideIcon;
   /** Real subject values from GET /api/subjects, matched with the `subject` LIKE filter. */
   subjects: string[];
 }
@@ -28,80 +42,70 @@ export const HUB_TOPICS: HubTopic[] = [
     slug: 'advanced-materials',
     label: 'Advanced Materials',
     text: 'Functional, smart and hybrid materials, composites, coatings and thin films.',
-    tint: '#E8F0FF',
-    ink: '#1546E0',
+    icon: Layers,
     subjects: ['Materials Science', 'Surface Science', 'Functional Materials', 'Thin Films'],
   },
   {
     slug: 'energy-materials',
     label: 'Energy Materials',
     text: 'Batteries, solar cells, fuel cells, hydrogen storage, supercapacitors and thermoelectrics.',
-    tint: '#FFF4DB',
-    ink: '#B45309',
+    icon: Zap,
     subjects: ['Energy Materials'],
   },
   {
     slug: 'biomaterials',
     label: 'Biomaterials',
     text: 'Tissue scaffolds, implants, drug delivery, biosensors and bioinspired design.',
-    tint: '#FFE8EF',
-    ink: '#BE185D',
+    icon: Dna,
     subjects: ['Biomaterials', 'Biosensors'],
   },
   {
     slug: 'nanomaterials',
     label: 'Nanomaterials',
     text: 'Nanoparticles, nanotubes, two-dimensional layers, quantum dots and nanocomposites.',
-    tint: '#F1E8FF',
-    ink: '#6D28D9',
+    icon: Atom,
     subjects: ['Nanomaterials', 'Nanotechnology', '2D Materials'],
   },
   {
     slug: 'sustainable-circular-materials',
     label: 'Sustainable & Circular Materials',
     text: 'Bio-based and recyclable materials, life-cycle design, waste recovery and green chemistry.',
-    tint: '#DDF7E9',
-    ink: '#0E7A45',
+    icon: Recycle,
     subjects: ['Green Materials', 'Sustainable'],
   },
   {
     slug: 'electronic-materials',
     label: 'Electronic Materials',
     text: 'Semiconductors, dielectrics, flexible and printed electronics, photonics and sensors.',
-    tint: '#DDF4FA',
-    ink: '#0E7490',
+    icon: CircuitBoard,
     subjects: ['Electronic Materials', 'Bioelectronics'],
   },
   {
     slug: 'metallurgy-rare-earth-materials',
     label: 'Metallurgy & Rare-Earth Materials',
     text: 'Alloys, magnets, critical minerals, extraction, corrosion and high-temperature behaviour.',
-    tint: '#E9EDF3',
-    ink: '#334155',
+    icon: Magnet,
     subjects: [],
   },
   {
     slug: 'structural-engineering-materials',
     label: 'Structural & Engineering Materials',
     text: 'Ceramics, polymers, concrete, lightweight structures, fatigue and fracture.',
-    tint: '#FFEBDD',
-    ink: '#C2410C',
+    icon: Building2,
     subjects: ['Composites', 'Polymer Science', 'Polymers'],
   },
   {
     slug: 'ai-materials-discovery',
     label: 'AI & Materials Discovery',
     text: 'Machine learning, materials informatics, high-throughput screening and autonomous laboratories.',
-    tint: '#E6E9FF',
-    ink: '#4338CA',
+    icon: BrainCircuit,
     subjects: [],
   },
   {
     slug: 'quantum-materials',
     label: 'Quantum Materials',
     text: 'Superconductors, topological phases, spintronics and materials for quantum devices.',
-    tint: '#D9F5F0',
-    ink: '#0F766E',
+    icon: Orbit,
     subjects: [],
   },
 ];
