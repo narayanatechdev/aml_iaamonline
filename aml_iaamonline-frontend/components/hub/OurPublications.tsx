@@ -25,6 +25,8 @@ interface Publication {
   icon: LucideIcon;
   /** Tailwind gradient for the card's art, standing in until photography exists. */
   art: string;
+  /** Artwork for the featured card, where the title has its own. */
+  image?: string;
 }
 
 const PUBLICATIONS: Publication[] = [
@@ -37,6 +39,7 @@ const PUBLICATIONS: Publication[] = [
     href: '/advanced-materials-letters',
     icon: FileText,
     art: 'from-[#0B2C6B] via-[#0A1A45] to-[#06122F]',
+    image: '/hub/aml-featured.webp',
   },
   {
     tab: 'Proceedings',
@@ -97,7 +100,22 @@ function FeaturedCard({ publication }: { publication: Publication }) {
   const isFlagship = publication.short === 'AML';
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${publication.art} text-white p-8 md:p-10 h-full flex flex-col`}>
+    <div className={`relative isolate overflow-hidden rounded-2xl bg-gradient-to-br ${publication.art} text-white p-8 md:p-10 h-full flex flex-col`}>
+      {publication.image && (
+        <>
+          <img
+            src={publication.image}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 w-full h-full object-cover object-right"
+          />
+          {/* Holds the copy legible over the brightest part of the artwork. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#06122F_0%,rgba(6,18,47,0.92)_38%,rgba(6,18,47,0.45)_70%,rgba(6,18,47,0.25)_100%)]"
+          />
+        </>
+      )}
       <span className="inline-flex self-start items-center px-3 py-1.5 rounded-lg bg-white text-[#0A1A45] text-[12px] font-bold tracking-wide mb-5">
         {publication.short}
       </span>
@@ -193,7 +211,13 @@ export function OurPublications() {
   const rest = PUBLICATIONS.filter((p) => p !== featured);
 
   return (
-    <section className="font-hub-body bg-[#F6F8FC]">
+    <section className="font-hub-body relative isolate bg-[#F6F8FC] overflow-hidden">
+      <img
+        src="/hub/publications-background.webp"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 w-full h-full object-cover"
+      />
       <div className="max-w-[1400px] mx-auto px-6 py-14">
         <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-[#DCE3F0] mb-10">
           {TABS.map((tab) => (
