@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\EditorController;
 use App\Http\Controllers\Api\HomeSectionController;
+use App\Http\Controllers\Api\HubContactController;
 use App\Http\Controllers\Api\IndexingExportController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ManagingEditorController;
@@ -97,6 +98,9 @@ Route::prefix('export')->name('export.')->group(function () {
 });
 Route::get('/auth/orcid', [OrcidController::class, 'redirect'])->name('orcid.redirect');
 Route::get('/auth/orcid/callback', [OrcidController::class, 'callback'])->name('orcid.callback');
+
+// pubs.iaamonline.org hub
+Route::post('/hub/contact', [HubContactController::class, 'store'])->middleware('throttle:5,1')->name('hub.contact');
 
 // Service-to-service fetch API — for other IAAM systems (the Portal,
 // eventually AMP) to ask "what does AML have on this person," keyed by
