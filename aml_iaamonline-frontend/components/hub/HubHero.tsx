@@ -10,11 +10,13 @@ const PILLARS = [
 export function HubHero() {
   return (
     <section className="font-hub-body relative isolate bg-[#0A1A45] text-white overflow-hidden">
-      {/* Decorative: the artwork carries the globe, so nothing here is content. */}
+      {/*
+        The artwork has the four pillars lettered into it, so it carries
+        meaning and gets a real description rather than aria-hidden.
+      */}
       <img
         src="/hub/hero-molecular-globe.webp"
-        alt=""
-        aria-hidden="true"
+        alt="A globe wrapped in a molecular lattice, labelled Net Zero, Sustainable Materials, Global Collaboration and Knowledge Sharing."
         className="absolute inset-0 -z-10 w-full h-full object-cover object-center lg:object-right"
       />
       {/*
@@ -24,7 +26,7 @@ export function HubHero() {
       */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0A1A45] via-[#0A1A45]/90 to-[#0A1A45]/40 lg:via-[#0A1A45]/75 lg:to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0A1A45] via-[#0A1A45]/90 to-[#0A1A45]/40 lg:bg-[linear-gradient(to_right,#0A1A45_0%,rgba(10,26,69,0.88)_36%,transparent_62%)]"
       />
 
       <div className="relative max-w-[1400px] mx-auto px-6 py-14 md:py-20">
@@ -76,7 +78,12 @@ export function HubHero() {
           </form>
         </div>
 
-        <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-10 max-w-[920px]">
+        {/*
+          Only below lg. From lg up the artwork's own labels are on screen and
+          these would say the same four things twice; narrower than that the
+          image is cropped past them, so the words would otherwise be lost.
+        */}
+        <ul className="grid grid-cols-2 gap-3 mt-10 max-w-[920px] lg:hidden">
           {PILLARS.map((p) => (
             <li
               key={p.label}
