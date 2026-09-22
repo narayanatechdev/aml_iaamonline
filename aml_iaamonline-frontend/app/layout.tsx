@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 const isHub = process.env.NEXT_PUBLIC_SITE_KIND === 'hub';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const journalName = process.env.NEXT_PUBLIC_JOURNAL_NAME || 'Advanced Materials Letters';
 
 export const metadata: Metadata = isHub
@@ -34,6 +35,9 @@ export const metadata: Metadata = isHub
         default: journalName,
         template: `%s | ${journalName}`,
       },
+      // Declared rather than left to app/favicon.ico: that file convention
+      // emits on every build, so the hub was serving this journal icon too.
+      icons: { icon: [{ url: `${basePath}/journal-favicon.ico`, type: 'image/x-icon' }] },
       // NEXT_PUBLIC_JOURNAL_DESCRIPTION overrides this per deployment — the
       // default below states AML-specific facts (founding year) that don't
       // necessarily hold for another journal built from this same codebase.
