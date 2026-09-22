@@ -12,8 +12,25 @@ export function HubArticleCard({ article }: { article: HubArticle }) {
   return (
     <a
       href={`/${article.journalPath}/article/${article.id}`}
-      className="flex flex-col rounded-[10px] border border-[#DCE3F0] bg-white p-4 hover:shadow-lg transition-shadow"
+      className="group flex flex-col rounded-[10px] border border-[#DCE3F0] bg-white overflow-hidden hover:shadow-lg transition-shadow"
     >
+      {/*
+        Only where the article actually has a graphical abstract. Early volumes
+        have none at all, and a fixed slot turned those listings into a wall of
+        identical placeholders.
+      */}
+      {article.image && (
+        <div className="relative h-[150px] bg-[#EAF1FD] overflow-hidden">
+          <img
+            src={article.image}
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+          />
+        </div>
+      )}
+
+      <div className="flex flex-col flex-1 p-4">
       <div className="flex items-center justify-between gap-2 mb-2">
         <span className="text-[11px] font-bold tracking-wide text-[var(--brand)]">{article.journal}</span>
         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F3E8] text-[#14532D] whitespace-nowrap">
@@ -28,6 +45,7 @@ export function HubArticleCard({ article }: { article: HubArticle }) {
         {date && <span>{date}</span>}
         <span>{article.views.toLocaleString()} views</span>
         <span>{article.citations} citations</span>
+      </div>
       </div>
     </a>
   );

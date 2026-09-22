@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { FileText } from 'lucide-react';
 import type { HubArticle } from '@/lib/hub-data';
 
 function formatDate(iso: string | null) {
@@ -18,23 +17,20 @@ function ArticleCard({ article }: { article: HubArticle }) {
       className="group flex flex-col rounded-[10px] border border-[#DCE3F0] bg-white overflow-hidden hover:shadow-lg transition-shadow"
     >
       {/*
-        Roughly a third of the archive has a graphical abstract, so the tinted
-        panel below stands in rather than leaving a torn hole in the grid.
+        Only where the article actually has a graphical abstract. Early volumes
+        have none at all, and a fixed slot turned those listings into a wall of
+        identical placeholders.
       */}
-      <div className="relative h-[150px] bg-[#EAF1FD] overflow-hidden">
-        {article.image ? (
+      {article.image && (
+        <div className="relative h-[150px] bg-[#EAF1FD] overflow-hidden">
           <img
             src={article.image}
             alt=""
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
           />
-        ) : (
-          <span className="absolute inset-0 flex items-center justify-center text-[#9DB2DC]">
-            <FileText className="w-8 h-8" strokeWidth={1.5} />
-          </span>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="flex flex-col flex-1 p-4">
       <div className="flex items-center justify-between gap-2 mb-2">

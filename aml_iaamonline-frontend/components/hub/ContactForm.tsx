@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const HUB_API_URL = process.env.NEXT_PUBLIC_HUB_API_URL;
 
@@ -64,15 +65,18 @@ export function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-[10px] border border-[#DCE3F0] bg-white p-6">
+      <div className="rounded-2xl border border-[#DCE3F0] bg-white p-7">
         <p className="text-[14.5px] text-[#14532D] font-semibold">{successMessage}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-[10px] border border-[#DCE3F0] bg-white p-6" noValidate>
-      <h3 className="font-hub-display font-bold text-[17px] text-[#0B1F4D] mb-4">Send us a message</h3>
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-[#DCE3F0] bg-white p-7" noValidate>
+      <h3 className="font-hub-display font-bold text-[21px] text-[#0B1F4D] mb-2">Send us a message</h3>
+      <p className="text-[14px] text-[#5a6a8a] mb-6">
+        Fill out the form below and we&rsquo;ll get back to you shortly.
+      </p>
 
       {status === 'error' && (
         <p className="text-[13px] text-[#B42318] bg-[#FBE9EB] rounded-md px-3 py-2 mb-4">{errorMessage}</p>
@@ -159,15 +163,15 @@ export function ContactForm() {
       <p className="text-[11.5px] text-[#8B98B8] mb-4">Fields marked * are required.</p>
       <p className="text-[11.5px] text-[#8B98B8] mb-5">
         We use your details only to answer this message. See our{' '}
-        <a href="/advanced-materials-letters/privacy-policy" className="underline">privacy policy</a>.
+        <a href="/privacy-policy" className="underline">privacy policy</a>.
       </p>
 
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="w-full h-12 rounded-md bg-[var(--brand)] text-white text-[14.5px] font-bold hover:bg-[var(--brand-deep)] transition-colors disabled:opacity-60"
+        className="flex items-center justify-center gap-2 w-full h-13 py-3.5 rounded-lg bg-[var(--brand)] text-white text-[15px] font-bold hover:bg-[var(--brand-deep)] transition-colors disabled:opacity-60"
       >
-        {status === 'sending' ? 'Sending…' : 'Send message'}
+        {status === 'sending' ? 'Sending…' : (<>Send message <ArrowRight className="w-4 h-4" /></>)}
       </button>
     </form>
   );
