@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ArticleAccessController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
+use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\EditorController;
 use App\Http\Controllers\Api\HomeSectionController;
 use App\Http\Controllers\Api\HubContactController;
@@ -29,8 +30,10 @@ use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\ServiceAdminController;
 use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\ServiceManuscriptController;
+use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
+use App\Http\Controllers\Api\SubmissionInvitationController;
 use App\Http\Controllers\Api\WorkflowSettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -77,6 +80,16 @@ Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.ind
 
 // Access model (public — membership tiers and article access allowances)
 Route::get('/access-model', [AccessSettingsController::class, 'show'])->name('access-model.show');
+
+// Article gating state for any visitor (free vs paywalled), consumes nothing
+Route::get('/articles/{id}/access-state', [ArticleAccessController::class, 'state'])->where('id', '[0-9]+')->name('articles.access-state');
+
+// Invited-only submission window
+Route::get('/submission-gate', [SubmissionInvitationController::class, 'gateState'])->name('submission-gate.state');
+Route::post('/submission-gate/verify', [SubmissionInvitationController::class, 'verify'])->middleware('throttle:10,1')->name('submission-gate.verify');
+
+// Stripe fulfilment (signature-verified, no session auth)
+Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])->name('webhooks.stripe');
 
 // Site pages (public — admin-managed pages linked in header/footer menus)
 Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
@@ -146,6 +159,12 @@ Route::middleware('auth.token')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // Member article access check (consumes tier daily/monthly allowance)
     Route::get('/articles/{id}/access', [ArticleAccessController::class, 'check'])->where('id', '[0-9]+')->name('articles.access');
+
+    // Stripe Checkout: single articles, subscription plans, open-access charges
+    Route::post('/checkout/article/{id}', [CheckoutController::class, 'article'])->where('id', '[0-9]+')->middleware('throttle:10,1')->name('checkout.article');
+    Route::post('/checkout/subscription', [CheckoutController::class, 'subscription'])->middleware('throttle:10,1')->name('checkout.subscription');
+    Route::post('/checkout/apc/{id}', [CheckoutController::class, 'apc'])->where('id', '[0-9]+')->middleware('throttle:10,1')->name('checkout.apc');
+    Route::get('/my/purchases', [CheckoutController::class, 'purchases'])->name('my.purchases');
 
     // Authenticated author's own workspace (any logged-in user)
     Route::get('/my/manuscripts', [AccountController::class, 'manuscripts'])->name('my.manuscripts');
@@ -231,6 +250,11 @@ Route::middleware('auth:sanctum')->group(function () {
         // Access model / subscription settings (settings:* permissions)
         Route::get('/settings/access', [AccessSettingsController::class, 'adminShow'])->name('admin.settings.access.show');
         Route::patch('/settings/access', [AccessSettingsController::class, 'update'])->name('admin.settings.access.update');
+
+        // Invitation codes for the invited-only submission window
+        Route::get('/submission-invitations', [SubmissionInvitationController::class, 'index'])->name('admin.invitations.index');
+        Route::post('/submission-invitations', [SubmissionInvitationController::class, 'store'])->name('admin.invitations.store');
+        Route::delete('/submission-invitations/{invitation}', [SubmissionInvitationController::class, 'destroy'])->name('admin.invitations.destroy');
 
         Route::get('/subjects', [SubjectController::class, 'adminIndex'])->name('admin.subjects.index');
         Route::post('/subjects', [SubjectController::class, 'store'])->name('admin.subjects.store');

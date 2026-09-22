@@ -76,6 +76,16 @@ class User extends Authenticatable
         return $this->name ?? '';
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_user')

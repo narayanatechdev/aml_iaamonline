@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Setting;
+use App\Models\Article;
+use App\Services\ArticleAccessService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,12 +12,29 @@ use Illuminate\Support\Facades\DB;
 /**
  * Per-member article access allowances.
  *
- * Signed-in members consume one unit of their tier's daily/monthly allowance
- * per distinct article per day; admins and editorial staff are exempt. The
- * allowances come from the admin-managed access_model setting.
+ * Articles published before the paywall cut-off are free for everyone and
+ * never touch a member's allowance. Beyond the cut-off, signed-in members
+ * consume one unit of their tier's daily/monthly allowance per distinct
+ * article per day, unless they hold a subscription or have bought that
+ * article outright; editorial staff are exempt.
  */
 class ArticleAccessController extends Controller
 {
+    public function __construct(private readonly ArticleAccessService $access) {}
+
+    /**
+     * The gating state of an article for any visitor, signed in or not.
+     * Consumes nothing — it only says what the reader is facing.
+     */
+    public function state(int $articleId): JsonResponse
+    {
+        $article = $this->findArticle($articleId);
+
+        abort_if($article === null, 404, 'Article not found.');
+
+        return response()->json(['data' => $this->access->publicState($article)]);
+    }
+
     /**
      * Check (and record) access to an article's full text for the
      * authenticated user. Returns whether access is allowed plus the
@@ -25,17 +43,33 @@ class ArticleAccessController extends Controller
     public function check(Request $request, int $articleId): JsonResponse
     {
         $user = $request->user();
-        $model = Setting::getValue(AccessSettingsController::SETTING_KEY, AccessSettingsController::defaults());
+        $settings = $this->access->settings();
 
-        // Gate off, or privileged users: unlimited access.
-        if (! ($model['enabled'] ?? true) || $user->hasAnyRole(['admin', 'editor', 'managing_editor', 'publisher'])) {
-            return response()->json(['data' => [
-                'allowed' => true,
-                'unlimited' => true,
-            ]]);
+        if (! ($settings['enabled'] ?? true)) {
+            return $this->unlimited('free');
         }
 
-        $tiers = collect($model['tiers'] ?? []);
+        $article = $this->findArticle($articleId);
+
+        // Free-to-read articles, privileged staff, subscribers and readers who
+        // bought this article all pass without spending an allowance.
+        if ($article && $this->access->isFreeToRead($article, $settings)) {
+            return $this->unlimited('free');
+        }
+
+        if ($this->access->isPrivileged($user)) {
+            return $this->unlimited('staff');
+        }
+
+        if ($this->access->hasActiveSubscription($user)) {
+            return $this->unlimited('subscription');
+        }
+
+        if ($this->access->hasPurchased($user, $articleId)) {
+            return $this->unlimited('purchase');
+        }
+
+        $tiers = collect($settings['tiers'] ?? []);
         $tier = $tiers->firstWhere('key', $user->membership_tier) ?? $tiers->first();
 
         $dailyLimit = (int) ($tier['daily_limit'] ?? 0);
@@ -78,9 +112,26 @@ class ArticleAccessController extends Controller
         return response()->json(['data' => [
             'allowed' => $allowed,
             'unlimited' => false,
+            'reason' => 'membership',
             'tier' => $tier['key'] ?? null,
             'remaining_today' => max(0, $dailyLimit - $usedToday),
             'remaining_month' => max(0, $monthlyLimit - $usedThisMonth),
+            'price' => (float) ($settings['article_price'] ?? 0),
+            'currency' => $settings['currency'] ?? 'EUR',
+        ]]);
+    }
+
+    private function findArticle(int $articleId): ?Article
+    {
+        return Article::where('legacy_id', $articleId)->orWhere('id', $articleId)->first();
+    }
+
+    private function unlimited(string $reason): JsonResponse
+    {
+        return response()->json(['data' => [
+            'allowed' => true,
+            'unlimited' => true,
+            'reason' => $reason,
         ]]);
     }
 }

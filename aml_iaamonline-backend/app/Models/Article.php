@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'legacy_id', 'manuscript_id', 'title', 'document_type', 'subject', 'division',
     'abstract', 'keywords', 'doi', 'doi_link', 'google_scholar_id', 'volume', 'issue', 'pages_from',
-    'pages_to', 'language', 'status', 'pdf_url', 'original_pdf_url',
+    'pages_to', 'language', 'status', 'is_open_access', 'apc_status', 'is_invited',
+    'pdf_url', 'original_pdf_url',
     'graphical_abstract_url', 'article_link', 'file_name',
     'views_count', 'pdf_downloads', 'cited_count',
     'corresponding_author', 'receive_date', 'revise_date',
@@ -33,6 +34,8 @@ class Article extends Model
             'publish_date' => 'date',
             'author_contributions' => 'json',
             'doi_synced_at' => 'datetime',
+            'is_open_access' => 'boolean',
+            'is_invited' => 'boolean',
         ];
     }
 

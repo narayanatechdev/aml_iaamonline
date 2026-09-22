@@ -62,14 +62,12 @@ class AccessSettingsTest extends TestCase
     {
         $user = $this->makeUserWithPermissions(['settings:view', 'settings:edit']);
 
-        $payload = [
-            'enabled' => true,
-            'preview' => 'abstract',
+        $payload = array_merge(AccessSettingsController::defaults(), [
             'tiers' => [
                 ['key' => 'regular', 'label' => 'Regular Member', 'daily_limit' => 7, 'monthly_limit' => 120],
                 ['key' => 'fellow', 'label' => 'Fellow Member', 'daily_limit' => 12, 'monthly_limit' => 240],
             ],
-        ];
+        ]);
 
         $this->actingAs($user)->patchJson('/api/admin/settings/access', $payload)
             ->assertStatus(200)
@@ -87,13 +85,14 @@ class AccessSettingsTest extends TestCase
     {
         $user = $this->makeUserWithPermissions(['settings:view', 'settings:edit']);
 
-        $this->actingAs($user)->patchJson('/api/admin/settings/access', [
-            'enabled' => true,
-            'preview' => 'abstract',
-            'tiers' => [
-                ['key' => 'regular', 'label' => 'A', 'daily_limit' => 1, 'monthly_limit' => 10],
-                ['key' => 'regular', 'label' => 'B', 'daily_limit' => 2, 'monthly_limit' => 20],
-            ],
-        ])->assertStatus(422);
+        $this->actingAs($user)->patchJson('/api/admin/settings/access', array_merge(
+            AccessSettingsController::defaults(),
+            [
+                'tiers' => [
+                    ['key' => 'regular', 'label' => 'A', 'daily_limit' => 1, 'monthly_limit' => 10],
+                    ['key' => 'regular', 'label' => 'B', 'daily_limit' => 2, 'monthly_limit' => 20],
+                ],
+            ]
+        ))->assertStatus(422);
     }
 }

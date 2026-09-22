@@ -27,6 +27,11 @@ class AccessSettingsController extends Controller
         return [
             'enabled' => true,
             'preview' => 'abstract', // what non-subscribers see on an article page
+            // Everything up to and including this volume/year stays free to
+            // read forever: Volumes 1-17 (2010-2026) were published as free
+            // open access, and that promise outlives the paywall.
+            'free_until_volume' => 17,
+            'free_until_year' => 2026,
             'tiers' => [
                 ['key' => 'regular',       'label' => 'Regular Member',       'daily_limit' => 5,  'monthly_limit' => 100],
                 ['key' => 'fellow',        'label' => 'Fellow Member',        'daily_limit' => 10, 'monthly_limit' => 200],
@@ -42,7 +47,7 @@ class AccessSettingsController extends Controller
                     'name' => 'Individual Subscription',
                     'audience' => 'individual',
                     'price' => 199,
-                    'currency' => 'USD',
+                    'currency' => 'EUR',
                     'period' => 'year',
                     'description' => 'Full-text access for a single reader.',
                     'benefits' => ['Unlimited full-text article access', 'New-issue email alerts', 'Citation export tools'],
@@ -53,16 +58,23 @@ class AccessSettingsController extends Controller
                     'name' => 'Institutional Subscription',
                     'audience' => 'institutional',
                     'price' => 999,
-                    'currency' => 'USD',
+                    'currency' => 'EUR',
                     'period' => 'year',
                     'description' => 'Campus-wide access for universities, libraries, and R&D organisations.',
                     'benefits' => ['Unlimited access for all campus users', 'IP-range based authentication', 'Usage reporting for librarians', 'Priority support'],
                     'featured' => true,
                 ],
             ],
-            'article_price' => 35,
-            'currency' => 'USD',
-            'contact_email' => 'aml@iaamonline.org',
+            'article_price' => 25,
+            'currency' => 'EUR',
+            // Optional open-access route: authors of gated articles may pay an
+            // article processing charge to make their article free for everyone.
+            'apc' => [
+                'enabled' => true,
+                'research' => 1200,
+                'review' => 1500,
+            ],
+            'contact_email' => 'publishers@iaamonline.org',
         ];
     }
 
@@ -102,6 +114,8 @@ class AccessSettingsController extends Controller
         $validated = $request->validate([
             'enabled' => ['required', 'boolean'],
             'preview' => ['required', 'in:abstract,none'],
+            'free_until_volume' => ['required', 'integer', 'min:0', 'max:1000'],
+            'free_until_year' => ['required', 'integer', 'min:0', 'max:2200'],
             'tiers' => ['required', 'array', 'min:1'],
             'tiers.*.key' => ['required', 'string', 'max:50'],
             'tiers.*.label' => ['required', 'string', 'max:100'],
@@ -120,6 +134,10 @@ class AccessSettingsController extends Controller
             'plans.*.featured' => ['required', 'boolean'],
             'article_price' => ['required', 'numeric', 'min:0', 'max:100000'],
             'currency' => ['required', 'string', 'size:3'],
+            'apc' => ['present', 'array'],
+            'apc.enabled' => ['required', 'boolean'],
+            'apc.research' => ['required', 'numeric', 'min:0', 'max:100000'],
+            'apc.review' => ['required', 'numeric', 'min:0', 'max:100000'],
             'contact_email' => ['required', 'email', 'max:255'],
         ]);
 

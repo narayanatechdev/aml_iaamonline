@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Services\AuthorImageValidationService;
 use App\Services\ManuscriptSubmissionService;
+use App\Services\SubmissionGateService;
 use Illuminate\Http\Request;
 
 class SubmissionController extends Controller
@@ -14,11 +15,17 @@ class SubmissionController extends Controller
     /**
      * Store a newly created manuscript submission.
      */
-    public function store(Request $request, ManuscriptSubmissionService $submissions)
+    public function store(Request $request, ManuscriptSubmissionService $submissions, SubmissionGateService $gate)
     {
         $validated = $request->validate($submissions->rules());
 
+        // During the invited-only window a manuscript needs a code from its
+        // handling editor; the code is burned once the manuscript exists.
+        $invitation = $gate->redeem($request->input('invitation_code'));
+
         $manuscript = $submissions->create($request, $validated);
+
+        $invitation?->update(['used_at' => now(), 'manuscript_id' => $manuscript->id]);
 
         return response()->json([
             'success' => true,
