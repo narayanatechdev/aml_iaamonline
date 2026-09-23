@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Mail\EditorialDecisionMail;
-use App\Mail\ReviewAssignmentMail;
 use App\Mail\RevisionRequestedMail;
 use App\Models\AuditLog;
 use App\Models\Manuscript;
 use App\Models\Notification;
 use App\Models\Review;
-use App\Models\ReviewAssignment;
 use App\Models\User;
+use App\Services\PeerReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -172,50 +171,21 @@ class EditorController extends Controller
         return response()->json(['data' => $reviewers]);
     }
 
-    public function inviteReviewer(Request $request)
+    public function inviteReviewer(Request $request, PeerReviewService $reviews)
     {
-        $validated = $request->validate([
+        $validated = $request->validate(array_merge(PeerReviewService::inviteRules(), [
             'manuscript_id' => 'required|exists:manuscripts,id',
-            'reviewer_email' => 'required|email',
-            'reviewer_name' => 'required|string|max:255',
-            'due_date' => 'required|date|after:today',
-        ]);
+        ]));
 
-        $assignment = ReviewAssignment::create([
-            'manuscript_id' => $validated['manuscript_id'],
-            'reviewer_email' => $validated['reviewer_email'],
-            'reviewer_name' => $validated['reviewer_name'],
-            'status' => 'invited',
-            'invited_at' => now(),
-            'due_date' => $validated['due_date'],
-        ]);
+        $manuscript = Manuscript::findOrFail($validated['manuscript_id']);
 
-        // Update manuscript status if it was just submitted
-        $manuscript = Manuscript::find($validated['manuscript_id']);
-        if ($manuscript->status === 'submitted') {
-            $manuscript->update(['status' => 'under_review']);
-        }
-
-        AuditLog::create([
-            'action' => 'reviewer_invited',
-            'actor_email' => $request->user()->email,
-            'actor_type' => 'editor',
-            'manuscript_id' => $validated['manuscript_id'],
-            'description' => "Reviewer {$validated['reviewer_email']} invited for manuscript: ".$manuscript->submission_id,
-            'status' => 'success',
-            'actor_ip' => $request->ip(),
-        ]);
-
-        Notification::add($validated['reviewer_email'], 'review_invitation', 'New review invitation',
-            'You have been invited to review a manuscript. Due '.$validated['due_date'].'.', '/reviewer');
-
-        try {
-            Mail::to($validated['reviewer_email'])->send(new ReviewAssignmentMail(
-                $request->user()->name, $manuscript->title, [$validated['reviewer_email']], $validated['due_date']
-            ));
-        } catch (\Throwable $e) {
-            // Email failure must not block the invitation
-        }
+        $assignment = $reviews->invite(
+            $manuscript,
+            $validated,
+            actorEmail: $request->user()->email,
+            actorType: 'editor',
+            actorIp: $request->ip(),
+        );
 
         return response()->json([
             'success' => true,

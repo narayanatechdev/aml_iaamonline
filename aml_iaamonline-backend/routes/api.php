@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\ReviewerPortalController;
 use App\Http\Controllers\Api\ServiceAdminController;
 use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\ServiceManuscriptController;
+use App\Http\Controllers\Api\ServicePeerReviewController;
 use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubmissionController;
@@ -126,6 +127,13 @@ Route::prefix('service')->name('service.')->middleware('auth.service')->group(fu
     Route::get('/manuscript-options', [ServiceManuscriptController::class, 'options'])->name('manuscripts.options');
     Route::get('/users/{iaamId}/manuscripts', [ServiceManuscriptController::class, 'index'])->name('manuscripts.index');
     Route::get('/users/{iaamId}/manuscripts/{submissionId}', [ServiceManuscriptController::class, 'show'])->name('manuscripts.show');
+    // Peer review, reviewer side: the Portal acts for a person, named by IAAM ID.
+    Route::middleware('service.ability:reviews.write')->group(function () {
+        Route::get('/users/{iaamId}/review-assignments', [ServicePeerReviewController::class, 'assignments'])->name('reviews.assignments');
+        Route::post('/users/{iaamId}/review-assignments/{assignment}/respond', [ServicePeerReviewController::class, 'respond'])->where('assignment', '[0-9]+')->name('reviews.respond');
+        Route::post('/users/{iaamId}/review-assignments/{assignment}/review', [ServicePeerReviewController::class, 'review'])->where('assignment', '[0-9]+')->name('reviews.submit');
+    });
+
     Route::middleware('service.ability:manuscripts.write')->group(function () {
         Route::post('/users/{iaamId}/manuscripts', [ServiceManuscriptController::class, 'store'])->name('manuscripts.store');
         Route::post('/users/{iaamId}/manuscripts/{submissionId}/revise', [ServiceManuscriptController::class, 'revise'])->name('manuscripts.revise');
@@ -137,6 +145,11 @@ Route::prefix('service')->name('service.')->middleware('auth.service')->group(fu
         Route::get('/manuscripts/{submissionId}', [ServiceAdminController::class, 'manuscript'])->name('manuscripts.show');
         Route::post('/manuscripts/{submissionId}/assign-editor', [ServiceAdminController::class, 'assignEditor'])->name('manuscripts.assign-editor');
         Route::post('/manuscripts/{submissionId}/status', [ServiceAdminController::class, 'updateStatus'])->name('manuscripts.status');
+
+        // Peer review, editor side.
+        Route::get('/manuscripts/{submissionId}/reviewers', [ServicePeerReviewController::class, 'index'])->name('manuscripts.reviewers.index');
+        Route::post('/manuscripts/{submissionId}/reviewers', [ServicePeerReviewController::class, 'invite'])->name('manuscripts.reviewers.invite');
+        Route::delete('/manuscripts/{submissionId}/reviewers/{assignment}', [ServicePeerReviewController::class, 'withdraw'])->where('assignment', '[0-9]+')->name('manuscripts.reviewers.withdraw');
         Route::get('/editors', [ServiceAdminController::class, 'editors'])->name('editors');
         Route::get('/roles', [ServiceAdminController::class, 'roles'])->name('roles.index');
         Route::post('/roles', [ServiceAdminController::class, 'createRole'])->name('roles.store');
