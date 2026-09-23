@@ -186,3 +186,37 @@ it('omits the publication date when the year is unknown', function () {
 
     expect($xml)->not->toContain('<publication_date');
 });
+
+describe('publication date', function () {
+    it('falls back to publish_date for the month, which every row relies on', function () {
+        $xml = buildXml(crossrefArticle([
+            'publish_month' => null,
+            'publish_date' => '2026-01-01',
+            'publish_year' => 2026,
+        ]));
+
+        expect($xml)->toContain('<month>01</month>')
+            ->toContain('<year>2026</year>');
+    });
+
+    it('never deposits a day, since publish_date is the 1st on 98% of records', function () {
+        $xml = buildXml(crossrefArticle([
+            'publish_month' => null,
+            'publish_date' => '2026-03-14',
+            'publish_year' => 2026,
+        ]));
+
+        expect($xml)->toContain('<month>03</month>')
+            ->not->toContain('<day>');
+    });
+
+    it('prefers an explicit publish_month when one is set', function () {
+        $xml = buildXml(crossrefArticle([
+            'publish_month' => 7,
+            'publish_date' => '2026-01-01',
+            'publish_year' => 2026,
+        ]));
+
+        expect($xml)->toContain('<month>07</month>');
+    });
+});

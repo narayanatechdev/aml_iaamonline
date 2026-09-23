@@ -266,7 +266,17 @@ class CrossrefXmlBuilder
         $date = $doc->createElement('publication_date');
         $date->setAttribute('media_type', 'online');
 
+        /*
+         * publish_month is empty on every row, so the month comes from
+         * publish_date. The day deliberately does not: it is the 1st on 1,632
+         * of 1,662 articles, so it is a placeholder rather than a real
+         * publication day, and depositing it would be false precision.
+         */
         $month = (int) $article->publish_month;
+        if ($month < 1 || $month > 12) {
+            $month = (int) optional($article->publish_date)->month;
+        }
+
         if ($month >= 1 && $month <= 12) {
             $date->appendChild($this->text($doc, 'month', str_pad((string) $month, 2, '0', STR_PAD_LEFT)));
         }
