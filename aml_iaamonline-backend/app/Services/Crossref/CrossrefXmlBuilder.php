@@ -154,12 +154,7 @@ class CrossrefXmlBuilder
             $node->appendChild($date);
         }
 
-        if (filled($article->pages_from)) {
-            $pages = $doc->createElement('pages');
-            $pages->appendChild($this->text($doc, 'first_page', (string) $article->pages_from));
-            if (filled($article->pages_to)) {
-                $pages->appendChild($this->text($doc, 'last_page', (string) $article->pages_to));
-            }
+        if ($pages = $this->pages($doc, $article)) {
             $node->appendChild($pages);
         }
 
@@ -169,6 +164,33 @@ class CrossrefXmlBuilder
         $node->appendChild($doiData);
 
         return $node;
+    }
+
+    /**
+     * Some records hold an article-numbering scheme in the page columns rather
+     * than real pages — pages_from 2601 with pages_to 1780, where 1780 is the
+     * DOI suffix. A descending range is bad metadata, so the closing page is
+     * dropped unless it genuinely follows the opening one.
+     */
+    private function pages(DOMDocument $doc, Article $article): ?DOMElement
+    {
+        $from = trim((string) $article->pages_from);
+
+        if ($from === '') {
+            return null;
+        }
+
+        $pages = $doc->createElement('pages');
+        $pages->appendChild($this->text($doc, 'first_page', $from));
+
+        $to = trim((string) $article->pages_to);
+        $bothNumeric = is_numeric($from) && is_numeric($to);
+
+        if ($to !== '' && (! $bothNumeric || (float) $to >= (float) $from)) {
+            $pages->appendChild($this->text($doc, 'last_page', $to));
+        }
+
+        return $pages;
     }
 
     private function contributors(DOMDocument $doc, Article $article): ?DOMElement
