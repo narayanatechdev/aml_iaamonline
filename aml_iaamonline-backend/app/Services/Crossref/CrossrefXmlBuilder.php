@@ -204,6 +204,15 @@ class CrossrefXmlBuilder
         $contributors = $doc->createElement('contributors');
         $sequence = 'first';
 
+        /*
+         * Crossref rejects a whole record when one ORCID appears on two
+         * contributors, which is how 10.5185/amlett.2025.011768 failed: two
+         * different authors carry 0000-0001-9602-7774. The identifier is
+         * dropped from the later author rather than losing the deposit — the
+         * underlying data still needs correcting.
+         */
+        $seenOrcids = [];
+
         foreach ($authors as $author) {
             [$given, $surname] = $this->splitName($author);
 
@@ -230,7 +239,8 @@ class CrossrefXmlBuilder
                 $person->appendChild($affiliations);
             }
 
-            if ($orcid = $this->normaliseOrcid($author->orcid)) {
+            if (($orcid = $this->normaliseOrcid($author->orcid)) && ! in_array($orcid, $seenOrcids, true)) {
+                $seenOrcids[] = $orcid;
                 $person->appendChild($this->text($doc, 'ORCID', $orcid));
             }
 

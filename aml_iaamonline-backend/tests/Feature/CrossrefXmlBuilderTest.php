@@ -247,3 +247,18 @@ describe('placeholder affiliations', function () {
         expect($xml)->toContain('<institution_name>Madurai Kamaraj University, India</institution_name>');
     });
 });
+
+it('deposits a duplicated ORCID only once, rather than losing the record', function () {
+    // Crossref rejected 10.5185/amlett.2025.011768 outright because two
+    // different authors carried 0000-0001-9602-7774.
+    $shared = '0000-0001-9602-7774';
+
+    $xml = buildXml(crossrefArticle([], [
+        crossrefAuthor(['first_name' => 'Kamal', 'last_name' => 'Sharma', 'orcid' => $shared]),
+        crossrefAuthor(['first_name' => 'Takahiro', 'last_name' => 'Maruyama', 'orcid' => $shared]),
+    ]));
+
+    expect(substr_count($xml, "https://orcid.org/{$shared}"))->toBe(1)
+        ->and($xml)->toContain('<surname>Sharma</surname>')
+        ->toContain('<surname>Maruyama</surname>');
+});
