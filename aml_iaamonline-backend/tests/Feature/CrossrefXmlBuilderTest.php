@@ -220,3 +220,30 @@ describe('publication date', function () {
         expect($xml)->toContain('<month>07</month>');
     });
 });
+
+describe('placeholder affiliations', function () {
+    it('omits "Research Institution", which stands in for a real one on 6,159 rows', function () {
+        $xml = buildXml(crossrefArticle([], [
+            crossrefAuthor(['affiliation' => null], 'Research Institution'),
+        ]));
+
+        expect($xml)->toContain('<surname>Doe</surname>')
+            ->not->toContain('<affiliations>')
+            ->not->toContain('Research Institution');
+    });
+
+    it('omits the other stand-ins too, whatever their casing', function () {
+        foreach (['N/A', 'unknown', 'None', '-', 'not available'] as $placeholder) {
+            expect(buildXml(crossrefArticle([], [crossrefAuthor([], $placeholder)])))
+                ->not->toContain('<institution_name>');
+        }
+    });
+
+    it('still deposits a genuine affiliation', function () {
+        $xml = buildXml(crossrefArticle([], [
+            crossrefAuthor([], 'Madurai Kamaraj University, India'),
+        ]));
+
+        expect($xml)->toContain('<institution_name>Madurai Kamaraj University, India</institution_name>');
+    });
+});

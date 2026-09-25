@@ -317,6 +317,23 @@ class CrossrefXmlBuilder
         return [implode(' ', $parts), $surname];
     }
 
+    /**
+     * Placeholders that stand in for a real institution on imported records.
+     * "Research Institution" alone accounts for 6,159 author rows, so
+     * depositing it would publish a fabricated affiliation for most AML
+     * authors. Crossref treats affiliations as optional; omitting one is
+     * honest, inventing one is not.
+     */
+    private const PLACEHOLDER_AFFILIATIONS = [
+        'research institution',
+        'n/a',
+        'na',
+        'unknown',
+        'not available',
+        'none',
+        '-',
+    ];
+
     private function affiliationName(object $author): ?string
     {
         $pivot = $author->pivot ?? null;
@@ -326,7 +343,13 @@ class CrossrefXmlBuilder
             $text = trim((string) ($author->affiliation ?? ''));
         }
 
-        return blank($text) ? null : $this->plain($text);
+        if (blank($text)) {
+            return null;
+        }
+
+        $text = $this->plain($text);
+
+        return in_array(mb_strtolower($text), self::PLACEHOLDER_AFFILIATIONS, true) ? null : $text;
     }
 
     private function normaliseOrcid(?string $orcid): ?string
