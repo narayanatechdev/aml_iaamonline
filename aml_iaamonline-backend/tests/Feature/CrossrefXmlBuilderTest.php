@@ -262,3 +262,26 @@ it('deposits a duplicated ORCID only once, rather than losing the record', funct
         ->and($xml)->toContain('<surname>Sharma</surname>')
         ->toContain('<surname>Maruyama</surname>');
 });
+
+describe('journal identity', function () {
+    it('sends both ISSNs when the journal has a print and an electronic one', function () {
+        // AMP's 385 existing registrations carry both, so a deposit sending
+        // only one would contradict them.
+        config([
+            'journal.issn' => '2002-4428',
+            'journal.issn_type' => 'print',
+            'journal.issn_electronic' => '2002-441X',
+        ]);
+
+        $xml = buildXml(crossrefArticle());
+
+        expect($xml)->toContain('<issn media_type="print">2002-4428</issn>')
+            ->toContain('<issn media_type="electronic">2002-441X</issn>');
+    });
+
+    it('sends one ISSN when the journal has only the one', function () {
+        config(['journal.issn' => '0976-397X', 'journal.issn_type' => 'print', 'journal.issn_electronic' => null]);
+
+        expect(substr_count(buildXml(crossrefArticle()), '<issn'))->toBe(1);
+    });
+});
