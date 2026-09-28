@@ -230,7 +230,28 @@ class ArticleController extends Controller
 
     public function getAuthorsWithAffiliations(string $articleId)
     {
-        $authors = ArticleAuthor::where('article_id', $articleId)
+        $article = Article::where('legacy_id', $articleId)->orWhere('id', $articleId)->first();
+
+        if (! $article) {
+            return response()->json([
+                'article_id' => $articleId,
+                'authors' => [],
+                'total_authors' => 0,
+                'message' => 'Article not found',
+            ], 404);
+        }
+
+        /*
+         * The two journals' databases disagree about which key article_authors
+         * points at: AML stores the legacy_id there, AMP the primary key. The
+         * route carries whichever id the landing page was built with, so match
+         * on either. Neither journal's legacy_ids (13708+, 15902+) come near its
+         * primary keys (below 1700), so this cannot pull in another article.
+         */
+        $authors = ArticleAuthor::whereIn('article_id', array_values(array_filter(
+            [$article->id, $article->legacy_id],
+            fn ($key) => $key !== null && $key !== ''
+        )))
             ->with(['author', 'affiliation'])
             ->orderBy('position')
             ->get();
