@@ -220,3 +220,45 @@ describe('publication date', function () {
         expect($xml)->toContain('<month>07</month>');
     });
 });
+
+describe('placeholder affiliations', function () {
+    it('omits "Research Institution", which stands in for a real one on 6,159 rows', function () {
+        $xml = buildXml(crossrefArticle([], [
+            crossrefAuthor(['affiliation' => null], 'Research Institution'),
+        ]));
+
+        expect($xml)->toContain('<surname>Doe</surname>')
+            ->not->toContain('<affiliations>')
+            ->not->toContain('Research Institution');
+    });
+
+    it('omits the other stand-ins too, whatever their casing', function () {
+        foreach (['N/A', 'unknown', 'None', '-', 'not available'] as $placeholder) {
+            expect(buildXml(crossrefArticle([], [crossrefAuthor([], $placeholder)])))
+                ->not->toContain('<institution_name>');
+        }
+    });
+
+    it('still deposits a genuine affiliation', function () {
+        $xml = buildXml(crossrefArticle([], [
+            crossrefAuthor([], 'Madurai Kamaraj University, India'),
+        ]));
+
+        expect($xml)->toContain('<institution_name>Madurai Kamaraj University, India</institution_name>');
+    });
+});
+
+it('deposits a duplicated ORCID only once, rather than losing the record', function () {
+    // Crossref rejected 10.5185/amlett.2025.011768 outright because two
+    // different authors carried 0000-0001-9602-7774.
+    $shared = '0000-0001-9602-7774';
+
+    $xml = buildXml(crossrefArticle([], [
+        crossrefAuthor(['first_name' => 'Kamal', 'last_name' => 'Sharma', 'orcid' => $shared]),
+        crossrefAuthor(['first_name' => 'Takahiro', 'last_name' => 'Maruyama', 'orcid' => $shared]),
+    ]));
+
+    expect(substr_count($xml, "https://orcid.org/{$shared}"))->toBe(1)
+        ->and($xml)->toContain('<surname>Sharma</surname>')
+        ->toContain('<surname>Maruyama</surname>');
+});

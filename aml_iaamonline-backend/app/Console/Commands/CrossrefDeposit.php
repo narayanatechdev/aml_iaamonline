@@ -7,6 +7,7 @@ use App\Services\Crossref\CrossrefDepositService;
 use App\Services\Crossref\CrossrefXmlBuilder;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use RuntimeException;
 
 class CrossrefDeposit extends Command
@@ -19,6 +20,7 @@ class CrossrefDeposit extends Command
         {--unregistered : Only articles Crossref does not already know}
         {--limit=0 : Cap how many articles are included}
         {--dry-run : Print the XML and send nothing}
+        {--force : Skip the production confirmation, for an authorised unattended run}
         {--out= : Write the XML to this path}';
 
     protected $description = 'Register or update article DOIs at Crossref (schema 5.5.0)';
@@ -67,7 +69,7 @@ class CrossrefDeposit extends Command
         // Registering a DOI is irreversible and globally visible, so a
         // production deposit is never allowed to happen unattended.
         $this->line('Endpoint: '.$deposits->endpoint());
-        if ($deposits->isProduction() && ! $this->confirm('This deposits to PRODUCTION Crossref and cannot be undone. Continue?', false)) {
+        if ($deposits->isProduction() && ! $this->option('force') && ! $this->confirm('This deposits to PRODUCTION Crossref and cannot be undone. Continue?', false)) {
             $this->warn('Aborted.');
 
             return self::SUCCESS;
@@ -96,7 +98,7 @@ class CrossrefDeposit extends Command
         return self::SUCCESS;
     }
 
-    /** @return \Illuminate\Support\Collection<int, Article> */
+    /** @return Collection<int, Article> */
     private function articles()
     {
         $query = Article::query()
