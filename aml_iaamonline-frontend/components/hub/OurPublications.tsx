@@ -28,7 +28,7 @@ interface Publication {
 const PUBLICATIONS: Publication[] = [
   {
     title: 'Advanced Materials Letters',
-    short: 'AML',
+    short: 'Journal',
     text: 'Our flagship journal. Short, rigorous research papers and reviews, led by invited articles from proven experts and IAAM Fellows.',
     link: 'Explore the journal',
     href: '/advanced-materials-letters',
@@ -38,37 +38,41 @@ const PUBLICATIONS: Publication[] = [
   },
   {
     title: 'Advanced Materials Proceedings',
-    short: 'AMP',
+    short: 'Proceedings',
     text: 'Peer-reviewed papers from IAAM congresses and symposia, organised by event and session so delegates can find their work quickly.',
     link: 'Browse proceedings',
     href: '/advanced-materials-proceedings',
     icon: FileText,
     art: 'from-[#27476F] via-[#16293F] to-[#0C1726]',
+    image: '/hub/proceedings-logo.jpeg',
   },
   {
     title: 'Advanced Materials Lecture Series',
-    short: 'AMLS',
+    short: 'Lectures',
     text: 'Distinguished lectures published as citable records: video, slides, transcript and DOI.',
     icon: Library,
     art: 'from-[#1E4E63] via-[#16323F] to-[#0B1A21]',
+    image: '/hub/lectures-logo.jpeg',
   },
   {
     title: 'Advanced Materials Video Proceedings',
-    short: 'AMVP',
+    short: 'Video Proceedings',
     text: 'Recorded congress presentations, keynotes and panel discussions, linked to the written paper where one exists.',
     icon: PlayCircle,
     art: 'from-[#2B3B63] via-[#1A2340] to-[#0D1224]',
+    image: '/hub/video-proceedings-logo.jpeg',
   },
   {
     title: 'Advanced Materials WebTalks',
-    short: 'AMWT',
+    short: 'Online Talks',
     text: 'Free live online talks with audience questions. Recordings stay available to members afterwards.',
     icon: Headphones,
     art: 'from-[#1F4C57] via-[#153238] to-[#0A1A1E]',
+    image: '/hub/webtalks-logo.jpeg',
   },
   {
     title: 'Books & Reports',
-    short: 'B&R',
+    short: 'Books',
     text: 'Monographs, edited volumes and handbooks, plus IAAM technology outlooks and policy papers.',
     icon: BookOpen,
     art: 'from-[#3A3F55] via-[#242838] to-[#12141F]',
@@ -133,7 +137,7 @@ function FeaturedCard({ publication }: { publication: Publication }) {
         </a>
       </div>
 
-      <p
+      {/* <p
         aria-hidden="true"
         className="hidden xl:block absolute right-8 bottom-9 font-hub-display text-[19px] leading-[1.35] text-white/70 text-left border-l border-white/20 pl-5"
       >
@@ -144,7 +148,7 @@ function FeaturedCard({ publication }: { publication: Publication }) {
         A Better
         <br />
         Tomorrow
-      </p>
+      </p> */}
     </div>
   );
 }
@@ -157,11 +161,14 @@ function PublicationCard({ publication }: { publication: Publication }) {
       {...(publication.href ? { href: publication.href } : {})}
       className="group rounded-[10px] border border-[#DCE3F0] bg-white overflow-hidden flex flex-col hover:shadow-md transition-shadow"
     >
-      <div className={`relative h-[120px] bg-gradient-to-br ${publication.art}`}>
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 text-[var(--brand)] text-[11.5px] font-bold tracking-wide">
+      <div className={`relative h-[120px] ${publication.image ? 'bg-[#F6F8FC] border-b border-gray-100' : `bg-gradient-to-br ${publication.art}`}`}>
+        {publication.image && (
+          <img src={publication.image} alt={publication.title} className="absolute inset-0 w-full h-full object-contain p-4 pt-10" />
+        )}
+        <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11.5px] font-bold tracking-wide z-10 shadow-sm ${publication.image ? 'bg-white border border-[#DCE3F0] text-[var(--brand)]' : 'bg-white/95 text-[var(--brand)]'}`}>
           {publication.short}
         </span>
-        <span className="absolute -bottom-4 right-4 w-9 h-9 rounded-full bg-white border border-[#DCE3F0] flex items-center justify-center text-[#0B1F4D]">
+        <span className="absolute -bottom-4 right-4 z-10 w-9 h-9 rounded-full bg-white border border-[#DCE3F0] flex items-center justify-center text-[#0B1F4D] shadow-sm">
           <publication.icon className="w-4 h-4" strokeWidth={1.75} />
         </span>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getRecentArticles } from '@/lib/realData';
 import { useArticleMedia, withLiveMedia } from '@/lib/live-media';
@@ -18,6 +19,7 @@ function formatAuthor(author: any): string {
 }
 
 export function FeaturedArticles({ content }: { content?: { heading?: string } } = {}) {
+  const router = useRouter();
   const media = useArticleMedia();
   const articles = withLiveMedia(getRecentArticles(10), media);
   const heading = content?.heading || 'Featured Articles';
@@ -71,10 +73,10 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
         <div ref={scrollContainerRef} className="overflow-x-hidden pb-4" style={{ scrollBehavior: 'smooth' }}>
           <div className="flex gap-6 min-w-max">
           {articles.map((article) => (
-            <Link
+            <div
               key={article.id}
-              href={`/article/${article.id}`}
-              className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0 w-80 flex flex-col"
+              onClick={() => router.push(`/article/${article.id}`)}
+              className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0 w-80 flex flex-col cursor-pointer"
             >
               {/* Image */}
               <div className="bg-gray-100 aspect-[4/3] overflow-hidden flex-shrink-0">
@@ -137,7 +139,7 @@ export function FeaturedArticles({ content }: { content?: { heading?: string } }
                   </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
           </div>
         </div>

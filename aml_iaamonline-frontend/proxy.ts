@@ -33,6 +33,7 @@ const HUB_ROUTES = new Set([
   '/terms-of-use',
   '/search',
   '/search/advanced',
+  '/saved-articles',
   '/topics',
 ]);
 

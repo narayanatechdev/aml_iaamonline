@@ -26,7 +26,7 @@ export function FromIAAM() {
               Theme: Materials for a Sustainable World.
             </p>
             <a
-              href="https://iaamonline.org/events"
+              href="https://advancedmater.org/"
               className="mt-4 inline-block self-start px-4 py-2 rounded-full bg-white text-[var(--brand-deep)] text-[13px] font-bold hover:bg-[var(--brand-tint)] transition-colors"
             >
               Learn more

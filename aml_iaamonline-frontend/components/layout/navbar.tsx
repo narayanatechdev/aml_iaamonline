@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Menu, X, Search, BookOpen, Moon, Sun, Bell as BellIcon, Rss } from 'lucide-react';
+import { ChevronDown, Menu, X, Search, BookOpen, Moon, Sun, Bell as BellIcon, Rss, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { searchArticles, JOURNAL_INFO } from '@/lib/realData';
 
@@ -286,6 +286,14 @@ export function Navbar() {
               <BellIcon className="w-4 h-4" />
               Sign up for alerts
             </a>
+            <Link
+              href="/saved-articles"
+              className="px-4 py-2.5 text-sm font-semibold rounded transition-all flex items-center gap-2 text-gray-700 hover:bg-gray-100"
+              style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
+            >
+              <Bookmark className="w-4 h-4" />
+              Saved
+            </Link>
             <Link
               href="/author-resources/submit"
               className="px-5 py-2.5 text-sm font-bold rounded transition-all bg-black text-white hover:bg-gray-800"

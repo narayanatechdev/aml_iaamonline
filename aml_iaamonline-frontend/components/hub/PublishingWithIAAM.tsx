@@ -9,7 +9,7 @@ const AUTHOR_SERVICES = [
 
 export function PublishingWithIAAM() {
   return (
-    <section className="font-hub-body bg-white">
+    <section id="publishing" className="font-hub-body bg-white">
       <div className="max-w-[1400px] mx-auto px-6 py-14">
         <div className="flex items-end justify-between gap-4 mb-2">
           <div>

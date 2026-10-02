@@ -2,19 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Bell, ChevronDown, Menu, X } from 'lucide-react';
+import { Search, Bell, ChevronDown, Menu, X, Bookmark } from 'lucide-react';
 
 const PORTAL_LOGIN_URL = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || 'https://dev-portal.iaamonline.org/portal/login';
 const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'https://dev-portal.iaamonline.org/register';
 
 const GLOBAL_LINKS = [
-  { label: 'About IAAM', href: 'https://iaamonline.org/about' },
-  { label: 'News', href: 'https://iaamonline.org/news' },
-  { label: 'Events', href: 'https://iaamonline.org/events' },
-  { label: 'Awards', href: 'https://iaamonline.org/awards' },
+  { label: 'About IAAM', href: 'https://www.iaamonline.org/about-iaam' },
+  { label: 'News', href: 'https://www.iaamonline.org/newsletters' },
+  { label: 'Events', href: 'https://advancedmater.org/' },
+  { label: 'Awards', href: 'https://www.iaamonline.org/awards-nomination' },
   { label: 'Education', href: 'https://iaamonline.org/education' },
   { label: 'Publications', href: '/' },
-  { label: 'Membership', href: 'https://iaamonline.org/membership' },
+  { label: 'Membership', href: 'https://www.iaamonline.org/membership' },
 ];
 
 const DROPDOWNS: Record<string, { label: string; href: string }[]> = {
@@ -166,7 +166,7 @@ export function HubHeader() {
 
           <div className="hidden xl:flex items-center gap-3 ml-auto">
             <a
-              href="/for-authors/submit"
+              href="/#publishing"
               className="px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Submit &amp; Publish
@@ -178,6 +178,14 @@ export function HubHeader() {
             >
               <Bell className="w-3.5 h-3.5" />
               Get Alerts
+            </a>
+            <a
+              href="/saved-articles"
+              title="Your saved articles"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[#DCE3F0] text-[#2B3853] text-[14px] font-semibold hover:bg-[#F6F8FC] transition-colors"
+            >
+              <Bookmark className="w-3.5 h-3.5" />
+              Saved
             </a>
           </div>
 
@@ -202,7 +210,7 @@ export function HubHeader() {
                 ))}
               </div>
             ))}
-            <a href="/for-authors/submit" className="block mt-3 px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-center text-[14px] font-semibold">
+            <a href="/#publishing" className="block mt-3 px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-center text-[14px] font-semibold">
               Submit &amp; Publish
             </a>
           </div>

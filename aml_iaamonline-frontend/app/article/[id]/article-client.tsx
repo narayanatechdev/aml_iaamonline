@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FEATURED_ARTICLES, FeaturedArticle } from "@/lib/realData";
-import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock, Copy, Check, Loader2, CreditCard, Unlock } from "lucide-react";
+import { Download, Quote, Share2, BookmarkPlus, ExternalLink, Eye, ChevronLeft, FileText, Lock, Copy, Check, Loader2, CreditCard, Unlock, X } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { RichText } from "@/components/shared/rich-text";
 import { richTextToPlain } from "@/lib/rich-text";
@@ -114,6 +114,9 @@ export default function ArticleClient() {
   const [citeLoading, setCiteLoading] = useState(false);
   const [citeError, setCiteError] = useState<string | null>(null);
   const [citeCopied, setCiteCopied] = useState(false);
+  const [isHtmlModalOpen, setIsHtmlModalOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   // Subscription gate: articles published before the free-access cut-off stay
   // free for everyone. Beyond it, anonymous visitors see the preview with a
@@ -256,6 +259,44 @@ export default function ArticleClient() {
 
   const article: FeaturedArticle = { ...staticArticle, ...liveArticle };
   const related = FEATURED_ARTICLES.filter((a) => a.id !== article.id && a.subject === article.subject).slice(0, 3);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`saved_article_${id}`);
+      if (saved) setIsSaved(true);
+    }
+  }, [id]);
+
+  const handleSave = () => {
+    if (isSaved) {
+      localStorage.removeItem(`saved_article_${id}`);
+      setIsSaved(false);
+    } else {
+      localStorage.setItem(`saved_article_${id}`, 'true');
+      setIsSaved(true);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: article.title,
+          url: url
+        });
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          console.error('Error sharing', err);
+        }
+      }
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      });
+    }
+  };
 
   // Count a view once per visit (fire-and-forget; server throttles abuse).
   useEffect(() => {
@@ -676,7 +717,9 @@ export default function ArticleClient() {
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
               {hasFullAccess ? (
-                <button className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors" style={{ fontWeight: 600 }}>
+                <button 
+                  onClick={() => setIsHtmlModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-[#0f2d6b] text-white rounded-lg text-base hover:bg-[#0d2560] transition-colors" style={{ fontWeight: 600 }}>
                   <FileText className="w-4 h-4" /> View HTML
                 </button>
               ) : overLimit ? (
@@ -735,11 +778,33 @@ export default function ArticleClient() {
               >
                 <Quote className="w-4 h-4" /> Cite
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
-                <BookmarkPlus className="w-4 h-4" /> Save
+              <button 
+                onClick={handleSave}
+                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
+              >
+                {isSaved ? (
+                  <>
+                    <Check className="w-4 h-4 text-green-600" /> Saved
+                  </>
+                ) : (
+                  <>
+                    <BookmarkPlus className="w-4 h-4" /> Save
+                  </>
+                )}
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors">
-                <Share2 className="w-4 h-4" /> Share
+              <button 
+                onClick={handleShare}
+                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-base text-[#3a4a6a] hover:bg-[#f0f4fb] transition-colors"
+              >
+                {shareCopied ? (
+                  <>
+                    <Check className="w-4 h-4 text-green-600" /> Copied!
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-4 h-4" /> Share
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -892,6 +957,63 @@ export default function ArticleClient() {
 
       </div>
       </div>
+
+      {/* HTML View Modal */}
+      {isHtmlModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 md:p-8">
+          <div className="bg-white w-full max-w-4xl h-full max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-[#0f1a2e]">Full Text View</h2>
+              <button
+                onClick={() => setIsHtmlModalOpen(false)}
+                className="text-gray-500 hover:text-gray-900 transition-colors bg-gray-100 hover:bg-gray-200 p-2 rounded-full"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-gray-50">
+              <div className="bg-white p-6 md:p-10 rounded-lg shadow-sm border border-gray-200 max-w-3xl mx-auto">
+                <RichText
+                  as="h1"
+                  html={article.title}
+                  className="text-3xl text-[#0f1a2e] mb-6 leading-snug font-bold text-center"
+                />
+                
+                <div className="mb-8 text-center">
+                  <p className="text-[#0f2d6b] text-lg font-semibold mb-2">
+                    {authorNames}
+                  </p>
+                  <p className="text-[#5a6a8a] text-sm italic">
+                    {article.volume ? `Vol. ${article.volume}, ` : ''} 
+                    {article.issue ? `Issue ${article.issue}, ` : ''} 
+                    {article.published ? article.published : article.year}
+                  </p>
+                </div>
+
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-[#0f1a2e] mb-4 border-b pb-2">Abstract</h3>
+                  <RichText
+                    as="p"
+                    html={article.abstract}
+                    className="text-[#3a4a6a] text-base leading-relaxed"
+                  />
+                </div>
+                
+                {/* Fallback note since real HTML isn't returned by the API yet */}
+                <div className="bg-blue-50 text-blue-800 p-6 rounded-lg border border-blue-100 text-center">
+                  <FileText className="w-8 h-8 mx-auto mb-3 text-blue-400" />
+                  <h4 className="font-semibold text-lg mb-2">Full HTML content coming soon</h4>
+                  <p className="text-sm">The complete HTML version of this article is currently being processed. For now, please use the <strong>Download PDF</strong> option to read the full text.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
