@@ -111,7 +111,7 @@ export function HubHeader() {
 
       {/* Publications menu bar */}
       <div className="bg-white border-b border-[#DCE3F0]">
-        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center gap-6">
+        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="IAAM Publications, home">
             <img src="/iaam-logo.svg" alt="" width={38} height={39} className="w-[38px] h-[39px]" />
             <span className="font-hub-display font-semibold text-[15px] text-[#0B1F4D] hidden sm:inline">
@@ -119,7 +119,7 @@ export function HubHeader() {
             </span>
           </Link>
 
-          <nav className="hidden xl:flex items-center gap-1 ml-4">
+          <nav className="hidden xl:flex items-center gap-0.5 ml-2">
             {MENU_ITEMS.map((item) => {
               const hasDropdown = item in DROPDOWNS;
               const jumpHref = item === 'Impact' ? '/#article-impact' : item === 'Collaboration' ? '/#collaboration' : undefined;
@@ -133,13 +133,13 @@ export function HubHeader() {
                   {jumpHref ? (
                     <a
                       href={jumpHref}
-                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
+                      className="flex items-center gap-1 whitespace-nowrap px-2.5 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
                     >
                       {item}
                     </a>
                   ) : (
                     <button
-                      className="flex items-center gap-1 px-3 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
+                      className="flex items-center gap-1 whitespace-nowrap px-2.5 py-2 text-[14px] font-semibold text-[#14213D] hover:text-[var(--brand)] transition-colors"
                       aria-expanded={openMenu === item}
                     >
                       {item}
@@ -164,28 +164,30 @@ export function HubHeader() {
             })}
           </nav>
 
-          <div className="hidden xl:flex items-center gap-3 ml-auto">
+          <div className="hidden xl:flex items-center gap-2 ml-auto shrink-0">
             <a
               href="/#publishing"
-              className="px-4 py-2.5 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
+              className="whitespace-nowrap px-3.5 py-2.5 rounded-md bg-[var(--brand)] text-white text-[14px] font-semibold hover:bg-[var(--brand-deep)] transition-colors"
             >
               Submit &amp; Publish
             </a>
             <a
               href="/#footer-newsletter"
               title="New issues, articles and lectures in your inbox."
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[var(--brand)] text-[var(--brand)] text-[14px] font-semibold hover:bg-[#EAF1FD] transition-colors"
+              aria-label="Get alerts"
+              className="flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 rounded-md border border-[var(--brand)] text-[var(--brand)] text-[14px] font-semibold hover:bg-[#EAF1FD] transition-colors"
             >
-              <Bell className="w-3.5 h-3.5" />
-              Get Alerts
+              <Bell className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden 2xl:inline">Get Alerts</span>
             </a>
             <a
               href="/saved-articles"
               title="Your saved articles"
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md border border-[#DCE3F0] text-[#2B3853] text-[14px] font-semibold hover:bg-[#F6F8FC] transition-colors"
+              aria-label="Saved articles"
+              className="flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 rounded-md border border-[#DCE3F0] text-[#2B3853] text-[14px] font-semibold hover:bg-[#F6F8FC] transition-colors"
             >
-              <Bookmark className="w-3.5 h-3.5" />
-              Saved
+              <Bookmark className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden 2xl:inline">Saved</span>
             </a>
           </div>
 
