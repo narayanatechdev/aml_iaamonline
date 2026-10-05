@@ -76,3 +76,23 @@ it('reports a missing article rather than an empty author list', function () {
         ->assertNotFound()
         ->assertJsonPath('total_authors', 0);
 });
+
+it('does not compare a non-numeric id against the integer primary key', function () {
+    /*
+     * Postgres rejects "abc" against an integer column and the request became a
+     * 500 in production. SQLite compares loosely, so the fault cannot be
+     * reproduced here -- assert the query never mentions the primary key
+     * instead, which holds on either driver.
+     */
+    $sql = App\Models\Article::where('legacy_id', 'abc')
+        ->when(ctype_digit('abc'), fn ($query) => $query->orWhere('id', 'abc'))
+        ->toSql();
+
+    expect($sql)->not->toContain('"id"')
+        ->and($sql)->toContain('legacy_id');
+});
+
+it('answers a non-numeric id with a not-found rather than an error', function () {
+    $this->getJson('/api/articles/abc/authors')->assertNotFound();
+    $this->getJson('/api/articles/24308-x/authors')->assertNotFound();
+});

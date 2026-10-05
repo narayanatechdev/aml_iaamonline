@@ -230,7 +230,14 @@ class ArticleController extends Controller
 
     public function getAuthorsWithAffiliations(string $articleId)
     {
-        $article = Article::where('legacy_id', $articleId)->orWhere('id', $articleId)->first();
+        /*
+         * Only compare against the primary key when the route value could be
+         * one. Postgres rejects a string like "abc" against an integer column
+         * outright, which turned a missing article into a 500.
+         */
+        $article = Article::where('legacy_id', $articleId)
+            ->when(ctype_digit($articleId), fn ($query) => $query->orWhere('id', (int) $articleId))
+            ->first();
 
         if (! $article) {
             return response()->json([
