@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Bell, ChevronDown, Menu, X, Bookmark } from 'lucide-react';
 
-const PORTAL_LOGIN_URL = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || 'https://dev-portal.iaamonline.org/portal/login';
-const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'https://dev-portal.iaamonline.org/register';
+const PORTAL_LOGIN_URL = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL || 'https://portal.iaamonline.org/portal/login';
+const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'https://portal.iaamonline.org/register';
 
 const GLOBAL_LINKS = [
   { label: 'About IAAM', href: 'https://www.iaamonline.org/about-iaam' },
