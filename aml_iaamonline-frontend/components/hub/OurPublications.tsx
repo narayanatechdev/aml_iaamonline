@@ -34,7 +34,7 @@ const PUBLICATIONS: Publication[] = [
     href: '/advanced-materials-letters',
     icon: FileText,
     art: 'from-[#0B2C6B] via-[#0A1A45] to-[#06122F]',
-    image: '/hub/aml-featured.webp',
+    image: '/hub/image.png',
   },
   {
     title: 'Advanced Materials Proceedings',
@@ -44,7 +44,7 @@ const PUBLICATIONS: Publication[] = [
     href: '/advanced-materials-proceedings',
     icon: FileText,
     art: 'from-[#27476F] via-[#16293F] to-[#0C1726]',
-    image: '/hub/proceedings-logo.jpeg',
+    image: '/hub/Proceedings copy.webp',
   },
   {
     title: 'Advanced Materials Lecture Series',
@@ -52,7 +52,9 @@ const PUBLICATIONS: Publication[] = [
     text: 'Distinguished lectures published as citable records: video, slides, transcript and DOI.',
     icon: Library,
     art: 'from-[#1E4E63] via-[#16323F] to-[#0B1A21]',
-    image: '/hub/lectures-logo.jpeg',
+    image: '/hub/Lectures.webp',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     title: 'Advanced Materials Video Proceedings',
@@ -60,7 +62,9 @@ const PUBLICATIONS: Publication[] = [
     text: 'Recorded congress presentations, keynotes and panel discussions, linked to the written paper where one exists.',
     icon: PlayCircle,
     art: 'from-[#2B3B63] via-[#1A2340] to-[#0D1224]',
-    image: '/hub/video-proceedings-logo.jpeg',
+    image: '/hub/Video Proceedings.webp',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     title: 'Advanced Materials WebTalks',
@@ -68,7 +72,9 @@ const PUBLICATIONS: Publication[] = [
     text: 'Free live online talks with audience questions. Recordings stay available to members afterwards.',
     icon: Headphones,
     art: 'from-[#1F4C57] via-[#153238] to-[#0A1A1E]',
-    image: '/hub/webtalks-logo.jpeg',
+    image: '/hub/Online Talks.webp',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     title: 'Books & Reports',
@@ -76,6 +82,9 @@ const PUBLICATIONS: Publication[] = [
     text: 'Monographs, edited volumes and handbooks, plus IAAM technology outlooks and policy papers.',
     icon: BookOpen,
     art: 'from-[#3A3F55] via-[#242838] to-[#12141F]',
+    image: '/hub/Books.webp',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
 ];
 
@@ -161,9 +170,9 @@ function PublicationCard({ publication }: { publication: Publication }) {
       {...(publication.href ? { href: publication.href } : {})}
       className="group rounded-[10px] border border-[#DCE3F0] bg-white overflow-hidden flex flex-col hover:shadow-md transition-shadow"
     >
-      <div className={`relative h-[120px] ${publication.image ? 'bg-[#F6F8FC] border-b border-gray-100' : `bg-gradient-to-br ${publication.art}`}`}>
+      <div className={`relative h-[120px] ${publication.image ? 'bg-[#F6F8FC] border-b border-[#DCE3F0]' : `bg-gradient-to-br ${publication.art}`}`}>
         {publication.image && (
-          <img src={publication.image} alt={publication.title} className="absolute inset-0 w-full h-full object-contain p-4 pt-10" />
+          <img src={publication.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
         )}
         <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11.5px] font-bold tracking-wide z-10 shadow-sm ${publication.image ? 'bg-white border border-[#DCE3F0] text-[var(--brand)]' : 'bg-white/95 text-[var(--brand)]'}`}>
           {publication.short}

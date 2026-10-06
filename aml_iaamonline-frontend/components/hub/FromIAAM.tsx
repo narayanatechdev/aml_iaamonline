@@ -1,4 +1,4 @@
-const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'https://dev-portal.iaamonline.org/register';
+const PORTAL_REGISTER_URL = process.env.NEXT_PUBLIC_PORTAL_REGISTER_URL || 'https://www.iaamonline.org/membership';
 
 export function FromIAAM() {
   return (

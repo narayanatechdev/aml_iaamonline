@@ -26,6 +26,7 @@ const HUB_ROUTES = new Set([
   '/archive',
   '/collaboration',
   '/coming-soon',
+  '/hub-coming-soon',
   '/cookie-policy',
   '/for-authors',
   '/privacy-policy',

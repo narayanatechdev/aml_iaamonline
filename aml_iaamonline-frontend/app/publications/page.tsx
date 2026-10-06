@@ -17,21 +17,29 @@ const FORTHCOMING = [
     short: 'AMLS',
     title: 'Advanced Materials Lecture Series',
     text: 'Distinguished lectures published as citable records: video, slides, transcript and DOI.',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     short: 'AMVP',
     title: 'Advanced Materials Video Proceedings',
     text: 'Recorded congress presentations, keynotes and panel discussions, linked to the written paper where one exists.',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     short: 'AMWT',
     title: 'Advanced Materials WebTalks',
     text: 'Free live online talks with audience questions. Recordings stay available to members afterwards.',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
   {
     short: 'B&R',
     title: 'Books & Reports',
     text: 'Monographs, edited volumes and handbooks, plus IAAM technology outlooks and policy papers.',
+    href: '/hub-coming-soon',
+    link: 'Coming soon',
   },
 ];
 
@@ -138,20 +146,27 @@ export default async function PublicationsPage() {
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FORTHCOMING.map((p) => (
-            <div key={p.short} className="rounded-[10px] border border-[#DCE3F0] bg-[#F6F8FC] p-5 flex flex-col">
-              <span className="w-11 h-11 rounded-lg bg-white text-[#8B98B8] font-hub-display font-bold text-[13px] flex items-center justify-center mb-3">
-                {p.short}
-              </span>
-              <h3 className="font-hub-display font-bold text-[14.5px] text-[#0B1F4D] leading-snug mb-2">
-                {p.title}
-              </h3>
-              <p className="text-[12.5px] text-[#3D4A66] leading-relaxed flex-1">{p.text}</p>
-              <span className="mt-3 text-[11px] font-semibold tracking-wide uppercase text-[#8B98B8]">
-                Coming soon
-              </span>
-            </div>
-          ))}
+          {FORTHCOMING.map((p) => {
+            const Card = p.href ? 'a' : 'div';
+            return (
+              <Card 
+                key={p.short} 
+                {...(p.href ? { href: p.href } : {})}
+                className={`rounded-[10px] border border-[#DCE3F0] bg-[#F6F8FC] p-5 flex flex-col ${p.href ? 'hover:shadow-md transition-shadow group cursor-pointer' : ''}`}
+              >
+                <span className={`w-11 h-11 rounded-lg bg-white ${p.href ? 'text-[var(--brand)] shadow-sm' : 'text-[#8B98B8]'} font-hub-display font-bold text-[13px] flex items-center justify-center mb-3`}>
+                  {p.short}
+                </span>
+                <h3 className="font-hub-display font-bold text-[14.5px] text-[#0B1F4D] leading-snug mb-2">
+                  {p.title}
+                </h3>
+                <p className="text-[12.5px] text-[#3D4A66] leading-relaxed flex-1">{p.text}</p>
+                <span className={`mt-3 text-[11px] font-semibold tracking-wide uppercase ${p.href ? 'text-[var(--brand)] group-hover:underline' : 'text-[#8B98B8]'}`}>
+                  {p.link || 'Coming soon'} {p.href && '→'}
+                </span>
+              </Card>
+            );
+          })}
         </div>
       </HubSection>
     </HubPageLayout>
