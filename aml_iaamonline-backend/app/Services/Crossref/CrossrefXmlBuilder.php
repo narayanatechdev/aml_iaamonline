@@ -37,6 +37,7 @@ class CrossrefXmlBuilder
             'title' => config('journal.title'),
             'issn' => config('journal.issn'),
             'issn_type' => config('journal.issn_type'),
+            'issn_electronic' => config('journal.issn_electronic'),
             'article_url' => rtrim((string) config('journal.article_url'), '/'),
         ]);
     }
@@ -109,6 +110,12 @@ class CrossrefXmlBuilder
             $issn = $this->text($doc, 'issn', (string) $this->journal['issn']);
             $issn->setAttribute('media_type', (string) ($this->journal['issn_type'] ?: 'print'));
             $metadata->appendChild($issn);
+        }
+
+        if (filled($this->journal['issn_electronic'] ?? null)) {
+            $electronic = $this->text($doc, 'issn', (string) $this->journal['issn_electronic']);
+            $electronic->setAttribute('media_type', 'electronic');
+            $metadata->appendChild($electronic);
         }
         $journal->appendChild($metadata);
 
