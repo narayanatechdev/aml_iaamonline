@@ -265,3 +265,18 @@ test('the migration rolls back cleanly', function () {
     expect(Schema::hasColumn('manuscripts', 'iaam_id'))->toBeFalse()
         ->and(Schema::hasColumn('service_clients', 'abilities'))->toBeFalse();
 });
+
+test('the manuscript type and author contributions are kept', function () {
+    $contributions = [['name' => 'Portal Author', 'contribution' => 'Designed the study']];
+
+    $this->withToken($this->key)
+        ->postJson("/api/service/users/{$this->iaamId}/manuscripts", portalPayload([
+            'manuscript_type' => 'Review Article',
+            'author_contributions' => json_encode($contributions),
+        ]))
+        ->assertCreated()
+        ->assertJsonPath('data.manuscript_type', 'Review Article')
+        ->assertJsonPath('data.author_contributions', $contributions);
+
+    expect(Manuscript::sole()->manuscript_type)->toBe('Review Article');
+});

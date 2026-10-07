@@ -60,6 +60,7 @@ class ManuscriptSubmissionService
             'abstract' => 'required|string|min:50|max:5000',
             'keywords' => 'required|string',
             'category' => ['required', Rule::in($this->allowedCategories())],
+            'manuscript_type' => ['nullable', 'string', 'max:100'],
             'pdf' => 'required|file|mimes:pdf|max:52428800',
             'image' => [
                 'required',
@@ -90,6 +91,7 @@ class ManuscriptSubmissionService
             'data_availability' => 'nullable|string|max:2000',
             'cover_letter' => 'required|string|max:5000',
             'co_authors' => 'nullable|json',
+            'author_contributions' => 'nullable|json',
             'sdgs' => ['nullable', 'json', function ($attribute, $value, $fail) {
                 $sdgs = json_decode($value, true);
                 if (is_array($sdgs) && count($sdgs) > 5) {
@@ -122,12 +124,16 @@ class ManuscriptSubmissionService
             'abstract' => $validated['abstract'],
             'keywords' => $validated['keywords'],
             'category' => $validated['category'],
+            'manuscript_type' => $validated['manuscript_type'] ?? null,
             'funding_information' => $validated['funding_information'] ?? null,
             'acknowledgements' => $validated['acknowledgements'] ?? null,
             'conflict_of_interest' => $validated['conflict_of_interest'] ?? null,
             'data_availability' => $validated['data_availability'] ?? null,
             'cover_letter' => $validated['cover_letter'] ?? null,
             'co_authors' => $coAuthors,
+            'author_contributions' => $request->filled('author_contributions')
+                ? json_decode($request->input('author_contributions'), true)
+                : null,
             'trl' => $validated['trl'] ?? null,
             'division' => $validated['division'] ?? null,
             'status' => 'submitted',

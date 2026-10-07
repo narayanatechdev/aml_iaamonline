@@ -36,6 +36,7 @@ class Manuscript extends Model
         'doi',
         'published_at',
         'category',
+        'manuscript_type',
         'trl',
         'division',
         'similarity_score',
