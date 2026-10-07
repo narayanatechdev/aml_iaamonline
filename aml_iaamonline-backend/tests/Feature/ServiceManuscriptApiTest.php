@@ -280,3 +280,17 @@ test('the manuscript type and author contributions are kept', function () {
 
     expect(Manuscript::sole()->manuscript_type)->toBe('Review Article');
 });
+
+test('a submission without a manuscript file is accepted', function () {
+    $payload = portalPayload();
+    unset($payload['pdf']);
+
+    $this->withToken($this->key)
+        ->postJson("/api/service/users/{$this->iaamId}/manuscripts", $payload)
+        ->assertCreated();
+
+    $manuscript = Manuscript::sole();
+    expect($manuscript->file_path)->toBeNull()
+        ->and($manuscript->files()->where('file_type_category', 'manuscript')->count())->toBe(0);
+});
+

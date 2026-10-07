@@ -61,7 +61,9 @@ class ManuscriptSubmissionService
             'keywords' => 'required|string',
             'category' => ['required', Rule::in($this->allowedCategories())],
             'manuscript_type' => ['nullable', 'string', 'max:100'],
-            'pdf' => 'required|file|mimes:pdf|max:52428800',
+            // Optional: the Portal's form collects the paper's details and
+            // files follow separately. AML's own form still sends one.
+            'pdf' => 'nullable|file|mimes:pdf|max:52428800',
             'image' => [
                 'required',
                 'image',
