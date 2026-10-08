@@ -6,6 +6,24 @@ import { ChevronDown, Menu, X, Search, BookOpen, Moon, Sun, Bell as BellIcon, Rs
 import Link from 'next/link';
 import { searchArticles, JOURNAL_INFO } from '@/lib/realData';
 
+/*
+ * Submitting starts in the Portal: a member signs in once there and then
+ * submits and tracks papers under that one account, so the call to action
+ * hands them straight to its sign-in page rather than to a page that would
+ * only tell them to go there. The same NEXT_PUBLIC_PORTAL_LOGIN_URL already
+ * sends /account/login and /account/register to the Portal (next.config.js).
+ * Unset -- a journal running without the Portal -- keeps the journal's own
+ * submission guidance, so nothing dead-ends.
+ */
+const PORTAL_LOGIN_URL = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL;
+const SUBMIT_CTA_HREF = PORTAL_LOGIN_URL || '/author-resources/submit';
+const SUBMIT_CTA_CLASS =
+  'px-5 py-2.5 text-sm font-bold rounded transition-all bg-black text-white hover:bg-gray-800';
+const SUBMIT_CTA_STYLE = {
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+};
+
 const dropdownStyles = `
   @keyframes slideDownFade {
     from {
@@ -294,13 +312,15 @@ export function Navbar() {
               <Bookmark className="w-4 h-4" />
               Saved
             </Link>
-            <Link
-              href="/author-resources/submit"
-              className="px-5 py-2.5 text-sm font-bold rounded transition-all bg-black text-white hover:bg-gray-800"
-              style={{ fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif' }}
-            >
-              Submit / Get invited →
-            </Link>
+            {PORTAL_LOGIN_URL ? (
+              <a href={SUBMIT_CTA_HREF} className={SUBMIT_CTA_CLASS} style={SUBMIT_CTA_STYLE}>
+                Submit / Get invited →
+              </a>
+            ) : (
+              <Link href={SUBMIT_CTA_HREF} className={SUBMIT_CTA_CLASS} style={SUBMIT_CTA_STYLE}>
+                Submit / Get invited →
+              </Link>
+            )}
           </div>
         </div>
       </nav>

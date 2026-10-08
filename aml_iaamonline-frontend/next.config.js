@@ -38,6 +38,16 @@ const nextConfig = {
   // NEXT_PUBLIC_PORTAL_REGISTER_URL sends /account/register to the Portal's
   // own sign-up page specifically; falls back to the login URL (which links
   // to sign-up itself) if unset, so setting only the login URL still works.
+  //
+  // Everything an author does with an account now happens in the Portal, so
+  // submitting, tracking and the member dashboard go there too. Two routes
+  // deliberately stay here, because a live email links straight into each and
+  // a redirect would strand the reader:
+  //   /account/reset-password carries the reset token in its query string
+  //     (AppServiceProvider::boot builds that link), and
+  //   /reviewer is where the peer-review reminder emails land
+  //     (SendReviewReminders). Move those links before redirecting the routes.
+  // The contact form stays on the journal site by design.
   async redirects() {
     const portalLogin = process.env.NEXT_PUBLIC_PORTAL_LOGIN_URL;
 
@@ -50,6 +60,10 @@ const nextConfig = {
     return [
       { source: '/account/login', destination: portalLogin, permanent: false },
       { source: '/account/register', destination: portalRegister, permanent: false },
+      { source: '/submit', destination: portalLogin, permanent: false },
+      { source: '/track', destination: portalLogin, permanent: false },
+      { source: '/dashboard', destination: portalLogin, permanent: false },
+      { source: '/dashboard/:path*', destination: portalLogin, permanent: false },
     ];
   },
 };
