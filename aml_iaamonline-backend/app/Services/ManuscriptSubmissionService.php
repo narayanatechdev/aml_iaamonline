@@ -71,9 +71,9 @@ class ManuscriptSubmissionService
             // Optional: the Portal's form collects the paper's details and
             // files follow separately. AML's own form still sends one.
             'pdf' => 'nullable|file|mimes:pdf|max:52428800',
-            // The manuscript itself. The Portal sends a Word document; AML's
-            // own form still sends a PDF in 'pdf' above. Either slot is taken.
-            'manuscript_file' => 'nullable|file|mimes:pdf,doc,docx|max:20480',
+            // The manuscript itself, as a Word document. This is the Portal's
+            // slot; AML's own form still sends a PDF in 'pdf' above.
+            'manuscript_file' => 'nullable|file|mimes:doc,docx|max:20480',
             'image' => [
                 $forPortal ? 'nullable' : 'required',
                 'image',

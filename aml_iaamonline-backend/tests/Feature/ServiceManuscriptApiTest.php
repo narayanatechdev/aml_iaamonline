@@ -318,10 +318,10 @@ test('the portal sends the manuscript as a Word document', function () {
         ->and($manuscript->cover_letter)->toBeNull();
 });
 
-test('a manuscript that is neither a document nor a PDF is refused', function () {
+test('the manuscript slot takes Word documents only', function (UploadedFile $file) {
     $payload = portalPayload();
     unset($payload['pdf']);
-    $payload['manuscript_file'] = UploadedFile::fake()->image('holiday.png', 800, 600);
+    $payload['manuscript_file'] = $file;
 
     $this->withToken($this->key)
         ->postJson("/api/service/users/{$this->iaamId}/manuscripts", $payload)
@@ -329,4 +329,8 @@ test('a manuscript that is neither a document nor a PDF is refused', function ()
         ->assertJsonValidationErrors('manuscript_file');
 
     expect(Manuscript::count())->toBe(0);
-});
+})->with([
+    'an image' => fn () => UploadedFile::fake()->image('holiday.png', 800, 600),
+    // The Portal asks for Word, so a PDF in this slot is a mistake.
+    'a PDF' => fn () => UploadedFile::fake()->create('paper.pdf', 100, 'application/pdf'),
+]);
