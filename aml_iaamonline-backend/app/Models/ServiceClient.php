@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class ServiceClient extends Model
 {
     /** Abilities a client can be granted on top of the read-only fetch API. */
-    public const ABILITIES = ['manuscripts.write', 'journal.admin'];
+    public const ABILITIES = ['manuscripts.write', 'journal.admin', 'reviews.write'];
 
     protected $fillable = ['name', 'api_key_hash', 'is_active', 'last_used_at', 'abilities'];
 

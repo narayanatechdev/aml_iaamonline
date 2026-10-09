@@ -293,10 +293,16 @@ describe('reviewers working through the Portal', function () {
         expect($other->fresh()->status)->toBe('invited');
     });
 
-    it('404s for an IAAM ID that belongs to nobody', function () {
+    // The Portal asks this for every member to decide whether to show them a
+    // My Reviews tab. Holding no account here is the normal case, not an error.
+    it('returns an empty list for an IAAM ID that belongs to nobody', function () {
         $this->withToken($this->key)
             ->getJson('/api/service/users/'.anIaamId(5999999).'/review-assignments')
-            ->assertNotFound();
+            ->assertOk()
+            ->assertJsonPath('data', [])
+            ->assertJsonPath('stats.invited', 0)
+            ->assertJsonPath('stats.accepted', 0)
+            ->assertJsonPath('stats.completed', 0);
     });
 });
 
@@ -326,4 +332,36 @@ it('surfaces a submitted review to the editor', function () {
         ->assertJsonPath('data.0.status', 'completed')
         ->assertJsonPath('data.0.review.recommendation', 'accept')
         ->assertJsonPath('data.0.review.confidential_comments', 'For the editor only.');
+});
+
+it('gives a reviewer back the report they already sent', function () {
+    $iaamId = anIaamId();
+    $reviewer = reviewerUser($iaamId);
+    $m = reviewManuscript();
+    $assignment = ReviewAssignment::create([
+        'manuscript_id' => $m->id,
+        'reviewer_email' => $reviewer->email,
+        'reviewer_name' => 'Dr Reviewer',
+        'status' => 'accepted',
+        'invited_at' => now(),
+        'due_date' => now()->addDays(14),
+    ]);
+
+    $this->withToken($this->key)
+        ->postJson("/api/service/users/{$iaamId}/review-assignments/{$assignment->id}/review", [
+            'recommendation' => 'minor-revisions',
+            'quality_score' => 4,
+            'comments' => 'Two small things to fix before this is ready.',
+            'confidential_comments' => 'Solid work.',
+        ])->assertCreated();
+
+    // The reviewer's own list carries the report back, so the Portal can
+    // show them what they sent rather than an empty "submitted" stub.
+    $this->withToken($this->key)
+        ->getJson("/api/service/users/{$iaamId}/review-assignments")
+        ->assertOk()
+        ->assertJsonPath('data.0.status', 'completed')
+        ->assertJsonPath('data.0.review.recommendation', 'minor-revisions')
+        ->assertJsonPath('data.0.review.quality_score', 4)
+        ->assertJsonPath('data.0.review.comments', 'Two small things to fix before this is ready.');
 });

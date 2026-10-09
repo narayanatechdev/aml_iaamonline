@@ -78,15 +78,32 @@ class ServicePeerReviewController extends Controller
     /** Everything this person has been asked to review. */
     public function assignments(string $iaamId): JsonResponse
     {
-        $email = $this->reviewerEmail($iaamId);
+        // Most Portal members hold no role here at all. Having no journal
+        // account is not an error, it just means nobody has invited them.
+        $user = User::where('iaam_id', $iaamId)->first();
+
+        if (! $user) {
+            return response()->json([
+                'data' => [],
+                'stats' => ['invited' => 0, 'accepted' => 0, 'completed' => 0],
+            ]);
+        }
+
+        $email = $user->email;
 
         $assignments = ReviewAssignment::where('reviewer_email', $email)
             ->with(['manuscript:id,submission_id,title,abstract,category,division,status'])
             ->latest('invited_at')
             ->get();
 
+        // A reviewer can read back the report they already sent.
+        $reviews = Review::whereIn('review_assignment_id', $assignments->pluck('id'))
+            ->where('is_submitted', true)
+            ->get()
+            ->keyBy('review_assignment_id');
+
         return response()->json([
-            'data' => $assignments->map(fn (ReviewAssignment $a) => $this->presentAssignment($a) + [
+            'data' => $assignments->map(fn (ReviewAssignment $a) => $this->presentAssignment($a, $reviews->get($a->id)) + [
                 'manuscript' => $a->manuscript,
             ]),
             'stats' => [
