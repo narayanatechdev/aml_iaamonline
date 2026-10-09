@@ -50,7 +50,14 @@ class ManuscriptSubmissionService
         'decided' => ['accepted', 'rejected', 'published'],
     ];
 
-    public function rules(): array
+    /**
+     * @param  bool  $forPortal  The Portal's form asks for fewer things than
+     *                           AML's own: no cover image and no cover letter.
+     *                           Submissions through the service API may arrive
+     *                           without either; AML's own form still requires
+     *                           both.
+     */
+    public function rules(bool $forPortal = false): array
     {
         return [
             'title' => 'required|string|max:500',
@@ -64,8 +71,11 @@ class ManuscriptSubmissionService
             // Optional: the Portal's form collects the paper's details and
             // files follow separately. AML's own form still sends one.
             'pdf' => 'nullable|file|mimes:pdf|max:52428800',
+            // The manuscript itself. The Portal sends a Word document; AML's
+            // own form still sends a PDF in 'pdf' above. Either slot is taken.
+            'manuscript_file' => 'nullable|file|mimes:pdf,doc,docx|max:20480',
             'image' => [
-                'required',
+                $forPortal ? 'nullable' : 'required',
                 'image',
                 'mimes:jpeg,jpg,png',
                 'max:10240',
@@ -91,7 +101,7 @@ class ManuscriptSubmissionService
             'acknowledgements' => 'nullable|string|max:2000',
             'conflict_of_interest' => 'nullable|string|max:2000',
             'data_availability' => 'nullable|string|max:2000',
-            'cover_letter' => 'required|string|max:5000',
+            'cover_letter' => ($forPortal ? 'nullable' : 'required').'|string|max:5000',
             'co_authors' => 'nullable|json',
             'author_contributions' => 'nullable|json',
             'sdgs' => ['nullable', 'json', function ($attribute, $value, $fail) {
@@ -151,16 +161,19 @@ class ManuscriptSubmissionService
             }
         }
 
-        if ($request->hasFile('pdf')) {
-            $file = $request->file('pdf');
-            $fileName = $submissionId.'_manuscript.pdf';
+        // 'manuscript_file' is what the Portal sends (PDF or Word); 'pdf' is
+        // what AML's own form sends. Whichever arrives is the manuscript.
+        if ($request->hasFile('manuscript_file') || $request->hasFile('pdf')) {
+            $file = $request->file('manuscript_file') ?: $request->file('pdf');
+            $extension = strtolower($file->getClientOriginalExtension() ?: 'pdf');
+            $fileName = $submissionId.'_manuscript.'.$extension;
             $filePath = $file->storeAs('manuscripts', $fileName, 'local');
 
             ManuscriptFile::create([
                 'manuscript_id' => $manuscript->id,
                 'file_name' => $file->getClientOriginalName(),
                 'file_path' => $filePath,
-                'file_type' => 'pdf',
+                'file_type' => $extension,
                 'file_size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
                 'file_type_category' => 'manuscript',

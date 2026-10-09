@@ -97,7 +97,8 @@ class ServiceManuscriptController extends Controller
             return $error;
         }
 
-        $validated = $request->validate($this->submissions->rules());
+        // The Portal's form collects the manuscript itself, not a cover image.
+        $validated = $request->validate($this->submissions->rules(forPortal: true));
 
         $manuscript = $this->submissions->create($request, $validated, [
             'iaam_id' => $iaamId,

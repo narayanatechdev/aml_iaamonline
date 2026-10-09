@@ -294,3 +294,39 @@ test('a submission without a manuscript file is accepted', function () {
         ->and($manuscript->files()->where('file_type_category', 'manuscript')->count())->toBe(0);
 });
 
+test('the portal sends the manuscript as a Word document', function () {
+    $payload = portalPayload();
+    unset($payload['pdf'], $payload['image'], $payload['cover_letter']);
+    $payload['manuscript_file'] = UploadedFile::fake()->create(
+        'graphene-lattices.docx', 150,
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+
+    $this->withToken($this->key)
+        ->postJson("/api/service/users/{$this->iaamId}/manuscripts", $payload)
+        ->assertCreated();
+
+    $manuscript = Manuscript::sole();
+    $file = $manuscript->files()->where('file_type_category', 'manuscript')->sole();
+
+    // Stored under its real extension, not forced to .pdf.
+    expect($manuscript->file_name)->toEndWith('_manuscript.docx')
+        ->and($file->file_type)->toBe('docx')
+        ->and($file->file_name)->toBe('graphene-lattices.docx')
+        ->and($manuscript->author_image_url)->toBeNull()
+        // The Portal asks for neither a cover image nor a cover letter.
+        ->and($manuscript->cover_letter)->toBeNull();
+});
+
+test('a manuscript that is neither a document nor a PDF is refused', function () {
+    $payload = portalPayload();
+    unset($payload['pdf']);
+    $payload['manuscript_file'] = UploadedFile::fake()->image('holiday.png', 800, 600);
+
+    $this->withToken($this->key)
+        ->postJson("/api/service/users/{$this->iaamId}/manuscripts", $payload)
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('manuscript_file');
+
+    expect(Manuscript::count())->toBe(0);
+});
