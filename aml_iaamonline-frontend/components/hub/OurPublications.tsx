@@ -11,6 +11,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import { PublicationsCarousel } from './PublicationsCarousel';
+
 interface Publication {
   title: string;
   short: string;
@@ -257,11 +259,22 @@ export function OurPublications() {
           <FeaturedCard publication={featured} />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mt-8">
+        {/*
+          Three at a time on a desktop, with the fourth peeking so it is clear
+          the rail carries on. Each item is a fixed share of the rail's width
+          rather than a grid column, which is what lets it scroll.
+        */}
+        <PublicationsCarousel>
           {rest.map((publication) => (
-            <PublicationCard key={publication.short} publication={publication} />
+            <div
+              key={publication.short}
+              className="snap-start shrink-0 flex
+                         basis-[85%] sm:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2rem)/3)]"
+            >
+              <PublicationCard publication={publication} />
+            </div>
           ))}
-        </div>
+        </PublicationsCarousel>
       </div>
     </section>
   );
