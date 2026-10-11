@@ -75,13 +75,6 @@ function ScoreDial({ score }: { score: number }) {
 export function ArticleImpact() {
   return (
     <section id="article-impact" className="font-hub-body relative isolate bg-[#F6F8FC] overflow-hidden">
-      <img
-        src="/hub/impact-background.webp"
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 w-full h-full object-cover"
-      />
-
       <div className="max-w-[1400px] mx-auto px-6 py-16">
         <div className="grid lg:grid-cols-[1fr_400px] gap-10 items-start">
           <div>
