@@ -22,7 +22,7 @@ function ArticleCard({ article }: { article: HubArticle }) {
         identical placeholders.
       */}
       {article.image && (
-        <div className="relative h-[150px] bg-[#EAF1FD] overflow-hidden">
+        <div className="relative h-[220px] bg-[#EAF1FD] overflow-hidden">
           <img
             src={article.image}
             alt=""
