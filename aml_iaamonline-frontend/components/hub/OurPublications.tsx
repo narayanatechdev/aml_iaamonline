@@ -120,7 +120,7 @@ function FeaturedCard({ publication }: { publication: Publication }) {
         {publication.short}
       </span>
 
-      <h3 className="font-hub-display font-bold text-[30px] sm:text-[38px] leading-[1.1] max-w-[14ch] mb-3">
+      <h3 className="font-hub-display font-bold text-[30px] sm:text-[38px] leading-[1.1] max-w-[14ch] xl:max-w-[24ch] mb-3">
         {publication.title}
       </h3>
       <p className="text-[15px] text-[#C5CEE3] leading-relaxed max-w-[46ch] mb-7">{publication.text}</p>
