@@ -60,7 +60,7 @@ const DROPDOWNS: Record<string, { label: string; href: string }[]> = {
     { label: 'IAAM Article Impact (AII)', href: '/about/article-impact' },
     { label: 'For authors', href: '/for-authors' },
     { label: 'Publish jointly with IAAM', href: '/collaboration' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Contact', href: '/contact' },
   ],
 };
 
@@ -100,7 +100,7 @@ export function HubHeader() {
               Join IAAM
             </a>
             <a
-              href="/#contact"
+              href="/contact"
               className="hidden sm:inline px-3 py-1.5 rounded-md border border-[#3A466F] hover:border-white hover:text-white transition-colors"
             >
               Contact

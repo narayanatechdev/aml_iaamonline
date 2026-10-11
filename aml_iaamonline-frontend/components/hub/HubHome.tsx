@@ -7,7 +7,6 @@ import { FromIAAM } from './FromIAAM';
 import { ArticleImpact } from './ArticleImpact';
 import { PublishingWithIAAM } from './PublishingWithIAAM';
 import { Collaboration } from './Collaboration';
-import { ContactSection } from './ContactSection';
 import { NotForProfitAndStats } from './NotForProfitAndStats';
 import { HubFooter } from './HubFooter';
 
@@ -24,7 +23,6 @@ export default function HubHome() {
         <ArticleImpact />
         <PublishingWithIAAM />
         <Collaboration />
-        <ContactSection />
         <NotForProfitAndStats />
       </main>
       <HubFooter />

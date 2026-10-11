@@ -137,7 +137,7 @@ export async function HubAbout() {
               <br />
               Gammalkilsvägen 18, Ulrika 590 53, Sweden
             </p>
-            <a href="/#contact" className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)] hover:underline">
+            <a href="/contact" className="inline-block mt-3 text-[13px] font-semibold text-[var(--brand)] hover:underline">
               Contact us →
             </a>
           </div>

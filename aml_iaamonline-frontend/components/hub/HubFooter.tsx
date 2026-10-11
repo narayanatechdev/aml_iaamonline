@@ -39,7 +39,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     heading: 'Books & Reports',
     links: [
       { label: 'Books & reports status', href: '/publications' },
-      { label: 'Propose a book', href: '/#contact' },
+      { label: 'Propose a book', href: '/contact' },
       { label: 'Publish jointly with IAAM', href: '/collaboration' },
     ],
   },
@@ -60,7 +60,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: 'Institutional subscriptions', href: '/for-authors/open-access' },
       { label: 'Access & charges', href: '/for-authors/open-access' },
-      { label: 'Request a quote', href: '/#contact' },
+      { label: 'Request a quote', href: '/contact' },
     ],
   },
   {
@@ -89,7 +89,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: 'IAAM Article Impact (AII)', href: '/about/article-impact' },
       { label: 'Publishing with IAAM', href: '/for-authors' },
       { label: 'Collaboration & joint publication', href: '/collaboration' },
-      { label: 'Contact us', href: '/#contact' },
+      { label: 'Contact us', href: '/contact' },
     ],
   },
   {
@@ -100,7 +100,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: 'Search all publications', href: '/search' },
       { label: 'Access & charges', href: '/for-authors/open-access' },
       { label: 'Email alerts', href: '/#footer-newsletter' },
-      { label: 'Reprints and permissions', href: '/#contact' },
+      { label: 'Reprints and permissions', href: '/contact' },
     ],
   },
   {

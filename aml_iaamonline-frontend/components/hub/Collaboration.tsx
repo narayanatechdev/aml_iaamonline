@@ -20,7 +20,7 @@ export function Collaboration() {
             editorial workflow, DOIs, article-level impact scores and an international readership.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a href="/#contact" className="px-5 py-2.5 rounded-md bg-[var(--brand-tint)] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[var(--brand-tint)] transition-colors">
+            <a href="/contact" className="px-5 py-2.5 rounded-md bg-[var(--brand-tint)] text-[#0A1A45] text-[13.5px] font-bold hover:bg-[var(--brand-tint)] transition-colors">
               Propose a collaboration
             </a>
             <a href="/collaboration" className="px-5 py-2.5 rounded-md border border-white/40 text-white text-[13.5px] font-semibold hover:bg-white/10 transition-colors">
@@ -34,7 +34,7 @@ export function Collaboration() {
             <div key={r.title} className="rounded-[10px] border border-[#DCE3F0] bg-white p-5">
               <h3 className="font-hub-display font-bold text-[14.5px] text-[#0B1F4D] mb-2">{r.title}</h3>
               <p className="text-[12.5px] text-[#3D4A66] leading-relaxed mb-3">{r.text}</p>
-              <a href="/#contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">
+              <a href="/contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">
                 {r.link} →
               </a>
             </div>
@@ -50,7 +50,7 @@ export function Collaboration() {
               Give your departments, centres and doctoral schools a recognised outlet, with your institution named
               as joint publisher.
             </p>
-            <a href="/#contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">Invite your university →</a>
+            <a href="/contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">Invite your university →</a>
           </div>
           <div className="rounded-[10px] bg-white border border-[#DCE3F0] p-5">
             <h3 className="font-hub-display font-bold text-[14.5px] text-[#0B1F4D] mb-2">
@@ -60,7 +60,7 @@ export function Collaboration() {
               Share your members&apos; research and your organisation&apos;s reports through a publisher that answers to
               the scientific community, not to shareholders.
             </p>
-            <a href="/#contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">Start a partnership →</a>
+            <a href="/contact" className="text-[12.5px] font-semibold text-[var(--brand)] hover:underline">Start a partnership →</a>
           </div>
         </div>
       </div>

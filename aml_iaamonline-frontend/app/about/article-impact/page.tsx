@@ -113,7 +113,7 @@ export default function ArticleImpactPage() {
               that produced it, so readers can see how the score was reached.
             </p>
             <a
-              href="/#contact"
+              href="/contact"
               className="inline-block mt-5 text-[13.5px] font-semibold text-[var(--brand)] hover:underline"
             >
               Ask us about AII →

@@ -14,10 +14,16 @@ const DETAILS = [
   { icon: Clock, label: 'Office hours', value: 'Monday to Friday, 9:00–17:30 CET' },
 ];
 
-export function ContactSection() {
+/**
+ * The contact block. On its own page the heading comes from HubPageLayout, so
+ * `heading={false}` drops the kicker, title and standfirst this would
+ * otherwise repeat.
+ */
+export function ContactSection({ heading = true }: { heading?: boolean } = {}) {
   return (
     <section id="contact" className="font-hub-body relative isolate bg-[#F6F8FC] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 py-16">
+        {heading && (
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-9">
           <div>
             <p className="flex items-center gap-3 text-[12px] font-bold tracking-[0.18em] uppercase text-[#5a6a8a] mb-3">
@@ -42,6 +48,7 @@ export function ContactSection() {
             for a brighter tomorrow
           </p>
         </div>
+        )}
 
         <div className="grid lg:grid-cols-[minmax(0,420px)_1fr] gap-6 items-start">
           <div className="rounded-2xl border border-[#DCE3F0] bg-white p-7">

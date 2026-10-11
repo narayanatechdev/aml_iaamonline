@@ -76,7 +76,7 @@ export default async function SubmitProposalPage() {
               An editor reads the proposal and either issues an invitation code, suggests a different journal, or
               explains why the topic is not a fit. You keep the proposal and can revise and resend it.
             </p>
-            <a href="/#contact" className="text-[13px] font-semibold text-[var(--brand)] hover:underline">
+            <a href="/contact" className="text-[13px] font-semibold text-[var(--brand)] hover:underline">
               Questions? Contact the editorial office →
             </a>
           </div>

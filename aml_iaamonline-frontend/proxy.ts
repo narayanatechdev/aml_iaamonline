@@ -25,6 +25,7 @@ const HUB_ROUTES = new Set([
   '/about/article-impact',
   '/archive',
   '/collaboration',
+  '/contact',
   '/coming-soon',
   '/hub-coming-soon',
   '/cookie-policy',
