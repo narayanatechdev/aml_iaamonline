@@ -16,7 +16,7 @@ export default function HubComingSoonPage() {
         {/* Background from Home Section */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <img
-            src="/hub/Home Banner.jpg"
+            src="/hub/pubs_banner2.webp"
             alt=""
             className="absolute inset-0 -z-10 w-full h-full object-cover object-center lg:object-right"
           />

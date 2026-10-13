@@ -15,8 +15,8 @@ export function HubHero() {
         meaning and gets a real description rather than aria-hidden.
       */}
       <img
-        src="/hub/Home Banner.jpg"
-        alt="A globe wrapped in a molecular lattice, labelled Net Zero, Sustainable Materials, Global Collaboration and Knowledge Sharing."
+        src="/hub/pubs_banner2.webp"
+        alt="IAAM Publications molecular structure banner"
         className="absolute inset-0 -z-10 w-full h-full object-cover object-center lg:object-right"
       />
       {/*

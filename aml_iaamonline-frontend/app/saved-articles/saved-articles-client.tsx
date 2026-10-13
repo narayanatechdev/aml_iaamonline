@@ -34,10 +34,25 @@ export function SavedArticlesClient() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
 
+  // On pubs.iaamonline.org the page is served at /<journal-slug>/saved-articles.
+  // Derive the journal prefix so article links go to /<journal-slug>/article/<id>
+  // instead of bare /article/<id> which the hub's proxy rejects with 404.
+  const journalPrefix =
+    typeof window !== 'undefined'
+      ? (() => {
+          const parts = window.location.pathname.split('/').filter(Boolean);
+          // e.g. ['advanced-materials-letters', 'saved-articles'] → 'advanced-materials-letters'
+          const idx = parts.indexOf('saved-articles');
+          return idx > 0 ? `/${parts[idx - 1]}` : '';
+        })()
+      : '';
+
   useEffect(() => {
     setMounted(true);
     const keys = Object.keys(localStorage).filter(k => k.startsWith('saved_article_'));
-    const savedIds = keys.map(k => k.replace('saved_article_', ''));
+    const savedIds = keys
+      .map(k => k.replace('saved_article_', ''))
+      .filter(id => /^\d+$/.test(id)); // guard against corrupt keys (e.g. 'saved-articles')
 
     if (savedIds.length === 0) {
       setLoading(false);
@@ -118,7 +133,7 @@ export function SavedArticlesClient() {
               key={article.id}
               className="flex flex-col rounded-lg border border-gray-200 bg-white overflow-hidden hover:shadow-md transition-shadow"
             >
-              <a href={`/article/${article.id}`} className="flex flex-col flex-1 p-5 group">
+              <a href={`${journalPrefix}/article/${article.id}`} className="flex flex-col flex-1 p-5 group">
                 <h3 className="font-bold text-[15px] text-black leading-snug mb-2 group-hover:text-blue-700 transition-colors line-clamp-3"
                     style={{ fontFamily: "'Linux Libertine', 'Georgia', 'Times', serif" }}>
                   {article.title}
