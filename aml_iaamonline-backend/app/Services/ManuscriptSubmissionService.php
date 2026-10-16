@@ -47,7 +47,20 @@ class ManuscriptSubmissionService
     public const STATUS_GROUPS = [
         'in_progress' => ['submitted', 'with_editor', 'under_review', 'decision', 'editor-review', 'under-review'],
         'awaiting_revision' => [self::AWAITING_REVISION, 'revision-requested'],
+        // Accepted and on its way to publication: copyediting, typesetting,
+        // proofing and XML. Left out of these groups until now, so a paper in
+        // production fell through to 'in_progress' and was counted alongside
+        // ones still waiting on a reviewer.
+        'in_production' => ['production'],
         'decided' => ['accepted', 'rejected', 'published'],
+    ];
+
+    /** The production checklist, in the order it is worked through. */
+    public const PRODUCTION_STEPS = [
+        'prod_copyedit' => 'Copyediting',
+        'prod_typeset' => 'Typesetting',
+        'prod_proof' => 'Proofing & corrections',
+        'prod_xml' => 'XML',
     ];
 
     /**

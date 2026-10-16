@@ -32,6 +32,43 @@ class ManuscriptPresenter
             'decision_date' => $m->decision_date?->toIso8601String(),
             'published_at' => $m->published_at?->toIso8601String(),
             'doi' => $m->doi,
+            'production' => $this->production($m),
+        ];
+    }
+
+    /**
+     * The production checklist, for an author watching an accepted paper.
+     *
+     * This is the part of the journey that used to be silent: accepted, then
+     * nothing until published. The steps are facts about their own manuscript,
+     * so there is nothing here an author should not see.
+     *
+     * @return array<string, mixed>|null  null until the paper reaches production
+     */
+    public function production(Manuscript $m): ?array
+    {
+        if (! in_array($m->status, ['production', 'published'], true)) {
+            return null;
+        }
+
+        $steps = collect(ManuscriptSubmissionService::PRODUCTION_STEPS)
+            ->map(fn (string $label, string $field) => [
+                'step' => $field,
+                'label' => $label,
+                'done' => (bool) $m->{$field},
+            ])
+            ->values()
+            ->all();
+
+        $done = collect($steps)->where('done', true)->count();
+
+        return [
+            'steps' => $steps,
+            'completed' => $done,
+            'total' => count($steps),
+            // Publication is gated on all four, so this says whether the paper
+            // is waiting on production or on an editor pressing publish.
+            'ready_to_publish' => $done === count($steps),
         ];
     }
 
@@ -92,6 +129,7 @@ class ManuscriptPresenter
             ['event' => 'editor_review_completed', 'label' => 'Editorial check completed', 'at' => $m->editor_review_completed_at],
             ['event' => 'peer_review_completed', 'label' => 'Peer review completed', 'at' => $m->peer_review_completed_at],
             ['event' => 'decision', 'label' => 'Decision: '.Str::headline((string) $m->final_decision), 'at' => $m->final_decision && $m->final_decision !== 'pending' ? $m->decision_date : null],
+            ['event' => 'production_started', 'label' => 'Production initiated', 'at' => $m->production_started_at ?? null],
             ['event' => 'published', 'label' => 'Published', 'at' => $m->published_at],
         ]);
 

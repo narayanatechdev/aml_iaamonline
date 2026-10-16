@@ -93,7 +93,10 @@ class EditorController extends Controller
         if ($manuscript->status !== 'accepted') {
             return response()->json(['success' => false, 'message' => 'Only accepted manuscripts can enter production.'], 422);
         }
-        $manuscript->update(['status' => 'production']);
+        $manuscript->update([
+            'status' => 'production',
+            'production_started_at' => $manuscript->production_started_at ?? now(),
+        ]);
 
         return response()->json(['success' => true, 'data' => $manuscript]);
     }

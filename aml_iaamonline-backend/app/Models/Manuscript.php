@@ -30,6 +30,7 @@ class Manuscript extends Model
         'prod_typeset',
         'prod_proof',
         'prod_xml',
+        'production_started_at',
         'volume',
         'issue',
         'pages',
@@ -72,6 +73,7 @@ class Manuscript extends Model
         'prod_typeset' => 'boolean',
         'prod_proof' => 'boolean',
         'prod_xml' => 'boolean',
+        'production_started_at' => 'datetime',
         'published_at' => 'datetime',
     ];
 
